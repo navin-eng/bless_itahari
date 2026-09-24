@@ -187,7 +187,7 @@
     <div class="team-hero">
         <div class="container team-hero-content" data-aos="zoom-out">
             <h1>Meet Our Exceptional Team</h1>
-            <p>The dedicated professionals, educators, and leaders who make {{ $siteSettings->site_short_name ?? 'Shiksha Sandesh' }} extraordinary.</p>
+            <p>The dedicated professionals, educators, and leaders who make {{ $siteSettings->site_short_name ?? 'Bless Itahari' }} extraordinary.</p>
         </div>
     </div>
 

@@ -27,7 +27,7 @@
                         <div class="ico"><i class="fas fa-envelope"></i></div>
                         <div class="info-text">
                             <div class="label">Email</div>
-                            <a href="mailto:{{ $siteSettings->contact_email ?? 'info@shikshasandesh.edu.np' }}">{{ $siteSettings->contact_email ?? 'info@shikshasandesh.edu.np' }}</a>
+                            <a href="mailto:{{ $siteSettings->contact_email ?? 'info@blessitahari.edu.np' }}">{{ $siteSettings->contact_email ?? 'info@blessitahari.edu.np' }}</a>
                         </div>
                     </div>
                     @if($siteSettings->whatsapp_number)
@@ -50,7 +50,7 @@
             <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
                 <div class="gplc-map">
                     <iframe
-                        src="https://maps.google.com/maps?q={{ urlencode($siteSettings->contact_address ?? 'Belbari, Morang, Nepal') }}&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                        src="https://maps.google.com/maps?q={{ urlencode($siteSettings->contact_address ?? 'Itahari, Nepal') }}&t=&z=13&ie=UTF8&iwloc=&output=embed"
                         allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
                     </iframe>
                 </div>

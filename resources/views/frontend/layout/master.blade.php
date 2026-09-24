@@ -12,9 +12,9 @@
     @endphp
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="{{ $siteSettings->site_name ?? 'Shiksha Sandesh English School' }} — Quality education from Playgroup to Secondary in {{ $siteSettings->contact_address ?? 'Belbari-2, Morang, Nepal' }}.">
-    <meta name="keywords" content="{{ $siteSettings->site_short_name ?? 'SSES' }}, {{ $siteSettings->site_name ?? 'Shiksha Sandesh English School' }}, Belbari, Morang, Nepal, School in Belbari">
-    <title>{{ $siteSettings->site_name ?? 'Shiksha Sandesh English School' }} | {{ $siteSettings->site_tagline ?? 'Belbari, Morang' }}</title>
+    <meta name="description" content="{{ $siteSettings->site_name ?? 'Bless Itahari' }} — Quality education from Playgroup to Secondary in {{ $siteSettings->contact_address ?? 'Itahari, Nepal' }}.">
+    <meta name="keywords" content="{{ $siteSettings->site_short_name ?? 'Bless Itahari' }}, {{ $siteSettings->site_name ?? 'Bless Itahari' }}, Itahari, Nepal, School in Belbari">
+    <title>{{ $siteSettings->site_name ?? 'Bless Itahari' }} | {{ $siteSettings->site_tagline ?? 'Itahari' }}</title>
     <link rel="icon" type="image/x-icon" href="{{ $siteSettings->site_favicon ? asset($siteSettings->site_favicon) : asset('backend/images/favicon.ico') }}">
     
     <!-- PWA Config -->
@@ -42,10 +42,14 @@
     
     <style>
         :root {
-            --primary: {{ $siteSettings->primary_color ?? '#1a4d8c' }};
-            --primary-dark: {{ $siteSettings->primary_dark ?? '#0e2d54' }};
-            --primary-light: {{ $siteSettings->primary_light ?? '#2e74c9' }};
-            --accent: {{ $siteSettings->accent_color ?? '#f59e0b' }};
+            --primary: {{ $siteSettings->primary_color ?? '#25255F' }};
+            --primary-dark: {{ $siteSettings->primary_dark ?? '#141E32' }};
+            --primary-light: {{ $siteSettings->primary_light ?? '#334581' }};
+            --accent: {{ $siteSettings->accent_color ?? '#BB3233' }};
+            --maroon: #590E1F;
+            --light-green: #D6E7D4;
+            --light-blue: #D6E7EE;
+            --white: #FEFEFE;
         }
     </style>
 

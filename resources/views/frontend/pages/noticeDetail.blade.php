@@ -58,9 +58,9 @@
                             <span>{{ $siteSettings->phone ?? '021-546236' }}</span>
                         </a>
                         
-                        <a href="mailto:{{ $siteSettings->email ?? 'info@shikshasandesh.edu.np' }}" class="help-contact-link">
+                        <a href="mailto:{{ $siteSettings->email ?? 'info@blessitahari.edu.np' }}" class="help-contact-link">
                             <div class="icon-circle"><i class="fa-solid fa-envelope"></i></div>
-                            <span style="word-break: break-all;">{{ $siteSettings->email ?? 'info@shikshasandesh.edu.np' }}</span>
+                            <span style="word-break: break-all;">{{ $siteSettings->email ?? 'info@blessitahari.edu.np' }}</span>
                         </a>
                     </div>
                 </div>

@@ -23,14 +23,14 @@
                     </div>
                 </div>
             @empty
-                <div class="swiper-slide gplc-hero-slide" style="background: linear-gradient(135deg, var(--dark) 0%, var(--primary-dark, #0e2d54) 100%);">
+                <div class="swiper-slide gplc-hero-slide" style="background: linear-gradient(135deg, var(--dark) 0%, var(--primary-dark, #141E32) 100%);">
                     <div class="gplc-hero-overlay"></div>
                     <div class="gplc-hero-content">
                         <span class="tag-line">
                             <i class="fa-solid fa-graduation-cap"></i>
                             {{ $siteSettings->site_tagline ?? 'Excellence in Education Since 1993' }}
                         </span>
-                        <h1>{{ $siteSettings->site_name ?? 'Shiksha Sandesh English School' }}</h1>
+                        <h1>{{ $siteSettings->site_name ?? 'Bless Itahari' }}</h1>
                         <p>Nurturing Young Minds & Inspiring Tomorrow's Leaders</p>
                         <div class="gplc-hero-actions">
                             <a href="{{ route('about.us') }}" class="btn-gplc">

@@ -47,7 +47,7 @@
                         <div class="ico"><i class="fas fa-envelope"></i></div>
                         <div class="info-text">
                             <div class="label">Email</div>
-                            <a href="mailto:{{ $siteSettings->contact_email ?? 'info@shikshasandesh.edu.np' }}">{{ $siteSettings->contact_email ?? 'info@shikshasandesh.edu.np' }}</a>
+                            <a href="mailto:{{ $siteSettings->contact_email ?? 'info@blessitahari.edu.np' }}">{{ $siteSettings->contact_email ?? 'info@blessitahari.edu.np' }}</a>
                         </div>
                     </div>
                     @if($siteSettings->whatsapp_number)
@@ -72,7 +72,7 @@
             <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
                 <div class="gplc-map">
                     <iframe
-                        src="https://maps.google.com/maps?q={{ urlencode($siteSettings->contact_address ?? 'Belbari, Morang, Nepal') }}&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                        src="https://maps.google.com/maps?q={{ urlencode($siteSettings->contact_address ?? 'Itahari, Nepal') }}&t=&z=13&ie=UTF8&iwloc=&output=embed"
                         allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
                     </iframe>
                 </div>
@@ -137,7 +137,7 @@
             @foreach([
                 ['fas fa-map-marker-alt','Our Address', $siteSettings->contact_address ?? 'Belbari-2, Lalbatti, Morang, Nepal', '#'],
                 ['fas fa-phone-alt','Call Us', $siteSettings->contact_phone ?? '021-546236', 'tel:' . preg_replace('/[^0-9+]/', '', $siteSettings->contact_phone ?? '021546236')],
-                ['fas fa-envelope','Email Us', $siteSettings->contact_email ?? 'info@shikshasandesh.edu.np', 'mailto:' . ($siteSettings->contact_email ?? 'info@shikshasandesh.edu.np')],
+                ['fas fa-envelope','Email Us', $siteSettings->contact_email ?? 'info@blessitahari.edu.np', 'mailto:' . ($siteSettings->contact_email ?? 'info@blessitahari.edu.np')],
             ] as [$icon, $label, $value, $link])
             <div class="col-lg-4 col-md-6" data-aos="fade-up">
                 <div style="background:var(--bg-surface);border:1.5px solid var(--border-color);border-radius:12px;padding:36px 28px;text-align:center;height:100%;transition:all .3s;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='var(--shadow-hover)'" onmouseout="this.style.transform='none';this.style.boxShadow='none'">
