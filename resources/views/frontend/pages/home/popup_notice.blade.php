@@ -1,7 +1,7 @@
 @if(!empty($popupNotice) && !session()->has('popupClosed'))
     <div class="gplc-popup-wrap" id="gplcPopup">
         <div class="gplc-popup">
-            <a href="{{ route('popup.close') }}" class="gplc-popup-close" title="Close">&times;</a>
+            <a href="javascript:void(0);" onclick="document.getElementById('gplcPopup').style.display='none'; fetch('{{ route('popup.close') }}');" class="gplc-popup-close" title="Close">&times;</a>
             @if($popupNotice->image)
                 <img src="{{ $popupNotice->image ? asset($popupNotice->image) : ($siteSettings->site_logo ? asset($siteSettings->site_logo) : asset('backend/images/logo.png')) }}" alt="{{ $popupNotice->title }}">
             @endif
