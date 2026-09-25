@@ -155,19 +155,22 @@
                                     <a href="#" class="nav-link dropdown-toggle {{ request()->segment(1)=='course' ? 'active' : '' }}" data-bs-toggle="dropdown" aria-expanded="false">
                                         {{ $menu->name }} <i class="fas fa-chevron-down" style="font-size:9px;margin-left:4px;"></i>
                                     </a>
-                                    <ul class="dropdown-menu-gplc dropdown-menu border-0 shadow-sm" style="border-radius: 12px; padding: 10px; min-width: 280px;">
+                                    <ul class="dropdown-menu-gplc dropdown-menu dropdown-menu-end border-0 shadow" style="border-radius: 14px; padding: 8px; width: 330px; max-width: calc(100vw - 32px);">
                                         <li>
-                                            <a class="dropdown-item fw-bold text-primary py-2" href="{{ url('course') }}" style="border-radius: 8px;">
-                                                <i class="bi bi-grid-fill me-2"></i> All Academic Levels (PG to 12)
+                                            <a class="dropdown-item fw-bold text-primary py-2 px-3 d-flex align-items-center gap-2" href="{{ url('course') }}" style="border-radius: 8px; background: rgba(13, 110, 253, 0.08); margin-bottom: 4px;">
+                                                <i class="bi bi-grid-fill"></i>
+                                                <span>All Academic Levels (PG to 12)</span>
                                             </a>
                                         </li>
-                                        <li><hr class="dropdown-divider" style="margin: 6px 0; opacity: 0.1;"></li>
+                                        <li><hr class="dropdown-divider my-1" style="opacity: 0.12;"></li>
                                         @foreach($navCourses as $nc)
                                             <li>
-                                                <a class="dropdown-item py-2" href="{{ url('course/' . $nc->slug) }}" style="border-radius: 8px;">
-                                                    <div class="fw-semibold text-dark" style="font-size: 13.5px;">{{ $nc->name }}</div>
+                                                <a class="dropdown-item py-2 px-3 d-block" href="{{ url('course/' . $nc->slug) }}" style="border-radius: 8px; white-space: normal;">
+                                                    <div class="fw-semibold text-dark text-truncate" style="font-size: 13.5px; line-height: 1.35;" title="{{ $nc->name }}">{{ $nc->name }}</div>
                                                     @if($nc->grade_span)
-                                                        <small class="text-muted d-block" style="font-size: 11px;"><i class="bi bi-mortarboard me-1"></i>{{ $nc->grade_span }}</small>
+                                                        <div class="text-muted small text-truncate mt-0.5" style="font-size: 11px; line-height: 1.25;" title="{{ $nc->grade_span }}">
+                                                            <i class="bi bi-mortarboard me-1 text-primary"></i>{{ $nc->grade_span }}
+                                                        </div>
                                                     @endif
                                                 </a>
                                             </li>
