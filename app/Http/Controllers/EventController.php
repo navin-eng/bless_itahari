@@ -29,7 +29,7 @@ class EventController extends Controller
             'venue' => 'nullable|string|max:255',
             'result_link' => 'nullable|string|max:255',
             'description' => 'required',
-            'image' => 'required|image|mimes:jpeg,png,jpg',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg',
             'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,webp',
         ]);
         $event = new Event();

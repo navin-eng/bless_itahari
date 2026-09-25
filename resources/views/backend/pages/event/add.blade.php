@@ -57,7 +57,7 @@
                 <input type="text" name="result_link" value="{{ old('result_link') }}" class="form-control" placeholder="Paste result page URL if this is a result notice">
             </div>
             <div class="mb-3">
-                <label for="" class="form-label">Upload a Image</label>
+                <label for="" class="form-label">Upload an Image (optional)</label>
                 <input type="file" name="image" class="form-control">
             </div>
             <div class="mb-3">
