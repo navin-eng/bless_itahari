@@ -187,25 +187,28 @@ if (lgEl && typeof lightGallery !== 'undefined') {
   lightGallery(lgEl, { speed: 500, download: false });
 }
 
-/* Ensure Admin Panel is free from stale service worker caches */
+/* Ensure Admin Panel is 100% free from Service Worker and stale caches */
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(function(regs) {
-    for (let r of regs) {
-      if (r.scope.includes('/admin')) {
-        r.unregister();
-      }
+  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+    for (let registration of registrations) {
+      registration.unregister();
     }
   });
 }
 if ('caches' in window) {
   caches.keys().then(function(names) {
     for (let name of names) {
-      if (name.includes('sses-pwa-cache')) {
-        caches.delete(name);
-      }
+      caches.delete(name);
     }
   });
 }
+
+/* Force reload if page was restored from browser Back/Forward Cache (BFCache) */
+window.addEventListener('pageshow', function(event) {
+  if (event.persisted) {
+    window.location.reload();
+  }
+});
 </script>
 
 @stack('scripts')

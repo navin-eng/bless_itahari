@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bless-pwa-cache-v2';
+const CACHE_NAME = 'bless-pwa-cache-v3';
 const urlsToCache = [
   '/',
   '/frontend/css/style.css',
@@ -58,16 +58,8 @@ self.addEventListener('fetch', event => {
     return; // Pass through to network directly
   }
 
-  // 3. For HTML navigation requests, ALWAYS use Network-First (never serve stale HTML with flash messages)
+  // 3. For HTML navigation requests, ALWAYS let browser fetch directly (never serve stale HTML)
   if (event.request.mode === 'navigate' || (event.request.headers.get('accept') && event.request.headers.get('accept').includes('text/html'))) {
-    event.respondWith(
-      fetch(event.request)
-        .catch(() => {
-          return caches.match(event.request).then(cached => {
-            return cached || caches.match('/');
-          });
-        })
-    );
     return;
   }
 

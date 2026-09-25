@@ -23,3 +23,11 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# Disable caching for admin area (prevents stale admin forms & tables on refresh)
+<IfModule mod_headers.c>
+    SetEnvIfNoCase Request_URI "^/admin" NO_ADMIN_CACHE
+    Header always set Cache-Control "no-store, no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0" env=NO_ADMIN_CACHE
+    Header always set Pragma "no-cache" env=NO_ADMIN_CACHE
+    Header always set Expires "0" env=NO_ADMIN_CACHE
+</IfModule>
