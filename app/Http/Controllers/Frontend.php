@@ -69,7 +69,16 @@ class Frontend extends Controller
     public function aboutUs()
     {
         $siteSettings = SiteSetting::current();
-        return view('frontend.pages.aboutus', compact('siteSettings'));
+        $aboutData = \App\Models\AboutUs::first();
+        $faqs = \App\Models\AboutUsFaq::where('status', 1)->orderBy('sort_order')->get();
+        $messages = \App\Models\CollegeMessage::where('status', 1)->orderBy('order')->get();
+        $counter = \App\Models\Counter::first();
+        $teachers = \App\Models\Teacher::where('status', 1)->orderBy('order')->take(8)->get();
+        $courses = \App\Models\Course::where(function ($q) {
+            $q->where('status', 1)->orWhereNull('status');
+        })->get();
+
+        return view('frontend.pages.aboutus', compact('siteSettings', 'aboutData', 'faqs', 'messages', 'counter', 'teachers', 'courses'));
     }
 
     public function coursesIndex()
