@@ -59,6 +59,8 @@ class SiteSetting extends Model
         'about_principal_name',
         'about_principal_designation',
         'about_principal_message',
+        'about_leadership_source',
+        'about_selected_leadership_ids',
         'about_mission',
         'about_vision',
         'about_established_year',

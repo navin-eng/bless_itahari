@@ -72,7 +72,7 @@ class Frontend extends Controller
 
         // Auto-heal missing tables if migrations haven't been run on production
         try {
-            if (!\Illuminate\Support\Facades\Schema::hasTable('about_us_faqs') || !\Illuminate\Support\Facades\Schema::hasColumn('site_settings', 'about_hero_title')) {
+            if (!\Illuminate\Support\Facades\Schema::hasTable('about_us_faqs') || !\Illuminate\Support\Facades\Schema::hasColumn('site_settings', 'about_leadership_source')) {
                 \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
                 \Illuminate\Support\Facades\Cache::forget('site_settings.current');
                 $siteSettings = SiteSetting::current();
@@ -102,7 +102,22 @@ class Frontend extends Controller
         $messages = collect();
         try {
             if (\Illuminate\Support\Facades\Schema::hasTable('college_messages')) {
-                $messages = \App\Models\CollegeMessage::where('status', 1)->orderBy('order')->get();
+                $leadershipSource = $siteSettings->about_leadership_source ?? 'all';
+                if ($leadershipSource === 'selected' && !empty($siteSettings->about_selected_leadership_ids)) {
+                    $selectedIds = is_string($siteSettings->about_selected_leadership_ids)
+                        ? json_decode($siteSettings->about_selected_leadership_ids, true)
+                        : $siteSettings->about_selected_leadership_ids;
+                    if (!empty($selectedIds)) {
+                        $messages = \App\Models\CollegeMessage::whereIn('id', (array)$selectedIds)
+                            ->where('status', 1)
+                            ->orderBy('order')
+                            ->get();
+                    }
+                } elseif ($leadershipSource === 'custom') {
+                    $messages = collect();
+                } else {
+                    $messages = \App\Models\CollegeMessage::where('status', 1)->orderBy('order')->get();
+                }
             }
         } catch (\Throwable $e) {
             $messages = collect();

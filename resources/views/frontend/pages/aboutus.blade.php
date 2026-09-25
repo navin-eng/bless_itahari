@@ -669,9 +669,17 @@
                         <div class="leader-card-modern">
                             <div class="leader-header-bar">
                                 @php
-                                    $msgImg = (!empty($msg->image) && file_exists(public_path('backend/images/messages/' . $msg->image)))
-                                        ? asset('backend/images/messages/' . $msg->image)
-                                        : asset('frontend/images/about_principal.jpg');
+                                    $msgImg = null;
+                                    if (!empty($msg->image)) {
+                                        if (file_exists(public_path($msg->image))) {
+                                            $msgImg = asset($msg->image);
+                                        } elseif (file_exists(public_path('backend/images/messages/' . $msg->image))) {
+                                            $msgImg = asset('backend/images/messages/' . $msg->image);
+                                        }
+                                    }
+                                    if (!$msgImg) {
+                                        $msgImg = asset('frontend/images/about_principal.jpg');
+                                    }
                                 @endphp
                                 <img src="{{ $msgImg }}" alt="{{ $msg->name }}" class="leader-avatar">
                                 <div>
@@ -689,10 +697,15 @@
                     </div>
                 @empty
                     {{-- Default Leadership Fallback --}}
+                    @php
+                        $leadImg = (!empty($siteSettings->about_principal_image) && file_exists(public_path($siteSettings->about_principal_image)))
+                            ? asset($siteSettings->about_principal_image)
+                            : asset('frontend/images/about_principal.jpg');
+                    @endphp
                     <div class="col-lg-6" data-aos="fade-up">
                         <div class="leader-card-modern">
                             <div class="leader-header-bar">
-                                <img src="{{ asset('frontend/images/about_principal.jpg') }}" alt="Principal" class="leader-avatar">
+                                <img src="{{ $leadImg }}" alt="Principal" class="leader-avatar">
                                 <div>
                                     <h5 class="fw-bold mb-1 text-dark">{{ $siteSettings->about_principal_name ?? 'Mr. Ramesh Koirala' }}</h5>
                                     <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1 rounded-pill" style="font-size: 11.5px;">

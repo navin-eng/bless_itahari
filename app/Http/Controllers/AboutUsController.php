@@ -15,7 +15,7 @@ class AboutUsController extends Controller
     public function create()
     {
         try {
-            if (!\Illuminate\Support\Facades\Schema::hasTable('about_us_faqs') || !\Illuminate\Support\Facades\Schema::hasColumn('site_settings', 'about_hero_title')) {
+            if (!\Illuminate\Support\Facades\Schema::hasTable('about_us_faqs') || !\Illuminate\Support\Facades\Schema::hasColumn('site_settings', 'about_leadership_source')) {
                 \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
                 Cache::forget('site_settings.current');
             }
@@ -26,8 +26,9 @@ class AboutUsController extends Controller
         $aboutus = AboutUs::first();
         $faqs = AboutUsFaq::orderBy('sort_order')->get();
         $siteSettings = SiteSetting::current();
+        $collegeMessages = \App\Models\CollegeMessage::orderBy('order')->get();
 
-        return view('backend.pages.aboutus.add', compact('aboutus', 'faqs', 'siteSettings'));
+        return view('backend.pages.aboutus.add', compact('aboutus', 'faqs', 'siteSettings', 'collegeMessages'));
     }
 
     public function store(Request $request)
@@ -77,7 +78,7 @@ class AboutUsController extends Controller
 
         $fields = [
             'about_layout', 'about_principal_name', 'about_principal_designation',
-            'about_principal_message', 'about_mission', 'about_vision',
+            'about_principal_message', 'about_leadership_source', 'about_mission', 'about_vision',
             'about_established_year', 'about_affiliation', 'about_intro',
             'about_hero_title', 'about_hero_subtitle', 'about_badge_text',
             'about_story_title', 'about_story_body',
@@ -93,6 +94,14 @@ class AboutUsController extends Controller
             if ($request->has($field)) {
                 $settings->$field = $request->$field;
             }
+        }
+
+        // Handle selected leadership messages (JSON)
+        if ($request->has('about_selected_leadership_ids')) {
+            $selIds = array_map('intval', (array)$request->about_selected_leadership_ids);
+            $settings->about_selected_leadership_ids = !empty($selIds) ? json_encode(array_values($selIds)) : null;
+        } else {
+            $settings->about_selected_leadership_ids = null;
         }
 
         // Handle core values (JSON)

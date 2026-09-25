@@ -397,45 +397,202 @@
                     </div>
 
                     {{-- ─── TAB 7: LEADERSHIP & PRINCIPAL ─────────────────── --}}
+                    @php
+                        $leadershipSource = old('about_leadership_source', $siteSettings->about_leadership_source ?? 'all');
+                        $selectedLeadershipIds = [];
+                        if (!empty($siteSettings->about_selected_leadership_ids)) {
+                            $selectedLeadershipIds = is_string($siteSettings->about_selected_leadership_ids)
+                                ? json_decode($siteSettings->about_selected_leadership_ids, true)
+                                : (array)$siteSettings->about_selected_leadership_ids;
+                        }
+                    @endphp
                     <div class="tab-pane fade" id="pane-principal" role="tabpanel">
-                        <div class="p-3 bg-light rounded-3 mb-4 border-start border-secondary border-4 d-flex justify-content-between align-items-center">
+                        <div class="p-3 bg-light rounded-3 mb-4 border-start border-primary border-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
                             <div>
-                                <h6 class="fw-bold mb-1 text-dark"><i class="bi bi-person-badge me-1"></i> Leadership Section</h6>
-                                <small class="text-muted">Manage the default principal quote and view multi-leader messages.</small>
+                                <h6 class="fw-bold mb-1 text-dark"><i class="bi bi-person-badge me-1"></i> Leadership Section & Official Messages</h6>
+                                <small class="text-muted">Choose how leadership messages are displayed on the public About Us page, or fetch existing messages to autofill.</small>
                             </div>
-                            <a href="{{ route('college_message.table') }}" target="_blank" class="btn btn-outline-primary btn-sm">
-                                <i class="bi bi-people me-1"></i> Open All Leadership Messages
-                            </a>
+                            <div class="d-flex gap-2">
+                                <a href="{{ route('college_message.table') }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-people me-1"></i> Manage All Leadership Messages
+                                </a>
+                                <a href="{{ route('college_message.add') }}" target="_blank" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-plus-lg me-1"></i> Add New Leader
+                                </a>
+                            </div>
                         </div>
 
+                        {{-- 1. DISPLAY SOURCE SELECTION --}}
+                        <div class="card border rounded-3 p-3 mb-4 shadow-sm">
+                            <label class="form-label fw-bold text-dark mb-2">
+                                <i class="bi bi-sliders me-1 text-primary"></i> Leadership Display Source on About Us Page
+                            </label>
+                            <p class="text-muted small mb-3">Choose whether to automatically showcase all institutional leaders, select specific ones, or display a single custom message.</p>
+
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="card h-100 p-3 border rounded-3 cursor-pointer source-card {{ $leadershipSource === 'all' ? 'border-primary bg-primary bg-opacity-10' : '' }}" style="cursor: pointer;">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="about_leadership_source" id="source_all" value="all" {{ $leadershipSource === 'all' ? 'checked' : '' }}>
+                                            <label class="form-check-label fw-bold text-dark" for="source_all">
+                                                All Leadership Messages
+                                            </label>
+                                        </div>
+                                        <small class="text-muted mt-2 d-block">
+                                            Recommended. Automatically pulls and displays all active messages (Principal, Chairperson, etc.) from the Leadership Messages system in their defined order.
+                                        </small>
+                                    </label>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="card h-100 p-3 border rounded-3 cursor-pointer source-card {{ $leadershipSource === 'selected' ? 'border-primary bg-primary bg-opacity-10' : '' }}" style="cursor: pointer;">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="about_leadership_source" id="source_selected" value="selected" {{ $leadershipSource === 'selected' ? 'checked' : '' }}>
+                                            <label class="form-check-label fw-bold text-dark" for="source_selected">
+                                                Specific Selected Leaders
+                                            </label>
+                                        </div>
+                                        <small class="text-muted mt-2 d-block">
+                                            Choose exact leadership cards from the checklist below to feature on the About Us page.
+                                        </small>
+                                    </label>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="card h-100 p-3 border rounded-3 cursor-pointer source-card {{ $leadershipSource === 'custom' ? 'border-primary bg-primary bg-opacity-10' : '' }}" style="cursor: pointer;">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="about_leadership_source" id="source_custom" value="custom" {{ $leadershipSource === 'custom' ? 'checked' : '' }}>
+                                            <label class="form-check-label fw-bold text-dark" for="source_custom">
+                                                Single Custom Principal Quote
+                                            </label>
+                                        </div>
+                                        <small class="text-muted mt-2 d-block">
+                                            Displays only the custom quote and photo entered in the manual fields below.
+                                        </small>
+                                    </label>
+                                </div>
+                            </div>
+
+                            {{-- Selected Leaders Checklist (Visible when 'selected' is active) --}}
+                            <div id="selectedLeadershipWrap" class="mt-4 pt-3 border-top {{ $leadershipSource === 'selected' ? '' : 'd-none' }}">
+                                <h6 class="fw-bold text-dark mb-2"><i class="bi bi-check2-square text-primary me-1"></i> Select Leaders to Display on About Us:</h6>
+                                @if(isset($collegeMessages) && $collegeMessages->count() > 0)
+                                    <div class="row g-2">
+                                        @foreach($collegeMessages as $cm)
+                                            @php
+                                                $cmImg = null;
+                                                if (!empty($cm->image)) {
+                                                    if (file_exists(public_path($cm->image))) {
+                                                        $cmImg = asset($cm->image);
+                                                    } elseif (file_exists(public_path('backend/images/messages/' . $cm->image))) {
+                                                        $cmImg = asset('backend/images/messages/' . $cm->image);
+                                                    }
+                                                }
+                                                if (!$cmImg) {
+                                                    $cmImg = asset('frontend/images/about_principal.jpg');
+                                                }
+                                                $isChecked = in_array($cm->id, (array)$selectedLeadershipIds);
+                                            @endphp
+                                            <div class="col-md-6">
+                                                <div class="p-2.5 border rounded-3 d-flex align-items-center justify-content-between bg-white">
+                                                    <div class="d-flex align-items-center gap-2.5">
+                                                        <div class="form-check mb-0">
+                                                            <input class="form-check-input" type="checkbox" name="about_selected_leadership_ids[]" value="{{ $cm->id }}" id="sel_cm_{{ $cm->id }}" {{ $isChecked ? 'checked' : '' }}>
+                                                        </div>
+                                                        <img src="{{ $cmImg }}" alt="{{ $cm->name }}" style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover;">
+                                                        <div>
+                                                            <label class="fw-bold text-dark mb-0 small" for="sel_cm_{{ $cm->id }}" style="cursor: pointer;">{{ $cm->name }}</label>
+                                                            <div class="text-muted" style="font-size: 11px;">{{ $cm->designation }}</div>
+                                                        </div>
+                                                    </div>
+                                                    <span class="badge {{ $cm->status ? 'bg-success' : 'bg-secondary' }} bg-opacity-10 text-{{ $cm->status ? 'success' : 'secondary' }} border border-{{ $cm->status ? 'success' : 'secondary' }} border-opacity-25" style="font-size: 10px;">
+                                                        {{ $cm->status ? 'Active' : 'Hidden' }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <div class="alert alert-info py-2 px-3 small mb-0">
+                                        <i class="bi bi-info-circle me-1"></i> No leadership messages found yet. <a href="{{ route('college_message.add') }}" target="_blank" class="fw-bold">Create one now</a>.
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
+                        {{-- 2. QUICK FETCH / AUTOFILL TOOLBAR --}}
+                        <div class="card border-primary border-opacity-25 bg-primary bg-opacity-10 mb-4 p-3 rounded-3 shadow-sm">
+                            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                                <div>
+                                    <div class="fw-bold text-primary mb-1">
+                                        <i class="bi bi-cloud-arrow-down-fill me-1"></i> Quick Fetch & Autofill from Leadership Messages
+                                    </div>
+                                    <small class="text-muted">Choose any existing leader to copy their details directly into the fields below with 1 click.</small>
+                                </div>
+                                <div class="d-flex align-items-center gap-2 flex-grow-1 flex-md-grow-0" style="min-width: 320px;">
+                                    <select id="leadershipFetcherSelect" class="form-select form-select-sm">
+                                        <option value="">-- Choose Leader to Fetch --</option>
+                                        @if(isset($collegeMessages))
+                                            @foreach($collegeMessages as $cm)
+                                                @php
+                                                    $cmImg = '';
+                                                    if (!empty($cm->image)) {
+                                                        if (file_exists(public_path($cm->image))) {
+                                                            $cmImg = asset($cm->image);
+                                                        } elseif (file_exists(public_path('backend/images/messages/' . $cm->image))) {
+                                                            $cmImg = asset('backend/images/messages/' . $cm->image);
+                                                        }
+                                                    }
+                                                @endphp
+                                                <option value="{{ $cm->id }}"
+                                                        data-name="{{ $cm->name }}"
+                                                        data-designation="{{ $cm->designation }}"
+                                                        data-message="{{ e($cm->message) }}"
+                                                        data-image="{{ $cmImg }}">
+                                                    {{ $cm->name }} ({{ $cm->designation }})
+                                                </option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                    <button type="button" class="btn btn-primary btn-sm px-3 text-nowrap" id="btnApplyLeaderFetch">
+                                        <i class="bi bi-box-arrow-in-down me-1"></i> Fetch
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- 3. CUSTOM PRINCIPAL / LEADER DETAILS --}}
                         <div class="row g-4">
                             <div class="col-md-4">
-                                <label class="form-label fw-bold">Principal Photo</label>
+                                <label class="form-label fw-bold">Principal / Leader Photo</label>
                                 @if($siteSettings->about_principal_image && file_exists(public_path($siteSettings->about_principal_image)))
                                     <div class="mb-2 d-flex align-items-center gap-3">
-                                        <img src="{{ asset($siteSettings->about_principal_image) }}" style="max-height: 80px; width: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #ddd;" alt="Principal">
+                                        <img src="{{ asset($siteSettings->about_principal_image) }}" id="previewPrincipalImg" style="max-height: 80px; width: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #ddd;" alt="Principal">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="remove_about_principal_image" value="1" id="rmPrincipal">
                                             <label class="form-check-label text-danger small fw-semibold" for="rmPrincipal">Remove</label>
                                         </div>
+                                    </div>
+                                @else
+                                    <div id="previewPrincipalBox" class="mb-2 d-none">
+                                        <img src="" id="previewPrincipalImg" style="max-height: 80px; width: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #0d6efd;" alt="Principal">
+                                        <span class="badge bg-primary-subtle text-primary small d-block mt-1">Fetched image preview</span>
                                     </div>
                                 @endif
                                 <input type="file" name="about_principal_image" class="form-control" accept="image/*">
                             </div>
 
                             <div class="col-md-4">
-                                <label class="form-label fw-bold">Principal Full Name</label>
-                                <input type="text" name="about_principal_name" class="form-control" placeholder="e.g. Mr. Ramesh Koirala" value="{{ old('about_principal_name', $siteSettings->about_principal_name) }}">
+                                <label class="form-label fw-bold">Principal / Leader Full Name</label>
+                                <input type="text" name="about_principal_name" id="field_principal_name" class="form-control" placeholder="e.g. Mr. Ramesh Koirala" value="{{ old('about_principal_name', $siteSettings->about_principal_name) }}">
                             </div>
 
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Designation</label>
-                                <input type="text" name="about_principal_designation" class="form-control" placeholder="e.g. Principal / Campus Chief" value="{{ old('about_principal_designation', $siteSettings->about_principal_designation) }}">
+                                <input type="text" name="about_principal_designation" id="field_principal_designation" class="form-control" placeholder="e.g. Principal / Campus Chief" value="{{ old('about_principal_designation', $siteSettings->about_principal_designation) }}">
                             </div>
 
                             <div class="col-12">
                                 <label class="form-label fw-bold">Principal Message / Quote</label>
-                                <textarea name="about_principal_message" class="form-control" rows="5" placeholder="Write the principal's message here...">{{ old('about_principal_message', $siteSettings->about_principal_message) }}</textarea>
+                                <textarea name="about_principal_message" id="field_principal_message" class="form-control" rows="5" placeholder="Write the leader's message here...">{{ old('about_principal_message', $siteSettings->about_principal_message) }}</textarea>
                             </div>
                         </div>
                     </div>
@@ -704,6 +861,74 @@
                 if (!htmlWrap.classList.contains('d-none')) {
                     $('#summernote').summernote('code', htmlSource.value);
                 }
+            });
+        }
+
+        // Leadership source radio card styling & checklist toggle
+        const sourceRadios = document.querySelectorAll('input[name="about_leadership_source"]');
+        const selectedWrap = document.getElementById('selectedLeadershipWrap');
+        sourceRadios.forEach(radio => {
+            radio.addEventListener('change', function () {
+                document.querySelectorAll('.source-card').forEach(c => c.classList.remove('border-primary', 'bg-primary', 'bg-opacity-10'));
+                const card = this.closest('.source-card');
+                if (card) {
+                    card.classList.add('border-primary', 'bg-primary', 'bg-opacity-10');
+                }
+                if (selectedWrap) {
+                    if (this.value === 'selected') {
+                        selectedWrap.classList.remove('d-none');
+                    } else {
+                        selectedWrap.classList.add('d-none');
+                    }
+                }
+            });
+        });
+
+        // Quick Fetch Leader details
+        const fetchSelect = document.getElementById('leadershipFetcherSelect');
+        const btnFetchLeader = document.getElementById('btnApplyLeaderFetch');
+        function applyFetchedLeader() {
+            if (!fetchSelect) return;
+            const opt = fetchSelect.options[fetchSelect.selectedIndex];
+            if (!opt || !opt.value) return;
+
+            const name = opt.getAttribute('data-name') || '';
+            const designation = opt.getAttribute('data-designation') || '';
+            const message = opt.getAttribute('data-message') || '';
+            const image = opt.getAttribute('data-image') || '';
+
+            const fieldName = document.getElementById('field_principal_name');
+            const fieldDesig = document.getElementById('field_principal_designation');
+            const fieldMsg = document.getElementById('field_principal_message');
+            const previewBox = document.getElementById('previewPrincipalBox');
+            const previewImg = document.getElementById('previewPrincipalImg');
+
+            if (fieldName) { fieldName.value = name; highlightInput(fieldName); }
+            if (fieldDesig) { fieldDesig.value = designation; highlightInput(fieldDesig); }
+            if (fieldMsg) { fieldMsg.value = message; highlightInput(fieldMsg); }
+
+            if (image && previewImg) {
+                previewImg.src = image;
+                if (previewBox) previewBox.classList.remove('d-none');
+            }
+        }
+
+        function highlightInput(el) {
+            el.style.transition = 'all 0.3s ease';
+            el.style.backgroundColor = '#ecfdf5';
+            el.style.borderColor = '#10b981';
+            setTimeout(() => {
+                el.style.backgroundColor = '';
+                el.style.borderColor = '';
+            }, 1200);
+        }
+
+        if (btnFetchLeader) {
+            btnFetchLeader.addEventListener('click', applyFetchedLeader);
+        }
+        if (fetchSelect) {
+            fetchSelect.addEventListener('change', function () {
+                if (this.value) applyFetchedLeader();
             });
         }
     });
