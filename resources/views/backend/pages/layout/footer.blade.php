@@ -1,5 +1,7 @@
 <footer class="admin-footer">
-  @php($footerSettings = \App\Models\SiteSetting::current())
+  @php
+    $footerSettings = \App\Models\SiteSetting::current();
+  @endphp
   <span>&copy; {{ date('Y') }} {{ $footerSettings->site_name ?? 'Shiksha Sandesh English School' }}. All rights reserved.</span>
   <span>Powered by <strong>nstudios</strong></span>
 </footer>

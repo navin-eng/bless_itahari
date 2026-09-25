@@ -2,15 +2,15 @@
 <html lang="en">
 
 <head>
-    @php($siteSettings = \App\Models\SiteSetting::current())
+    @php
+        $siteSettings = $siteSettings ?? \App\Models\SiteSetting::current();
+        $favIconUrl = ($siteSettings && $siteSettings->site_favicon) ? asset($siteSettings->site_favicon) : asset('favicon.ico');
+        $favIconVer = ($siteSettings && $siteSettings->updated_at) ? $siteSettings->updated_at->timestamp : '1';
+    @endphp
     <meta charset="utf-8" />
     @stack('user-title')
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
-    @php
-        $favIconUrl = ($siteSettings && $siteSettings->site_favicon) ? asset($siteSettings->site_favicon) : asset('favicon.ico');
-        $favIconVer = ($siteSettings && $siteSettings->updated_at) ? $siteSettings->updated_at->timestamp : '1';
-    @endphp
     <!-- App favicon -->
     <link rel="icon" href="{{ $favIconUrl }}?v={{ $favIconVer }}">
     <link rel="shortcut icon" href="{{ $favIconUrl }}?v={{ $favIconVer }}">
@@ -58,7 +58,7 @@
                 <div class="d-inline-block px-3 py-2 rounded-pill mb-3" style="background: rgba(var(--bs-primary-rgb), 0.1); color: var(--bs-primary); font-size: 0.85rem; font-weight: 600;">
                     <i class="bi bi-shield-lock-fill me-1"></i> Secure College Access
                 </div>
-                <h2 class="fw-bold" style="color: #1f2937;">{{ $siteSettings->site_name }}</h2>
+                <h2 class="fw-bold" style="color: #1f2937;">{{ $siteSettings->site_name ?? config('app.name', 'School Portal') }}</h2>
             </div>
             <div class="col-12">
                 <div class="auth-shell">
@@ -88,7 +88,7 @@
                                 <strong>Success - </strong> {{ session('oops') }}
                             </div>
                         @endif
-                        @if ($errors->any())
+                        @if (isset($errors) && $errors->any())
                             <div class="alert alert-danger">
                                 <p><strong>Opps Something went wrong</strong></p>
                                 <ul>
@@ -101,7 +101,7 @@
                         <!-- Logo -->
                         <div class="card-header pt-4 pb-4 text-center">
                             <a href="{{ route('home') }}">
-                                <span><img src="{{ $siteSettings->site_logo ? asset($siteSettings->site_logo) : asset('backend/images/logo.png') }}" alt="{{ $siteSettings->site_name }}" height="68"></span>
+                                <span><img src="{{ ($siteSettings && $siteSettings->site_logo) ? asset($siteSettings->site_logo) : asset('backend/images/logo.png') }}" alt="{{ $siteSettings->site_name ?? 'School' }}" height="68"></span>
                             </a>
                         </div>
                         @yield('backend-auth-content')

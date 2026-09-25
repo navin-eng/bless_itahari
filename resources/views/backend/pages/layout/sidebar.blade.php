@@ -1,5 +1,7 @@
 <aside class="admin-sidebar" id="adminSidebar">
-  @php($sidebarSettings = \App\Models\SiteSetting::current())
+  @php
+    $sidebarSettings = \App\Models\SiteSetting::current();
+  @endphp
 
   {{-- Logo --}}
   <a href="{{ url('admin/dashboard') }}" class="sb-logo">
