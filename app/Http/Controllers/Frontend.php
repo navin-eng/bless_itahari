@@ -69,14 +69,71 @@ class Frontend extends Controller
     public function aboutUs()
     {
         $siteSettings = SiteSetting::current();
-        $aboutData = \App\Models\AboutUs::first();
-        $faqs = \App\Models\AboutUsFaq::where('status', 1)->orderBy('sort_order')->get();
-        $messages = \App\Models\CollegeMessage::where('status', 1)->orderBy('order')->get();
-        $counter = \App\Models\Counter::first();
-        $teachers = \App\Models\Teacher::where('status', 1)->orderBy('order')->take(8)->get();
-        $courses = \App\Models\Course::where(function ($q) {
-            $q->where('status', 1)->orWhereNull('status');
-        })->get();
+
+        // Auto-heal missing tables if migrations haven't been run on production
+        try {
+            if (!\Illuminate\Support\Facades\Schema::hasTable('about_us_faqs')) {
+                \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+            }
+        } catch (\Throwable $e) {
+            // Silently continue with fallbacks
+        }
+
+        $aboutData = null;
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('about_us')) {
+                $aboutData = \App\Models\AboutUs::first();
+            }
+        } catch (\Throwable $e) {
+            $aboutData = null;
+        }
+
+        $faqs = collect();
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('about_us_faqs')) {
+                $faqs = \App\Models\AboutUsFaq::where('status', 1)->orderBy('sort_order')->get();
+            }
+        } catch (\Throwable $e) {
+            $faqs = collect();
+        }
+
+        $messages = collect();
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('college_messages')) {
+                $messages = \App\Models\CollegeMessage::where('status', 1)->orderBy('order')->get();
+            }
+        } catch (\Throwable $e) {
+            $messages = collect();
+        }
+
+        $counter = null;
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('counters')) {
+                $counter = \App\Models\Counter::first();
+            }
+        } catch (\Throwable $e) {
+            $counter = null;
+        }
+
+        $teachers = collect();
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('teachers')) {
+                $teachers = \App\Models\Teacher::orderBy('sort_order', 'asc')->take(8)->get();
+            }
+        } catch (\Throwable $e) {
+            $teachers = collect();
+        }
+
+        $courses = collect();
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('courses')) {
+                $courses = \App\Models\Course::where(function ($q) {
+                    $q->where('status', 1)->orWhereNull('status');
+                })->get();
+            }
+        } catch (\Throwable $e) {
+            $courses = collect();
+        }
 
         return view('frontend.pages.aboutus', compact('siteSettings', 'aboutData', 'faqs', 'messages', 'counter', 'teachers', 'courses'));
     }

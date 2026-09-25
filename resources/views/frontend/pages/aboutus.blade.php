@@ -2,10 +2,10 @@
 
 @php
     $siteSettings = $siteSettings ?? \App\Models\SiteSetting::current();
-    $messages = $messages ?? \App\Models\CollegeMessage::where('status', 1)->orderBy('order')->get();
-    $faqs = $faqs ?? \App\Models\AboutUsFaq::where('status', 1)->orderBy('sort_order')->get();
-    $aboutData = $aboutData ?? \App\Models\AboutUs::first();
-    $counter = $counter ?? \App\Models\Counter::first();
+    $messages = $messages ?? collect();
+    $faqs = $faqs ?? collect();
+    $aboutData = $aboutData ?? null;
+    $counter = $counter ?? null;
 @endphp
 
 @push('styles')
