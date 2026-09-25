@@ -90,8 +90,8 @@
                     <input type="text" name="result_link" value="{{ old('result_link') }}" class="admin-input" placeholder="Paste result page URL">
                 </div>
                 <div class="mb-3">
-                    <label class="admin-label">Upload Cover Image</label>
-                    <input type="file" name="image" class="admin-input" required>
+                    <label class="admin-label">Upload Cover Image (optional)</label>
+                    <input type="file" name="image" class="admin-input">
                 </div>
                 <div class="mb-3">
                     <label class="admin-label">Event Gallery Images</label>
