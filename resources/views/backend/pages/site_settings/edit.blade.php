@@ -71,11 +71,7 @@
                                             <h6 class="fw-bold mb-3"><i class="bi bi-image text-primary me-2"></i>Site Logo (Primary)</h6>
                                             <div class="d-flex align-items-center gap-3">
                                                 <div class="bg-light p-2 rounded border d-flex align-items-center justify-content-center" style="width: 120px; height: 80px;">
-                                                    @if($settings->site_logo)
-                                                        <img src="{{ asset($settings->site_logo) }}" alt="Logo" id="logoPreview" class="img-fluid" style="max-height: 60px;">
-                                                    @else
-                                                        <span class="text-muted small" id="logoPreview"><i class="bi bi-image fs-3"></i></span>
-                                                    @endif
+                                                    <img src="{{ $settings->site_logo ? asset($settings->site_logo) : asset('backend/images/logo.png') }}" alt="Logo" id="logoPreview" class="img-fluid" style="max-height: 60px;">
                                                 </div>
                                                 <div class="flex-grow-1">
                                                     <input type="file" name="site_logo" id="siteLogoInput" class="form-control" accept="image/*">
@@ -96,14 +92,10 @@
                                             <h6 class="fw-bold mb-3"><i class="bi bi-app-indicator text-primary me-2"></i>Site Favicon</h6>
                                             <div class="d-flex align-items-center gap-3">
                                                 <div class="bg-light p-2 rounded border d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                                                    @if($settings->site_favicon)
-                                                        <img src="{{ asset($settings->site_favicon) }}" alt="Favicon" id="faviconPreview" class="img-fluid" style="max-height: 32px; width: 32px; object-fit: contain;">
-                                                    @else
-                                                        <span class="text-muted" id="faviconPreview"><i class="bi bi-image fs-4"></i></span>
-                                                    @endif
+                                                    <img src="{{ $settings->site_favicon ? asset($settings->site_favicon) : asset('favicon.ico') }}" alt="Favicon" id="faviconPreview" class="img-fluid" style="max-height: 32px; width: 32px; object-fit: contain;">
                                                 </div>
                                                 <div class="flex-grow-1">
-                                                    <input type="file" name="site_favicon" id="siteFaviconInput" class="form-control" accept=".ico,.png,.jpg,.svg,.webp">
+                                                    <input type="file" name="site_favicon" id="siteFaviconInput" class="form-control" accept=".ico,.png,.jpg,.jpeg,.svg,.webp">
                                                     <small class="text-muted d-block mt-1">Recommended: 32x32px or 64x64px (PNG/ICO)</small>
                                                     @if($settings->site_favicon)
                                                     <div class="form-check mt-2">

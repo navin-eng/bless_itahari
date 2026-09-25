@@ -7,9 +7,13 @@
     @stack('user-title')
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
-    <meta content="Coderthemes" name="author" />
+    @php
+        $favIconUrl = $siteSettings->site_favicon ? asset($siteSettings->site_favicon) : asset('favicon.ico');
+        $favIconVer = $siteSettings->updated_at ? $siteSettings->updated_at->timestamp : '1';
+    @endphp
     <!-- App favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ $siteSettings->site_favicon ? asset($siteSettings->site_favicon) : asset('backend/images/favicon.ico') }}">
+    <link rel="icon" href="{{ $favIconUrl }}?v={{ $favIconVer }}">
+    <link rel="shortcut icon" href="{{ $favIconUrl }}?v={{ $favIconVer }}">
 
     <!-- App css -->
     <link href="{{ asset('backend/assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />

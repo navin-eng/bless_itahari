@@ -36,7 +36,7 @@ class SiteSettingController extends Controller
             'site_short_name' => 'required|string|max:100',
             'site_tagline' => 'required|string|max:255',
             'site_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
-            'site_favicon' => 'nullable|mimes:ico,png,jpg,svg,webp|max:1024',
+            'site_favicon' => 'nullable|file|mimes:ico,png,jpg,jpeg,svg,webp|max:1024',
             'primary_color' => 'required|string|max:20',
             'primary_dark' => 'required|string|max:20',
             'primary_light' => 'required|string|max:20',
@@ -116,6 +116,9 @@ class SiteSettingController extends Controller
             $favicon->move($destination, $favName);
             $data['site_favicon'] = 'backend/images/settings/' . $favName;
 
+            // Synchronize root favicon.ico so browsers hitting /favicon.ico receive the active favicon
+            @copy(public_path('backend/images/settings/' . $favName), public_path('favicon.ico'));
+
             if ($settings && $settings->site_favicon && file_exists(public_path($settings->site_favicon))) {
                 @unlink(public_path($settings->site_favicon));
             }
@@ -124,6 +127,11 @@ class SiteSettingController extends Controller
                 @unlink(public_path($settings->site_favicon));
             }
             $data['site_favicon'] = null;
+
+            // Restore default favicon.ico if available
+            if (file_exists(public_path('backend/images/favicon.ico'))) {
+                @copy(public_path('backend/images/favicon.ico'), public_path('favicon.ico'));
+            }
         } else {
             unset($data['site_favicon']);
         }

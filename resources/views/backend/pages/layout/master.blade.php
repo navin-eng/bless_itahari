@@ -5,7 +5,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>@stack('b-title') — {{ $siteSettings->site_short_name ?? 'SSES' }} Admin</title>
-  <link rel="icon" type="image/x-icon" href="{{ $siteSettings->site_favicon ? asset($siteSettings->site_favicon) : asset('backend/images/favicon.ico') }}">
+  @php
+      $favIconUrl = $siteSettings->site_favicon ? asset($siteSettings->site_favicon) : asset('favicon.ico');
+      $favIconVer = $siteSettings->updated_at ? $siteSettings->updated_at->timestamp : '1';
+  @endphp
+  <link rel="icon" href="{{ $favIconUrl }}?v={{ $favIconVer }}">
+  <link rel="shortcut icon" href="{{ $favIconUrl }}?v={{ $favIconVer }}">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">

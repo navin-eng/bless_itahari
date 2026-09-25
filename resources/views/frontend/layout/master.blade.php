@@ -15,12 +15,17 @@
     <meta name="description" content="{{ $siteSettings->site_name ?? 'Bless Itahari' }} — Quality education from Playgroup to Secondary in {{ $siteSettings->contact_address ?? 'Itahari, Nepal' }}.">
     <meta name="keywords" content="{{ $siteSettings->site_short_name ?? 'Bless Itahari' }}, {{ $siteSettings->site_name ?? 'Bless Itahari' }}, Itahari, Nepal, School in Belbari">
     <title>{{ $siteSettings->site_name ?? 'Bless Itahari' }} | {{ $siteSettings->site_tagline ?? 'Itahari' }}</title>
-    <link rel="icon" type="image/x-icon" href="{{ $siteSettings->site_favicon ? asset($siteSettings->site_favicon) : asset('backend/images/favicon.ico') }}">
+    @php
+        $favIconUrl = $siteSettings->site_favicon ? asset($siteSettings->site_favicon) : asset('favicon.ico');
+        $favIconVer = $siteSettings->updated_at ? $siteSettings->updated_at->timestamp : '1';
+    @endphp
+    <link rel="icon" href="{{ $favIconUrl }}?v={{ $favIconVer }}">
+    <link rel="shortcut icon" href="{{ $favIconUrl }}?v={{ $favIconVer }}">
     
     <!-- PWA Config -->
     <link rel="manifest" href="{{ asset('manifest.json') }}">
     <meta name="theme-color" content="{{ $siteSettings->primary_color ?? '#1a4d8c' }}">
-    <link rel="apple-touch-icon" href="{{ $siteSettings->site_logo ? asset($siteSettings->site_logo) : asset('backend/images/logo.png') }}">
+    <link rel="apple-touch-icon" href="{{ $siteSettings->site_favicon ? asset($siteSettings->site_favicon) : ($siteSettings->site_logo ? asset($siteSettings->site_logo) : asset('favicon.ico')) }}?v={{ $favIconVer }}">
 
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
