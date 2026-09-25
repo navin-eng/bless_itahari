@@ -35,8 +35,8 @@ class SiteSettingController extends Controller
             'site_name' => 'required|string|max:255',
             'site_short_name' => 'required|string|max:100',
             'site_tagline' => 'required|string|max:255',
-            'site_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
-            'site_favicon' => 'nullable|file|mimes:ico,png,jpg,jpeg,svg,webp|max:1024',
+            'site_logo' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,webp|max:5120',
+            'site_favicon' => 'nullable|file|mimes:ico,png,jpg,jpeg,svg,webp,gif|max:5120',
             'primary_color' => 'required|string|max:20',
             'primary_dark' => 'required|string|max:20',
             'primary_light' => 'required|string|max:20',
@@ -107,17 +107,94 @@ class SiteSettingController extends Controller
         // Handle Site Favicon Upload
         if ($request->hasFile('site_favicon')) {
             $favicon = $request->file('site_favicon');
-            $ext = $favicon->getClientOriginalExtension();
+            $ext = strtolower($favicon->getClientOriginalExtension() ?: 'png');
             $favName = 'favicon_' . time() . '_' . Str::random(8) . '.' . $ext;
             $destination = public_path('backend/images/settings');
             if (!file_exists($destination)) {
                 mkdir($destination, 0755, true);
             }
             $favicon->move($destination, $favName);
+            $fullFavPath = $destination . '/' . $favName;
             $data['site_favicon'] = 'backend/images/settings/' . $favName;
 
-            // Synchronize root favicon.ico so browsers hitting /favicon.ico receive the active favicon
-            @copy(public_path('backend/images/settings/' . $favName), public_path('favicon.ico'));
+            // Generate clean synchronized favicon.ico, favicon.png, apple-touch-icon.png
+            try {
+                if (extension_loaded('gd') && file_exists($fullFavPath)) {
+                    $imgInfo = @getimagesize($fullFavPath);
+                    $src = null;
+                    if ($imgInfo) {
+                        $src = match($imgInfo[2]) {
+                            IMAGETYPE_JPEG => @imagecreatefromjpeg($fullFavPath),
+                            IMAGETYPE_PNG => @imagecreatefrompng($fullFavPath),
+                            IMAGETYPE_WEBP => function_exists('imagecreatefromwebp') ? @imagecreatefromwebp($fullFavPath) : null,
+                            default => null,
+                        };
+                    }
+                    if ($src) {
+                        $sw = imagesx($src);
+                        $sh = imagesy($src);
+
+                        // 64x64 PNG
+                        $fav64 = imagecreatetruecolor(64, 64);
+                        imagealphablending($fav64, false);
+                        imagesavealpha($fav64, true);
+                        $trans = imagecolorallocatealpha($fav64, 255, 255, 255, 127);
+                        imagefilledrectangle($fav64, 0, 0, 64, 64, $trans);
+                        imagecopyresampled($fav64, $src, 0, 0, 0, 0, 64, 64, $sw, $sh);
+                        @imagepng($fav64, public_path('favicon.png'));
+
+                        // 180x180 Apple touch icon
+                        $apple = imagecreatetruecolor(180, 180);
+                        imagecopyresampled($apple, $src, 0, 0, 0, 0, 180, 180, $sw, $sh);
+                        @imagepng($apple, public_path('apple-touch-icon.png'));
+
+                        // 32x32 PNG for ICO
+                        $ico32 = imagecreatetruecolor(32, 32);
+                        imagealphablending($ico32, false);
+                        imagesavealpha($ico32, true);
+                        imagefilledrectangle($ico32, 0, 0, 32, 32, $trans);
+                        imagecopyresampled($ico32, $src, 0, 0, 0, 0, 32, 32, $sw, $sh);
+                        ob_start();
+                        imagepng($ico32);
+                        $png32 = ob_get_clean();
+
+                        // 16x16 PNG for ICO
+                        $ico16 = imagecreatetruecolor(16, 16);
+                        imagealphablending($ico16, false);
+                        imagesavealpha($ico16, true);
+                        imagefilledrectangle($ico16, 0, 0, 16, 16, $trans);
+                        imagecopyresampled($ico16, $src, 0, 0, 0, 0, 16, 16, $sw, $sh);
+                        ob_start();
+                        imagepng($ico16);
+                        $png16 = ob_get_clean();
+
+                        $icoData = pack('vvv', 0, 1, 2);
+                        $offset = 6 + (2 * 16);
+                        $len32 = strlen($png32);
+                        $len16 = strlen($png16);
+                        $icoData .= pack('CCCCvvVV', 32, 32, 0, 0, 1, 32, $len32, $offset);
+                        $offset += $len32;
+                        $icoData .= pack('CCCCvvVV', 16, 16, 0, 0, 1, 32, $len16, $offset);
+                        $icoData .= $png32 . $png16;
+
+                        @file_put_contents(public_path('favicon.ico'), $icoData);
+                        @file_put_contents(public_path('backend/images/favicon.ico'), $icoData);
+                        @file_put_contents(public_path('backend/assets/images/favicon.ico'), $icoData);
+                    } else {
+                        @copy($fullFavPath, public_path('favicon.ico'));
+                        @copy($fullFavPath, public_path('backend/images/favicon.ico'));
+                        @copy($fullFavPath, public_path('backend/assets/images/favicon.ico'));
+                    }
+                } else {
+                    @copy($fullFavPath, public_path('favicon.ico'));
+                    @copy($fullFavPath, public_path('backend/images/favicon.ico'));
+                    @copy($fullFavPath, public_path('backend/assets/images/favicon.ico'));
+                }
+            } catch (\Throwable $e) {
+                @copy($fullFavPath, public_path('favicon.ico'));
+                @copy($fullFavPath, public_path('backend/images/favicon.ico'));
+                @copy($fullFavPath, public_path('backend/assets/images/favicon.ico'));
+            }
 
             if ($settings && $settings->site_favicon && file_exists(public_path($settings->site_favicon))) {
                 @unlink(public_path($settings->site_favicon));

@@ -16,16 +16,34 @@
     <meta name="keywords" content="{{ $siteSettings->site_short_name ?? 'Bless Itahari' }}, {{ $siteSettings->site_name ?? 'Bless Itahari' }}, Itahari, Nepal, School in Belbari">
     <title>{{ $siteSettings->site_name ?? 'Bless Itahari' }} | {{ $siteSettings->site_tagline ?? 'Itahari' }}</title>
     @php
-        $favIconUrl = ($siteSettings && $siteSettings->site_favicon) ? asset($siteSettings->site_favicon) : asset('favicon.ico');
-        $favIconVer = ($siteSettings && $siteSettings->updated_at) ? $siteSettings->updated_at->timestamp : '1';
+        $favIconRelPath = null;
+        if ($siteSettings && !empty($siteSettings->site_favicon) && file_exists(public_path($siteSettings->site_favicon))) {
+            $favIconRelPath = $siteSettings->site_favicon;
+        } elseif ($siteSettings && !empty($siteSettings->site_logo) && file_exists(public_path($siteSettings->site_logo))) {
+            $favIconRelPath = $siteSettings->site_logo;
+        } elseif (file_exists(public_path('favicon.png'))) {
+            $favIconRelPath = 'favicon.png';
+        } else {
+            $favIconRelPath = 'favicon.ico';
+        }
+
+        $favIconUrl = asset($favIconRelPath);
+        $favIconVer = ($siteSettings && $siteSettings->updated_at) 
+            ? $siteSettings->updated_at->timestamp 
+            : (file_exists(public_path($favIconRelPath)) ? filemtime(public_path($favIconRelPath)) : '1');
+
+        $favExt = strtolower(pathinfo($favIconRelPath, PATHINFO_EXTENSION));
+        $favIconMime = match($favExt) {
+            'png' => 'image/png',
+            'jpg', 'jpeg' => 'image/jpeg',
+            'svg' => 'image/svg+xml',
+            'webp' => 'image/webp',
+            default => 'image/x-icon',
+        };
     @endphp
-    <link rel="icon" href="{{ $favIconUrl }}?v={{ $favIconVer }}">
+    <link rel="icon" type="{{ $favIconMime }}" href="{{ $favIconUrl }}?v={{ $favIconVer }}">
     <link rel="shortcut icon" href="{{ $favIconUrl }}?v={{ $favIconVer }}">
-    
-    <!-- PWA Config -->
-    <link rel="manifest" href="{{ asset('manifest.json') }}">
-    <meta name="theme-color" content="{{ $siteSettings->primary_color ?? '#1a4d8c' }}">
-    <link rel="apple-touch-icon" href="{{ $siteSettings->site_favicon ? asset($siteSettings->site_favicon) : ($siteSettings->site_logo ? asset($siteSettings->site_logo) : asset('favicon.ico')) }}?v={{ $favIconVer }}">
+    <link rel="apple-touch-icon" href="{{ file_exists(public_path('apple-touch-icon.png')) ? asset('apple-touch-icon.png') . '?v=' . $favIconVer : $favIconUrl . '?v=' . $favIconVer }}">
 
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">

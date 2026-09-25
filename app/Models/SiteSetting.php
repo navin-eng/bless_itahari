@@ -71,7 +71,17 @@ class SiteSetting extends Model
     {
         try {
             return Cache::rememberForever('site_settings.current', function () {
-                return static::first() ?? static::make([
+                $setting = static::first();
+                if ($setting) {
+                    if (!empty($setting->site_favicon) && !file_exists(public_path($setting->site_favicon))) {
+                        $setting->site_favicon = null;
+                    }
+                    if (!empty($setting->site_logo) && !file_exists(public_path($setting->site_logo))) {
+                        $setting->site_logo = null;
+                    }
+                    return $setting;
+                }
+                return static::make([
                     'site_name' => 'Shiksha Sandesh English School',
                     'site_short_name' => 'SSES',
                     'site_tagline' => 'Excellence in Education Since 1993',

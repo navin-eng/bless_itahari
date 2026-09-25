@@ -3,9 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>@stack('b-title') — GPLC Admin</title>
-  <link rel="icon" href="{{ asset('favicon.ico') }}">
-  <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+  @php
+      $siteSettings = \App\Models\SiteSetting::current();
+      $favIconRelPath = null;
+      if ($siteSettings && !empty($siteSettings->site_favicon) && file_exists(public_path($siteSettings->site_favicon))) {
+          $favIconRelPath = $siteSettings->site_favicon;
+      } elseif ($siteSettings && !empty($siteSettings->site_logo) && file_exists(public_path($siteSettings->site_logo))) {
+          $favIconRelPath = $siteSettings->site_logo;
+      } elseif (file_exists(public_path('favicon.png'))) {
+          $favIconRelPath = 'favicon.png';
+      } else {
+          $favIconRelPath = 'favicon.ico';
+      }
+      $favIconUrl = asset($favIconRelPath);
+      $favIconVer = ($siteSettings && $siteSettings->updated_at) ? $siteSettings->updated_at->timestamp : '1';
+  @endphp
+  <title>@stack('b-title') — {{ $siteSettings->site_short_name ?? 'Bless Itahari' }} Admin</title>
+  <link rel="icon" href="{{ $favIconUrl }}?v={{ $favIconVer }}">
+  <link rel="shortcut icon" href="{{ $favIconUrl }}?v={{ $favIconVer }}">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">

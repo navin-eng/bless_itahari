@@ -4,15 +4,37 @@
 <head>
     @php
         $siteSettings = $siteSettings ?? \App\Models\SiteSetting::current();
-        $favIconUrl = ($siteSettings && $siteSettings->site_favicon) ? asset($siteSettings->site_favicon) : asset('favicon.ico');
-        $favIconVer = ($siteSettings && $siteSettings->updated_at) ? $siteSettings->updated_at->timestamp : '1';
+        $favIconRelPath = null;
+        if ($siteSettings && !empty($siteSettings->site_favicon) && file_exists(public_path($siteSettings->site_favicon))) {
+            $favIconRelPath = $siteSettings->site_favicon;
+        } elseif ($siteSettings && !empty($siteSettings->site_logo) && file_exists(public_path($siteSettings->site_logo))) {
+            $favIconRelPath = $siteSettings->site_logo;
+        } elseif (file_exists(public_path('favicon.png'))) {
+            $favIconRelPath = 'favicon.png';
+        } else {
+            $favIconRelPath = 'favicon.ico';
+        }
+
+        $favIconUrl = asset($favIconRelPath);
+        $favIconVer = ($siteSettings && $siteSettings->updated_at) 
+            ? $siteSettings->updated_at->timestamp 
+            : (file_exists(public_path($favIconRelPath)) ? filemtime(public_path($favIconRelPath)) : '1');
+
+        $favExt = strtolower(pathinfo($favIconRelPath, PATHINFO_EXTENSION));
+        $favIconMime = match($favExt) {
+            'png' => 'image/png',
+            'jpg', 'jpeg' => 'image/jpeg',
+            'svg' => 'image/svg+xml',
+            'webp' => 'image/webp',
+            default => 'image/x-icon',
+        };
     @endphp
     <meta charset="utf-8" />
     @stack('user-title')
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
     <!-- App favicon -->
-    <link rel="icon" href="{{ $favIconUrl }}?v={{ $favIconVer }}">
+    <link rel="icon" type="{{ $favIconMime }}" href="{{ $favIconUrl }}?v={{ $favIconVer }}">
     <link rel="shortcut icon" href="{{ $favIconUrl }}?v={{ $favIconVer }}">
 
     <!-- App css -->

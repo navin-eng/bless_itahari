@@ -12,6 +12,18 @@
         </div>
     </div>
 
+    @if ($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm mb-4" role="alert">
+            <div class="fw-bold mb-1"><i class="bi bi-exclamation-triangle-fill me-2"></i>Could not save settings due to errors:</div>
+            <ul class="mb-0 ps-3">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     <form id="settingsForm" action="{{ route('site.settings.update') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
@@ -92,15 +104,27 @@
                                             <h6 class="fw-bold mb-3"><i class="bi bi-app-indicator text-primary me-2"></i>Site Favicon</h6>
                                             <div class="d-flex align-items-center gap-3">
                                                 <div class="bg-light p-2 rounded border d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                                                    <img src="{{ $settings->site_favicon ? asset($settings->site_favicon) : asset('favicon.ico') }}" alt="Favicon" id="faviconPreview" class="img-fluid" style="max-height: 32px; width: 32px; object-fit: contain;">
+                                                    @php
+                                                        $editFavUrl = null;
+                                                        if ($settings->site_favicon && file_exists(public_path($settings->site_favicon))) {
+                                                            $editFavUrl = asset($settings->site_favicon);
+                                                        } elseif ($settings->site_logo && file_exists(public_path($settings->site_logo))) {
+                                                            $editFavUrl = asset($settings->site_logo);
+                                                        } elseif (file_exists(public_path('favicon.png'))) {
+                                                            $editFavUrl = asset('favicon.png');
+                                                        } else {
+                                                            $editFavUrl = asset('favicon.ico');
+                                                        }
+                                                    @endphp
+                                                    <img src="{{ $editFavUrl }}?v={{ $settings->updated_at ? $settings->updated_at->timestamp : time() }}" alt="Favicon" id="faviconPreview" class="img-fluid" style="max-height: 44px; width: 44px; object-fit: contain;">
                                                 </div>
                                                 <div class="flex-grow-1">
                                                     <input type="file" name="site_favicon" id="siteFaviconInput" class="form-control" accept=".ico,.png,.jpg,.jpeg,.svg,.webp">
-                                                    <small class="text-muted d-block mt-1">Recommended: 32x32px or 64x64px (PNG/ICO)</small>
-                                                    @if($settings->site_favicon)
+                                                    <small class="text-muted d-block mt-1">Recommended: Square PNG, ICO, JPG, or WEBP (32x32, 64x64, 180x180, or 512x512 up to 5MB). Automatically synced across all browsers.</small>
+                                                    @if($settings->site_favicon && file_exists(public_path($settings->site_favicon)))
                                                     <div class="form-check mt-2">
                                                         <input class="form-check-input" type="checkbox" name="remove_favicon" value="1" id="removeFaviconCheck">
-                                                        <label class="form-check-label text-danger" for="removeFaviconCheck">Remove current favicon</label>
+                                                        <label class="form-check-label text-danger" for="removeFaviconCheck">Remove custom favicon (restore default school emblem)</label>
                                                     </div>
                                                     @endif
                                                 </div>
