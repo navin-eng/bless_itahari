@@ -74,7 +74,21 @@ class Frontend extends Controller
 
     public function coursesIndex()
     {
-        $courses = Course::where('status', 1)->get();
+        $courses = Course::where(function ($q) {
+            $q->where('status', 1)->orWhereNull('status');
+        })->get();
+
+        if ($courses->isEmpty() && Course::count() === 0) {
+            try {
+                (new \Database\Seeders\SchoolLevelsSeeder())->run();
+                $courses = Course::where(function ($q) {
+                    $q->where('status', 1)->orWhereNull('status');
+                })->get();
+            } catch (\Throwable $e) {
+                // Fallback gracefully
+            }
+        }
+
         return view('frontend.pages.courses', compact('courses'));
     }
 

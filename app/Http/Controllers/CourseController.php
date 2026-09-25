@@ -226,4 +226,16 @@ class CourseController extends Controller
         Alert::success('Success','Image Deleted');
         return back();
     }
+
+    public function seedDefaults()
+    {
+        try {
+            (new \Database\Seeders\SchoolLevelsSeeder())->run();
+            Cache::forget('home.courses');
+            Alert::success('Success', 'Standard Nepal School levels (PG to Grade 12) have been loaded successfully.');
+        } catch (\Throwable $e) {
+            Alert::error('Error', 'Could not load levels: ' . $e->getMessage());
+        }
+        return redirect()->route('course.table');
+    }
 }

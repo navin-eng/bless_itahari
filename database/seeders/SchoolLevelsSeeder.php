@@ -10,6 +10,30 @@ class SchoolLevelsSeeder extends Seeder
 {
     public function run()
     {
+        // Ensure columns exist on the database table even if migrations haven't run yet on production
+        if (!\Illuminate\Support\Facades\Schema::hasColumn('courses', 'academic_level')) {
+            \Illuminate\Support\Facades\Schema::table('courses', function (\Illuminate\Database\Schema\Blueprint $table) {
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('courses', 'academic_level')) {
+                    $table->string('academic_level')->nullable()->after('name');
+                }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('courses', 'grade_span')) {
+                    $table->string('grade_span')->nullable()->after('academic_level');
+                }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('courses', 'evaluation_system')) {
+                    $table->string('evaluation_system')->nullable()->after('requirement');
+                }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('courses', 'curriculum')) {
+                    $table->longText('curriculum')->nullable()->after('fulldescription');
+                }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('courses', 'rules')) {
+                    $table->longText('rules')->nullable()->after('curriculum');
+                }
+                if (!\Illuminate\Support\Facades\Schema::hasColumn('courses', 'admission_procedure')) {
+                    $table->longText('admission_procedure')->nullable()->after('rules');
+                }
+            });
+        }
+
         $levels = [
             [
                 'name' => 'Pre-Primary Level (Playgroup to UKG)',
@@ -501,11 +525,13 @@ class SchoolLevelsSeeder extends Seeder
             ],
         ];
 
-        // Replace old records or update appropriately
-        Course::truncate();
-
         foreach ($levels as $level) {
-            Course::create($level);
+            Course::updateOrCreate(
+                ['slug' => $level['slug']],
+                $level
+            );
         }
+
+        \Illuminate\Support\Facades\Cache::forget('home.courses');
     }
 }

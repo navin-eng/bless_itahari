@@ -95,6 +95,7 @@ Route::middleware('webGuard')->group(function () {
     Route::get('/admin/dashboard/course/edit/{id}', [CourseController::class, 'edit'])->name('course.edit');
     Route::post('/admin/dashboard/course/edit/update/{id}', [CourseController::class, 'update'])->name('course.update');
     Route::get('/admin/dashboard/course/delete/gallery/{id}/{index}', [CourseController::class, 'galleryDelete'])->name('course.gallery.delete');
+    Route::get('/admin/dashboard/course/seed-defaults', [CourseController::class, 'seedDefaults'])->name('course.seed');
 
     // Teacher Routes
     Route::get('/admin/dashboard/teacher/add', [TeacherController::class, 'create'])->name('teacher.add');

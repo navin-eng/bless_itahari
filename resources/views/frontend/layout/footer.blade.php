@@ -1,7 +1,9 @@
 @php
     $siteSettings = \App\Models\SiteSetting::current();
     try {
-        $footerCourses = \App\Models\Course::where('status', 1)->get();
+        $footerCourses = \App\Models\Course::where(function ($q) {
+            $q->where('status', 1)->orWhereNull('status');
+        })->get();
     } catch (\Throwable $e) {
         $footerCourses = collect();
     }

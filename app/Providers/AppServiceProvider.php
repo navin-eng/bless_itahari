@@ -58,7 +58,21 @@ class AppServiceProvider extends ServiceProvider
 
         View::composer('frontend.pages.home.courses', function ($view) {
             $view->with('courses', Cache::remember('home.courses', 600, function () {
-                return \App\Models\Course::where('status', 1)->get();
+                $courses = \App\Models\Course::where(function ($q) {
+                    $q->where('status', 1)->orWhereNull('status');
+                })->get();
+
+                if ($courses->isEmpty() && \App\Models\Course::count() === 0) {
+                    try {
+                        (new \Database\Seeders\SchoolLevelsSeeder())->run();
+                        $courses = \App\Models\Course::where(function ($q) {
+                            $q->where('status', 1)->orWhereNull('status');
+                        })->get();
+                    } catch (\Throwable $e) {
+                    }
+                }
+
+                return $courses;
             }));
         });
 
