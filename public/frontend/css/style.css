@@ -318,8 +318,11 @@ a:hover { color: var(--primary-dark); }
 }
 
 .gplc-hero-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(90deg, rgba(14,45,84,0.9) 0%, rgba(26,77,140,0.7) 50%, rgba(0,0,0,0.3) 100%);
+    position: absolute;
+    inset: 0;
+    /* Clean, cinematic dark neutral gradient - removes harsh blue tint, preserves real photography & campus colors */
+    background: linear-gradient(90deg, rgba(15, 23, 42, 0.82) 0%, rgba(15, 23, 42, 0.52) 50%, rgba(15, 23, 42, 0.2) 100%),
+                linear-gradient(180deg, rgba(15, 23, 42, 0.35) 0%, transparent 40%, rgba(15, 23, 42, 0.6) 100%);
 }
 .gplc-hero-content {
     position: absolute; inset: 0;
@@ -345,15 +348,25 @@ a:hover { color: var(--primary-dark); }
     text-shadow: 0 2px 8px rgba(0,0,0,0.6);
 }
 .tag-line {
-    background: rgba(187, 50, 51, 0.2);
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    padding: 8px 20px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    padding: 7px 18px;
     border-radius: var(--radius-full);
     font-weight: 600;
-    margin-bottom: 24px;
-    display: inline-flex; align-items: center; gap: 8px;
-    text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem;
+    margin-bottom: 22px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.82rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+.tag-line i {
+    color: #f59e0b;
 }
 .swiper-pagination-bullet { background: rgba(255,255,255,0.4) !important; width: 10px; height: 10px; }
 .swiper-pagination-bullet-active { background: var(--accent) !important; width: 24px; border-radius: 12px; }
