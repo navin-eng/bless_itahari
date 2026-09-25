@@ -155,17 +155,20 @@
                                     <a href="#" class="nav-link dropdown-toggle {{ request()->segment(1)=='course' ? 'active' : '' }}" data-bs-toggle="dropdown" aria-expanded="false">
                                         {{ $menu->name }} <i class="fas fa-chevron-down" style="font-size:9px;margin-left:4px;"></i>
                                     </a>
-                                    <ul class="dropdown-menu-gplc dropdown-menu border-0 shadow-sm" style="border-radius: 12px; padding: 12px 8px; min-width: 240px;">
+                                    <ul class="dropdown-menu-gplc dropdown-menu border-0 shadow-sm" style="border-radius: 12px; padding: 10px; min-width: 280px;">
                                         <li>
-                                            <a class="dropdown-item fw-bold" href="{{ url('course') }}">
-                                                All {{ $menu->name }}
+                                            <a class="dropdown-item fw-bold text-primary py-2" href="{{ url('course') }}" style="border-radius: 8px;">
+                                                <i class="bi bi-grid-fill me-2"></i> All Academic Levels (PG to 12)
                                             </a>
                                         </li>
-                                        <li><hr class="dropdown-divider" style="margin: 4px 0; opacity: 0.1;"></li>
+                                        <li><hr class="dropdown-divider" style="margin: 6px 0; opacity: 0.1;"></li>
                                         @foreach($navCourses as $nc)
                                             <li>
-                                                <a class="dropdown-item" href="{{ url('course/' . $nc->slug) }}">
-                                                    {{ $nc->name }}
+                                                <a class="dropdown-item py-2" href="{{ url('course/' . $nc->slug) }}" style="border-radius: 8px;">
+                                                    <div class="fw-semibold text-dark" style="font-size: 13.5px;">{{ $nc->name }}</div>
+                                                    @if($nc->grade_span)
+                                                        <small class="text-muted d-block" style="font-size: 11px;"><i class="bi bi-mortarboard me-1"></i>{{ $nc->grade_span }}</small>
+                                                    @endif
                                                 </a>
                                             </li>
                                         @endforeach

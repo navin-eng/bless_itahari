@@ -11,10 +11,13 @@ class Course extends Model
 
     protected $fillable = [
         'name',
+        'academic_level',
+        'grade_span',
         'slug',
         'duration',
         'semester',
         'requirement',
+        'evaluation_system',
         'starting_time',
         'closing_time',
         'image',
@@ -22,5 +25,8 @@ class Course extends Model
         'status',
         'description',
         'fulldescription',
+        'curriculum',
+        'rules',
+        'admission_procedure',
     ];
 }

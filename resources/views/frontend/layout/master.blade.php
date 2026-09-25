@@ -16,8 +16,8 @@
     <meta name="keywords" content="{{ $siteSettings->site_short_name ?? 'Bless Itahari' }}, {{ $siteSettings->site_name ?? 'Bless Itahari' }}, Itahari, Nepal, School in Belbari">
     <title>{{ $siteSettings->site_name ?? 'Bless Itahari' }} | {{ $siteSettings->site_tagline ?? 'Itahari' }}</title>
     @php
-        $favIconUrl = $siteSettings->site_favicon ? asset($siteSettings->site_favicon) : asset('favicon.ico');
-        $favIconVer = $siteSettings->updated_at ? $siteSettings->updated_at->timestamp : '1';
+        $favIconUrl = ($siteSettings && $siteSettings->site_favicon) ? asset($siteSettings->site_favicon) : asset('favicon.ico');
+        $favIconVer = ($siteSettings && $siteSettings->updated_at) ? $siteSettings->updated_at->timestamp : '1';
     @endphp
     <link rel="icon" href="{{ $favIconUrl }}?v={{ $favIconVer }}">
     <link rel="shortcut icon" href="{{ $favIconUrl }}?v={{ $favIconVer }}">

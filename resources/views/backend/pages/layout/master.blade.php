@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  @php($siteSettings = \App\Models\SiteSetting::current())
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>@stack('b-title') — {{ $siteSettings->site_short_name ?? 'SSES' }} Admin</title>
   @php
-      $favIconUrl = $siteSettings->site_favicon ? asset($siteSettings->site_favicon) : asset('favicon.ico');
-      $favIconVer = $siteSettings->updated_at ? $siteSettings->updated_at->timestamp : '1';
+      $siteSettings = \App\Models\SiteSetting::current();
+      $favIconUrl = ($siteSettings && $siteSettings->site_favicon) ? asset($siteSettings->site_favicon) : asset('favicon.ico');
+      $favIconVer = ($siteSettings && $siteSettings->updated_at) ? $siteSettings->updated_at->timestamp : '1';
   @endphp
+  <title>@stack('b-title') — {{ $siteSettings->site_short_name ?? 'SSES' }} Admin</title>
   <link rel="icon" href="{{ $favIconUrl }}?v={{ $favIconVer }}">
   <link rel="shortcut icon" href="{{ $favIconUrl }}?v={{ $favIconVer }}">
 
@@ -88,7 +88,7 @@
     </div>
     @endif
 
-    @if($errors->any())
+    @if(isset($errors) && $errors->any())
     <div class="admin-alert admin-alert-danger">
       <i class="bi bi-exclamation-circle-fill"></i>
       <div class="alert-body">

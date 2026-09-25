@@ -15,7 +15,7 @@ class CourseController extends Controller
 {
     protected function rules($courseId = null)
     {
-        $nameRule = 'required|min:2|max:80|unique:courses,name';
+        $nameRule = 'required|min:2|max:120|unique:courses,name';
 
         if ($courseId) {
             $nameRule .= ',' . $courseId;
@@ -23,15 +23,21 @@ class CourseController extends Controller
 
         return [
             'name' => $nameRule,
+            'academic_level' => 'required|string|max:100',
+            'grade_span' => 'nullable|string|max:100',
             'duration' => 'required|string|max:100',
-            'semester' => 'required|string|max:100',
-            'requirement' => 'required|string|max:100',
+            'semester' => 'nullable|string|max:100',
+            'requirement' => 'nullable|string|max:255',
+            'evaluation_system' => 'nullable|string|max:255',
+            'curriculum' => 'nullable|string',
+            'rules' => 'nullable|string',
+            'admission_procedure' => 'nullable|string',
             'starting_time' => 'nullable',
             'closing_time' => 'nullable',
-            'description' => 'required|string|max:255',
+            'description' => 'required|string|max:1000',
             'fulldescription' => 'nullable|string',
-            'image' => $courseId ? 'nullable|image|mimes:jpeg,png,jpg' : 'required|image|mimes:jpeg,png,jpg',
-            'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg',
+            'image' => $courseId ? 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048' : 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ];
     }
 
@@ -49,10 +55,16 @@ class CourseController extends Controller
         $request->validate($this->rules());
         $course = new Course();
         $course->name = $request->name;
+        $course->academic_level = $request->academic_level;
+        $course->grade_span = $request->grade_span ?: '';
         $course->slug = Str::slug($request->name);
         $course->duration = $request->duration;
-        $course->semester = $request->semester;
-        $course->requirement = $request->requirement;
+        $course->semester = $request->semester ?: ($request->academic_level ? $request->academic_level . ' (Annual)' : 'Annual Session');
+        $course->requirement = $request->requirement ?: 'As per School & NEB Criteria';
+        $course->evaluation_system = $request->evaluation_system ?: '';
+        $course->curriculum = $request->curriculum ?: '';
+        $course->rules = $request->rules ?: '';
+        $course->admission_procedure = $request->admission_procedure ?: '';
         $course->starting_time = $request->starting_time ? Carbon::parse($request->starting_time)->format('g:i A') : '';
         $course->closing_time = $request->closing_time ? Carbon::parse($request->closing_time)->format('g:i A') : '';
         $course->description = $request->description;
@@ -131,10 +143,16 @@ class CourseController extends Controller
         $request->validate($this->rules($id));
         $course = Course::find($id);
         $course->name = $request->name;
+        $course->academic_level = $request->academic_level;
+        $course->grade_span = $request->grade_span ?: '';
         $course->slug = Str::slug($request->name);
         $course->duration = $request->duration;
-        $course->semester = $request->semester;
-        $course->requirement = $request->requirement;
+        $course->semester = $request->semester ?: ($request->academic_level ? $request->academic_level . ' (Annual)' : 'Annual Session');
+        $course->requirement = $request->requirement ?: 'As per School & NEB Criteria';
+        $course->evaluation_system = $request->evaluation_system ?: '';
+        $course->curriculum = $request->curriculum ?: '';
+        $course->rules = $request->rules ?: '';
+        $course->admission_procedure = $request->admission_procedure ?: '';
         if($request->starting_time != null) {
             $course->starting_time = Carbon::parse($request->starting_time)->format('g:i A');
         } else {

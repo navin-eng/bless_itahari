@@ -43,7 +43,7 @@
             {{-- Courses --}}
             <div class="col-lg-3 col-md-6">
                 <div class="footer-widget">
-                    <h4>Our Courses</h4>
+                    <h4>Academic Levels</h4>
                     <ul class="footer-links">
                         @foreach($footerCourses as $fc)
                             <li><a href="{{ url('course/' . $fc->slug) }}">{{ $fc->name }}</a></li>

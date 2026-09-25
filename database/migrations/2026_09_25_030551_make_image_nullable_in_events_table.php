@@ -13,7 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        \Illuminate\Support\Facades\DB::statement('ALTER TABLE events MODIFY image TEXT NULL;');
+        if (\Illuminate\Support\Facades\DB::getDriverName() === 'mysql') {
+            \Illuminate\Support\Facades\DB::statement('ALTER TABLE events MODIFY image TEXT NULL;');
+        }
     }
 
     /**
@@ -23,6 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        \Illuminate\Support\Facades\DB::statement('ALTER TABLE events MODIFY image TEXT NOT NULL;');
+        if (\Illuminate\Support\Facades\DB::getDriverName() === 'mysql') {
+            \Illuminate\Support\Facades\DB::statement('ALTER TABLE events MODIFY image TEXT NOT NULL;');
+        }
     }
 };
