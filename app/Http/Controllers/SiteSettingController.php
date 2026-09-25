@@ -44,6 +44,7 @@ class SiteSettingController extends Controller
             'contact_phone' => 'nullable|string|max:100',
             'contact_email' => 'nullable|email|max:255',
             'contact_address' => 'nullable|string|max:255',
+            'google_map_iframe' => 'nullable|string',
             'whatsapp_number' => 'nullable|string|max:50',
             'facebook_url' => 'nullable|string|max:255',
             'youtube_url' => 'nullable|string|max:255',

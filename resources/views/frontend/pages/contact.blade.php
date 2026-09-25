@@ -71,10 +71,14 @@
             {{-- Map --}}
             <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
                 <div class="gplc-map">
-                    <iframe
-                        src="https://maps.google.com/maps?q={{ urlencode($siteSettings->contact_address ?? 'Itahari, Nepal') }}&t=&z=13&ie=UTF8&iwloc=&output=embed"
-                        allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
+                    @if(!empty($siteSettings->google_map_iframe))
+                        {!! $siteSettings->google_map_iframe !!}
+                    @else
+                        <iframe
+                            src="https://maps.google.com/maps?q={{ urlencode($siteSettings->contact_address ?? 'Itahari, Nepal') }}&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                            allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    @endif
                 </div>
             </div>
 

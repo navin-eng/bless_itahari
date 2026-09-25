@@ -23,6 +23,7 @@ class SiteSetting extends Model
         'contact_phone',
         'contact_email',
         'contact_address',
+        'google_map_iframe',
         'whatsapp_number',
         'facebook_url',
         'youtube_url',

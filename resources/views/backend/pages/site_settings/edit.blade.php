@@ -278,6 +278,11 @@
                                             <label class="form-label">Address</label>
                                             <input type="text" name="contact_address" class="form-control" value="{{ old('contact_address', $settings->contact_address) }}">
                                         </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Google Map Iframe Embed</label>
+                                            <textarea name="google_map_iframe" class="form-control" rows="3" placeholder='<iframe src="https://www.google.com/maps/embed?..."></iframe>'>{{ old('google_map_iframe', $settings->google_map_iframe) }}</textarea>
+                                            <small class="text-muted">Go to Google Maps -> Share -> Embed a map -> Copy HTML</small>
+                                        </div>
                                         <div class="mb-0">
                                             <label class="form-label">WhatsApp Number</label>
                                             <input type="text" name="whatsapp_number" class="form-control" value="{{ old('whatsapp_number', $settings->whatsapp_number) }}">
