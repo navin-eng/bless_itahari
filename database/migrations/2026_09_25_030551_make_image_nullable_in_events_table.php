@@ -13,9 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('events', function (Blueprint $table) {
-            $table->text('image')->nullable()->change();
-        });
+        \Illuminate\Support\Facades\DB::statement('ALTER TABLE events MODIFY image TEXT NULL;');
     }
 
     /**
@@ -25,8 +23,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('events', function (Blueprint $table) {
-            $table->text('image')->nullable(false)->change();
-        });
+        \Illuminate\Support\Facades\DB::statement('ALTER TABLE events MODIFY image TEXT NOT NULL;');
     }
 };
