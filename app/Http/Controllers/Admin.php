@@ -21,7 +21,10 @@ class Admin extends Controller
         if (Auth::check()) {
             return redirect('/admin/dashboard');
         }
-        return view('backend.auth.login');
+        return response()->view('backend.auth.login')
+            ->header('Cache-Control', 'no-cache, no-store, max-age=0, must-revalidate')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
     }
 
     public function register()
