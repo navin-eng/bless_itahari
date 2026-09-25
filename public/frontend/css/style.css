@@ -184,8 +184,8 @@ a:hover { color: var(--primary-dark); }
 
 /* ── Navbar Builder Layouts ── */
 @media (min-width: 1200px) {
-    .gplc-header.nav-layout-centered .header-inner { flex-direction: row; height: auto; padding: 15px 0; justify-content: space-between; gap: 20px; }
-    .gplc-header.nav-layout-centered .gplc-logo { margin-bottom: 0; }
+    .gplc-header.nav-layout-centered .header-inner { flex-direction: column; height: auto; padding: 15px 0; justify-content: center; gap: 15px; }
+    .gplc-header.nav-layout-centered .gplc-logo { margin-bottom: 5px; }
     .gplc-header.nav-layout-right .header-inner { justify-content: space-between; flex-direction: row-reverse; }
 }
 
