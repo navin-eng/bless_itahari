@@ -415,20 +415,30 @@
 <div class="about-page-wrap">
 
     {{-- ===== 1. CINEMATIC HERO SECTION ===== --}}
-    <section class="about-hero-cinematic text-center">
+    @php
+        $heroBgStyle = '';
+        if (!empty($siteSettings->about_hero_image) && file_exists(public_path($siteSettings->about_hero_image))) {
+            $heroBgStyle = "background: linear-gradient(135deg, rgba(9, 26, 50, 0.88) 0%, rgba(15, 39, 71, 0.92) 100%), url('" . asset($siteSettings->about_hero_image) . "') center/cover no-repeat;";
+        }
+    @endphp
+    <section class="about-hero-cinematic text-center" style="{{ $heroBgStyle }}">
         <div class="container position-relative z-1" data-aos="fade-up">
             <div class="about-hero-badge">
                 <i class="bi bi-patch-check-fill text-warning"></i>
-                <span>Est. {{ $siteSettings->about_established_year ?? '1993' }} • Quality Education You Can Trust</span>
+                <span>{{ $siteSettings->about_badge_text ?: ('Est. ' . ($siteSettings->about_established_year ?: '2061') . ' • Quality Education You Can Trust') }}</span>
             </div>
             
             <h1 class="about-hero-title">
-                Fostering Curiosity, Character & <br class="d-none d-md-block">
-                <span>Academic Excellence</span>
+                @if(!empty($siteSettings->about_hero_title))
+                    {!! nl2br(e($siteSettings->about_hero_title)) !!}
+                @else
+                    Fostering Curiosity, Character & <br class="d-none d-md-block">
+                    <span>Academic Excellence</span>
+                @endif
             </h1>
 
             <p class="about-hero-sub">
-                At {{ $siteSettings->site_name ?? 'Blooming Lotus Secondary English School' }}, we empower students from Playgroup to Grade 12 with Nepal CDC & NEB curriculum rigor, moral discipline, and 21st-century technological literacy.
+                {{ $siteSettings->about_hero_subtitle ?: ('At ' . ($siteSettings->site_name ?? 'Bless Itahari') . ', we empower students from Playgroup to Grade 12 with Nepal CDC & NEB curriculum rigor, moral discipline, and 21st-century technological literacy.') }}
             </p>
 
             {{-- Quick Jump Navigation --}}
@@ -488,7 +498,7 @@
                 <div class="col-lg-6" data-aos="fade-left">
                     <span class="about-section-tag">About Our School</span>
                     <h2 class="about-section-title">
-                        A Premier Educational Sanctuary in {{ $siteSettings->contact_address ?? 'Itahari, Koshi Province' }}
+                        {{ $siteSettings->about_story_title ?: ('A Premier Educational Sanctuary in ' . ($siteSettings->contact_address ?? 'Itahari, Koshi Province')) }}
                     </h2>
                     
                     <p class="about-lead-text mb-4">
@@ -496,47 +506,32 @@
                     </p>
 
                     <p class="text-muted mb-4" style="line-height: 1.8;">
-                        Bless Itahari combines experiential learning pedagogy, dedicated teacher mentorship, and technology-empowered classrooms to foster intellectual agility, ethical conscience, and creative confidence. From our nurturing Montessori pre-primary wing to rigorous SEE and NEB +2 academic programs, we cultivate students who excel locally and globally.
+                        {{ $siteSettings->about_story_body ?: 'Bless Itahari combines experiential learning pedagogy, dedicated teacher mentorship, and technology-empowered classrooms to foster intellectual agility, ethical conscience, and creative confidence. From our nurturing Montessori pre-primary wing to rigorous SEE and NEB +2 academic programs, we cultivate students who excel locally and globally.' }}
                     </p>
 
                     {{-- 4 Core Pillars --}}
+                    @php
+                        $pillars = !empty($siteSettings->about_features) ? json_decode($siteSettings->about_features, true) : [
+                            ['title' => 'Child-Centered Care', 'subtitle' => 'Personalized pacing & emotional safety', 'icon' => 'bi-person-hearts', 'color' => '#0d6efd'],
+                            ['title' => 'STEM & Practical Labs', 'subtitle' => 'Digital literacy & hands-on science', 'icon' => 'bi-cpu-fill', 'color' => '#10b981'],
+                            ['title' => 'Holistic Co-Curriculars', 'subtitle' => 'Sports, public speaking & creative arts', 'icon' => 'bi-trophy-fill', 'color' => '#f59e0b'],
+                            ['title' => 'Safe & Caring Campus', 'subtitle' => 'CCTV secured & caring pastoral guidance', 'icon' => 'bi-shield-check', 'color' => '#6366f1'],
+                        ];
+                    @endphp
                     <div class="row g-3 pt-2">
-                        <div class="col-sm-6">
-                            <div class="pillar-item">
-                                <div class="pillar-icon"><i class="bi bi-person-hearts"></i></div>
-                                <div>
-                                    <h6 class="fw-bold mb-1 text-dark">Child-Centered Care</h6>
-                                    <small class="text-muted">Personalized pacing & emotional safety</small>
+                        @foreach($pillars as $p)
+                            <div class="col-sm-6">
+                                <div class="pillar-item">
+                                    <div class="pillar-icon" style="background: rgba(13, 110, 253, 0.1); color: {{ $p['color'] ?? '#0d6efd' }};">
+                                        <i class="bi {{ $p['icon'] ?? 'bi-star-fill' }}"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-bold mb-1 text-dark">{{ $p['title'] ?? '' }}</h6>
+                                        <small class="text-muted">{{ $p['subtitle'] ?? '' }}</small>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="pillar-item">
-                                <div class="pillar-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;"><i class="bi bi-cpu-fill"></i></div>
-                                <div>
-                                    <h6 class="fw-bold mb-1 text-dark">STEM & Practical Labs</h6>
-                                    <small class="text-muted">Digital literacy & hands-on science</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="pillar-item">
-                                <div class="pillar-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;"><i class="bi bi-trophy-fill"></i></div>
-                                <div>
-                                    <h6 class="fw-bold mb-1 text-dark">Holistic Co-Curriculars</h6>
-                                    <small class="text-muted">Sports, public speaking & creative arts</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="pillar-item">
-                                <div class="pillar-icon" style="background: rgba(99, 102, 241, 0.1); color: #6366f1;"><i class="bi bi-shield-check"></i></div>
-                                <div>
-                                    <h6 class="fw-bold mb-1 text-dark">Safe & Caring Campus</h6>
-                                    <small class="text-muted">CCTV secured & caring pastoral guidance</small>
-                                </div>
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
 
                 </div>
@@ -591,12 +586,23 @@
                             <i class="bi bi-gem"></i>
                         </div>
                         <h4 class="fw-bold mb-3 text-dark">Core Values (संस्कार र मर्यादा)</h4>
-                        <ul class="list-unstyled mb-0" style="line-height: 2;">
-                            <li><i class="bi bi-check-circle-fill text-primary me-2"></i><strong>Integrity (सत्यता):</strong> Honesty in thought, speech, and academic pursuit.</li>
-                            <li><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Discipline (अनुशासन):</strong> Punctuality, self-regulation, and respect.</li>
-                            <li><i class="bi bi-check-circle-fill text-warning me-2"></i><strong>Innovation (सिर्जनशीलता):</strong> Creative questioning and problem-solving.</li>
-                            <li><i class="bi bi-check-circle-fill text-info me-2"></i><strong>Empathy (सद्भाव):</strong> Mutual respect and community service.</li>
-                        </ul>
+                        @php
+                            $valuesList = !empty($siteSettings->about_values) ? json_decode($siteSettings->about_values, true) : null;
+                        @endphp
+                        @if(!empty($valuesList))
+                            <ul class="list-unstyled mb-0" style="line-height: 2;">
+                                @foreach($valuesList as $val)
+                                    <li><i class="bi bi-check-circle-fill text-primary me-2"></i>{{ $val }}</li>
+                                @endforeach
+                            </ul>
+                        @else
+                            <ul class="list-unstyled mb-0" style="line-height: 2;">
+                                <li><i class="bi bi-check-circle-fill text-primary me-2"></i><strong>Integrity (सत्यता):</strong> Honesty in thought, speech, and academic pursuit.</li>
+                                <li><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Discipline (अनुशासन):</strong> Punctuality, self-regulation, and respect.</li>
+                                <li><i class="bi bi-check-circle-fill text-warning me-2"></i><strong>Innovation (सिर्जनशीलता):</strong> Creative questioning and problem-solving.</li>
+                                <li><i class="bi bi-check-circle-fill text-info me-2"></i><strong>Empathy (सद्भाव):</strong> Mutual respect and community service.</li>
+                            </ul>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -604,31 +610,41 @@
     </section>
 
     {{-- ===== 4. STATISTICAL MILESTONES ===== --}}
+    @php
+        $s1Num = $siteSettings->about_stat_1_number ?: '30+';
+        $s1Lbl = $siteSettings->about_stat_1_label ?: 'Years of Heritage';
+        $s2Num = $siteSettings->about_stat_2_number ?: '1,200+';
+        $s2Lbl = $siteSettings->about_stat_2_label ?: 'Enrolled Students';
+        $s3Num = $siteSettings->about_stat_3_number ?: '100%';
+        $s3Lbl = $siteSettings->about_stat_3_label ?: 'SEE & NEB Success';
+        $s4Num = $siteSettings->about_stat_4_number ?: '45+';
+        $s4Lbl = $siteSettings->about_stat_4_label ?: 'Qualified Teachers';
+    @endphp
     <section class="about-section py-5" style="background: linear-gradient(135deg, #091a32 0%, #173256 100%); color: #fff;">
         <div class="container py-3">
             <div class="row g-4">
                 <div class="col-lg-3 col-6" data-aos="zoom-in" data-aos-delay="50">
                     <div class="stat-counter-box bg-white">
-                        <div class="stat-number">30+</div>
-                        <p class="stat-label">Years of Heritage</p>
+                        <div class="stat-number">{{ $s1Num }}</div>
+                        <p class="stat-label">{{ $s1Lbl }}</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-6" data-aos="zoom-in" data-aos-delay="100">
                     <div class="stat-counter-box bg-white">
-                        <div class="stat-number">1,200+</div>
-                        <p class="stat-label">Enrolled Students</p>
+                        <div class="stat-number">{{ $s2Num }}</div>
+                        <p class="stat-label">{{ $s2Lbl }}</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-6" data-aos="zoom-in" data-aos-delay="150">
                     <div class="stat-counter-box bg-white">
-                        <div class="stat-number">100%</div>
-                        <p class="stat-label">SEE & NEB Success</p>
+                        <div class="stat-number">{{ $s3Num }}</div>
+                        <p class="stat-label">{{ $s3Lbl }}</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-6" data-aos="zoom-in" data-aos-delay="200">
                     <div class="stat-counter-box bg-white">
-                        <div class="stat-number">45+</div>
-                        <p class="stat-label">Qualified Teachers</p>
+                        <div class="stat-number">{{ $s4Num }}</div>
+                        <p class="stat-label">{{ $s4Lbl }}</p>
                     </div>
                 </div>
             </div>
@@ -781,6 +797,22 @@
     </section>
 
     {{-- ===== 7. CAMPUS AMENITIES & INFRASTRUCTURE ===== --}}
+    @php
+        $amenities = [];
+        if (!empty($siteSettings->about_amenities)) {
+            $amenities = is_string($siteSettings->about_amenities) ? json_decode($siteSettings->about_amenities, true) : $siteSettings->about_amenities;
+        }
+        if (empty($amenities) || !is_array($amenities)) {
+            $amenities = [
+                ['icon' => 'bi-laptop', 'color' => '#0d6efd', 'title' => 'Computer & Coding Labs', 'desc' => 'High-speed internet workstations, coding curricula, and digital projection systems.'],
+                ['icon' => 'bi-flask', 'color' => '#059669', 'title' => 'Science Laboratories', 'desc' => 'Well-ventilated, safely equipped Physics, Chemistry, and Biology practical stations.'],
+                ['icon' => 'bi-book-half', 'color' => '#d97706', 'title' => 'Resource-Rich Library', 'desc' => 'Curated collection of academic books, periodicals, encyclopedias, and quiet reading nooks.'],
+                ['icon' => 'bi-dribbble', 'color' => '#dc2626', 'title' => 'Sports & Play Arena', 'desc' => 'Spacious grounds for football, basketball, cricket, badminton, and early-childhood play.'],
+                ['icon' => 'bi-bus-front', 'color' => '#7c3aed', 'title' => 'Safe School Transport', 'desc' => 'Punctual, attendant-monitored bus routes serving Itahari, Belbari, and adjoining areas.'],
+                ['icon' => 'bi-cup-hot', 'color' => '#0284c7', 'title' => 'Hygienic Canteen & Pure Water', 'desc' => 'Freshly prepared nutritious meals and multi-stage RO purified drinking water facilities.'],
+            ];
+        }
+    @endphp
     <section class="about-section bg-white" id="campus-amenities">
         <div class="container">
             <div class="text-center mb-5" data-aos="fade-up">
@@ -793,60 +825,27 @@
             </div>
 
             <div class="row g-4">
-                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="50">
-                    <div class="facility-card">
-                        <div class="facility-ico-wrap"><i class="bi bi-laptop"></i></div>
-                        <div>
-                            <h6 class="fw-bold text-dark mb-1">Computer & Coding Labs</h6>
-                            <p class="text-muted small mb-0">High-speed internet workstations, coding curricula, and digital projection systems.</p>
+                @foreach($amenities as $amIdx => $am)
+                    @php
+                        $amColor = !empty($am['color']) ? $am['color'] : '#0d6efd';
+                        $amIcon = !empty($am['icon']) ? $am['icon'] : 'bi-stars';
+                        $amTitle = !empty($am['title']) ? $am['title'] : '';
+                        $amDesc = !empty($am['desc']) ? $am['desc'] : '';
+                    @endphp
+                    @if(!empty($amTitle))
+                        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ 50 * ($amIdx + 1) }}">
+                            <div class="facility-card">
+                                <div class="facility-ico-wrap" style="background: {{ $amColor }}15; color: {{ $amColor }};">
+                                    <i class="bi {{ $amIcon }}"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold text-dark mb-1">{{ $amTitle }}</h6>
+                                    <p class="text-muted small mb-0">{{ $amDesc }}</p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="facility-card">
-                        <div class="facility-ico-wrap" style="background: #ecfdf5; color: #059669;"><i class="bi bi-flask"></i></div>
-                        <div>
-                            <h6 class="fw-bold text-dark mb-1">Science Laboratories</h6>
-                            <p class="text-muted small mb-0">Well-ventilated, safely equipped Physics, Chemistry, and Biology practical stations.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="150">
-                    <div class="facility-card">
-                        <div class="facility-ico-wrap" style="background: #fef3c7; color: #d97706;"><i class="bi bi-book-half"></i></div>
-                        <div>
-                            <h6 class="fw-bold text-dark mb-1">Resource-Rich Library</h6>
-                            <p class="text-muted small mb-0">Curated collection of academic books, periodicals, encyclopedias, and quiet reading nooks.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
-                    <div class="facility-card">
-                        <div class="facility-ico-wrap" style="background: #fee2e2; color: #dc2626;"><i class="bi bi-dribbble"></i></div>
-                        <div>
-                            <h6 class="fw-bold text-dark mb-1">Sports & Play Arena</h6>
-                            <p class="text-muted small mb-0">Spacious grounds for football, basketball, cricket, badminton, and early-childhood play.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="250">
-                    <div class="facility-card">
-                        <div class="facility-ico-wrap" style="background: #f3e8ff; color: #7c3aed;"><i class="bi bi-bus-front"></i></div>
-                        <div>
-                            <h6 class="fw-bold text-dark mb-1">Safe School Transport</h6>
-                            <p class="text-muted small mb-0">Punctual, attendant-monitored bus routes serving Itahari, Belbari, and adjoining areas.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
-                    <div class="facility-card">
-                        <div class="facility-ico-wrap" style="background: #e0f2fe; color: #0284c7;"><i class="bi bi-cup-hot"></i></div>
-                        <div>
-                            <h6 class="fw-bold text-dark mb-1">Hygienic Canteen & Pure Water</h6>
-                            <p class="text-muted small mb-0">Freshly prepared nutritious meals and multi-stage RO purified drinking water facilities.</p>
-                        </div>
-                    </div>
-                </div>
+                    @endif
+                @endforeach
             </div>
         </div>
     </section>
@@ -955,23 +954,31 @@
     </section>
 
     {{-- ===== 10. CALL TO ACTION BANNER ===== --}}
+    @php
+        $ctaTitle = !empty($siteSettings->about_cta_title) ? $siteSettings->about_cta_title : 'Join Our Academic Family Today';
+        $ctaSubtitle = !empty($siteSettings->about_cta_subtitle) ? $siteSettings->about_cta_subtitle : 'Give your child the foundation of academic brilliance, moral integrity, and modern capabilities. Admissions are currently welcoming inquiries across all levels.';
+        $ctaBtnText = !empty($siteSettings->about_cta_button_text) ? $siteSettings->about_cta_button_text : 'Apply for Admission';
+        $ctaBtnUrl = !empty($siteSettings->about_cta_button_url) ? $siteSettings->about_cta_button_url : (Route::has('apply') ? route('apply') : url('apply'));
+    @endphp
     <section class="py-5" style="background: #f8fafc;">
         <div class="container">
             <div class="about-cta-banner text-center" data-aos="zoom-in">
                 <span class="badge bg-white text-dark px-3 py-2 rounded-pill fw-bold text-uppercase mb-3" style="font-size: 0.8rem; letter-spacing: 1px;">
                     <i class="bi bi-sparkles text-primary me-1"></i> Start Your Journey
                 </span>
-                <h2 class="display-6 fw-bold mb-3 text-white">Join Our Academic Family Today</h2>
+                <h2 class="display-6 fw-bold mb-3 text-white">{{ $ctaTitle }}</h2>
                 <p class="text-white-50 mx-auto mb-4" style="max-width: 620px; font-size: 1.1rem; line-height: 1.7;">
-                    Give your child the foundation of academic brilliance, moral integrity, and modern capabilities. Admissions are currently welcoming inquiries across all levels.
+                    {{ $ctaSubtitle }}
                 </p>
                 <div class="d-flex flex-wrap justify-content-center gap-3">
-                    <a href="{{ route('apply') }}" class="btn btn-primary btn-lg px-4 py-2.5 rounded-pill fw-bold shadow-sm">
-                        <i class="bi bi-pencil-square me-2"></i> Apply for Admission
+                    <a href="{{ $ctaBtnUrl }}" class="btn btn-primary btn-lg px-4 py-2.5 rounded-pill fw-bold shadow-sm">
+                        <i class="bi bi-pencil-square me-2"></i> {{ $ctaBtnText }}
                     </a>
+                    @if(Route::has('contact'))
                     <a href="{{ route('contact') }}" class="btn btn-outline-light btn-lg px-4 py-2.5 rounded-pill fw-bold">
                         <i class="bi bi-geo-alt me-2"></i> Visit Our Campus
                     </a>
+                    @endif
                 </div>
             </div>
         </div>

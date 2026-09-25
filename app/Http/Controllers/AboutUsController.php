@@ -14,6 +14,15 @@ class AboutUsController extends Controller
 {
     public function create()
     {
+        try {
+            if (!\Illuminate\Support\Facades\Schema::hasTable('about_us_faqs') || !\Illuminate\Support\Facades\Schema::hasColumn('site_settings', 'about_hero_title')) {
+                \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+                Cache::forget('site_settings.current');
+            }
+        } catch (\Throwable $e) {
+            // Silently continue
+        }
+
         $aboutus = AboutUs::first();
         $faqs = AboutUsFaq::orderBy('sort_order')->get();
         $siteSettings = SiteSetting::current();
@@ -70,6 +79,14 @@ class AboutUsController extends Controller
             'about_layout', 'about_principal_name', 'about_principal_designation',
             'about_principal_message', 'about_mission', 'about_vision',
             'about_established_year', 'about_affiliation', 'about_intro',
+            'about_hero_title', 'about_hero_subtitle', 'about_badge_text',
+            'about_story_title', 'about_story_body',
+            'about_stat_1_number', 'about_stat_1_label',
+            'about_stat_2_number', 'about_stat_2_label',
+            'about_stat_3_number', 'about_stat_3_label',
+            'about_stat_4_number', 'about_stat_4_label',
+            'about_cta_title', 'about_cta_subtitle',
+            'about_cta_button_text', 'about_cta_button_url',
         ];
 
         foreach ($fields as $field) {
@@ -84,13 +101,50 @@ class AboutUsController extends Controller
             $settings->about_values = !empty($values) ? json_encode(array_values($values)) : null;
         }
 
+        // Handle 4 core pillars / features (JSON)
+        if ($request->has('about_features')) {
+            $features = [];
+            foreach ($request->about_features as $feat) {
+                if (!empty($feat['title'])) {
+                    $features[] = [
+                        'title' => $feat['title'],
+                        'subtitle' => $feat['subtitle'] ?? '',
+                        'icon' => $feat['icon'] ?? 'bi-star-fill',
+                        'color' => $feat['color'] ?? '#0d6efd',
+                    ];
+                }
+            }
+            $settings->about_features = !empty($features) ? json_encode($features) : null;
+        }
+
+        // Handle amenities / campus facilities (JSON)
+        if ($request->has('about_amenities')) {
+            $amenities = [];
+            foreach ($request->about_amenities as $amenity) {
+                if (!empty($amenity['title'])) {
+                    $amenities[] = [
+                        'title' => $amenity['title'],
+                        'desc' => $amenity['desc'] ?? '',
+                        'icon' => $amenity['icon'] ?? 'bi-check-circle',
+                        'color' => $amenity['color'] ?? '#0d6efd',
+                    ];
+                }
+            }
+            $settings->about_amenities = !empty($amenities) ? json_encode($amenities) : null;
+        }
+
         // Handle image uploads
+        $aboutDir = public_path('backend/images/about');
+        if (!file_exists($aboutDir)) {
+            mkdir($aboutDir, 0755, true);
+        }
+
         $imageFields = ['about_hero_image', 'about_school_image', 'about_principal_image'];
         foreach ($imageFields as $imageField) {
             if ($request->hasFile($imageField)) {
                 $file = $request->file($imageField);
                 $filename = $imageField . '_' . time() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('backend/images/about'), $filename);
+                $file->move($aboutDir, $filename);
                 $settings->$imageField = 'backend/images/about/' . $filename;
             }
         }

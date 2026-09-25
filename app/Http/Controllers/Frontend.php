@@ -72,8 +72,10 @@ class Frontend extends Controller
 
         // Auto-heal missing tables if migrations haven't been run on production
         try {
-            if (!\Illuminate\Support\Facades\Schema::hasTable('about_us_faqs')) {
+            if (!\Illuminate\Support\Facades\Schema::hasTable('about_us_faqs') || !\Illuminate\Support\Facades\Schema::hasColumn('site_settings', 'about_hero_title')) {
                 \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+                \Illuminate\Support\Facades\Cache::forget('site_settings.current');
+                $siteSettings = SiteSetting::current();
             }
         } catch (\Throwable $e) {
             // Silently continue with fallbacks

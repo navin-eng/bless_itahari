@@ -1,44 +1,109 @@
 @extends('backend.pages.layout.master')
-@push('b-title', 'About Us')
+@push('b-title', 'About Us Management')
 
 @section('backend-content')
     @php
         $condition = !is_null($aboutus);
-        $contentAction = $condition ? route('aboutus.update', $aboutus->id) : route('aboutus.store');
         $siteSettings = $siteSettings ?? \App\Models\SiteSetting::current();
-        $currentLayout = $siteSettings->about_layout ?? 'classic';
         $existingValues = $siteSettings->about_values ? json_decode($siteSettings->about_values, true) : [];
+        
+        $features = !empty($siteSettings->about_features) ? json_decode($siteSettings->about_features, true) : [
+            ['title' => 'Child-Centered Care', 'subtitle' => 'Personalized pacing & emotional safety', 'icon' => 'bi-person-hearts', 'color' => '#0d6efd'],
+            ['title' => 'STEM & Practical Labs', 'subtitle' => 'Digital literacy & hands-on science', 'icon' => 'bi-cpu-fill', 'color' => '#10b981'],
+            ['title' => 'Holistic Co-Curriculars', 'subtitle' => 'Sports, public speaking & creative arts', 'icon' => 'bi-trophy-fill', 'color' => '#f59e0b'],
+            ['title' => 'Safe & Caring Campus', 'subtitle' => 'CCTV secured & caring pastoral guidance', 'icon' => 'bi-shield-check', 'color' => '#6366f1'],
+        ];
+
+        $amenities = !empty($siteSettings->about_amenities) ? json_decode($siteSettings->about_amenities, true) : [
+            ['title' => 'Computer & Coding Labs', 'desc' => 'High-speed internet workstations, coding curricula, and digital projection systems.', 'icon' => 'bi-laptop', 'color' => '#0d6efd'],
+            ['title' => 'Science Laboratories', 'desc' => 'Well-ventilated, safely equipped Physics, Chemistry, and Biology practical stations.', 'icon' => 'bi-flask', 'color' => '#059669'],
+            ['title' => 'Resource-Rich Library', 'desc' => 'Curated collection of academic books, periodicals, encyclopedias, and quiet reading nooks.', 'icon' => 'bi-book-half', 'color' => '#d97706'],
+            ['title' => 'Sports & Play Arena', 'desc' => 'Spacious grounds for football, basketball, cricket, badminton, and early-childhood play.', 'icon' => 'bi-dribbble', 'color' => '#dc2626'],
+            ['title' => 'Safe School Transport', 'desc' => 'Punctual, attendant-monitored bus routes serving Itahari, Belbari, and adjoining areas.', 'icon' => 'bi-bus-front', 'color' => '#7c3aed'],
+            ['title' => 'Hygienic Canteen & Pure Water', 'desc' => 'Freshly prepared nutritious meals and multi-stage RO purified drinking water facilities.', 'icon' => 'bi-cup-hot', 'color' => '#0284c7'],
+        ];
     @endphp
 
-    {{-- ===== STRUCTURED CONTENT & LAYOUT SELECTOR ===== --}}
-    {{-- ===== STRUCTURED CONTENT & LAYOUT SELECTOR ===== --}}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="mb-1 fw-bold">About Us Management</h3>
+            <p class="text-muted mb-0">Control every section of the public About Us page — headings, stories, stats, pillars, leadership, facilities & FAQs.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url('about/us') }}" target="_blank" class="btn btn-outline-secondary px-3">
+                <i class="bi bi-box-arrow-up-right me-1"></i> View Live Page
+            </a>
+            <button type="submit" form="aboutContentForm" class="btn btn-primary px-4 fw-semibold shadow-sm">
+                <i class="bi bi-check2-circle me-1"></i> Save All Changes
+            </button>
+        </div>
+    </div>
+
+    @if (isset($errors) && $errors->any())
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm mb-4" role="alert">
+            <div class="fw-bold mb-1"><i class="bi bi-exclamation-triangle-fill me-2"></i>Please fix the following issues:</div>
+            <ul class="mb-0 ps-3">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    {{-- ===== ABOUT US COMPREHENSIVE CONTROL PANEL ===== --}}
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white border-bottom pt-4 pb-0 px-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
-                    <h4 class="mb-1">About Us Settings</h4>
-                    <p class="text-muted mb-0">Manage all content and layout options for your About Us page here.</p>
-                </div>
-            </div>
-            
-            <ul class="nav nav-tabs border-bottom-0" id="aboutUsTabs" role="tablist">
+        <div class="card-header bg-white border-bottom pt-3 pb-0 px-3 px-md-4">
+            <ul class="nav nav-tabs border-bottom-0 flex-nowrap overflow-auto" id="aboutUsTabs" role="tablist" style="gap: 5px;">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active fw-semibold" id="tab-hero" data-bs-toggle="tab" data-bs-target="#pane-hero" type="button" role="tab"><i class="bi bi-image me-1"></i> Identity & Intro</button>
+                    <button class="nav-link active fw-semibold text-nowrap" id="tab-hero" data-bs-toggle="tab" data-bs-target="#pane-hero" type="button" role="tab">
+                        <i class="bi bi-image me-1 text-primary"></i> 1. Hero & Header
+                    </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link fw-semibold" id="tab-mission" data-bs-toggle="tab" data-bs-target="#pane-mission" type="button" role="tab"><i class="bi bi-bullseye me-1"></i> Mission & Values</button>
+                    <button class="nav-link fw-semibold text-nowrap" id="tab-story" data-bs-toggle="tab" data-bs-target="#pane-story" type="button" role="tab">
+                        <i class="bi bi-building me-1 text-info"></i> 2. Story & Heritage
+                    </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link fw-semibold" id="tab-principal" data-bs-toggle="tab" data-bs-target="#pane-principal" type="button" role="tab"><i class="bi bi-person-badge me-1"></i> Principal</button>
+                    <button class="nav-link fw-semibold text-nowrap" id="tab-mission" data-bs-toggle="tab" data-bs-target="#pane-mission" type="button" role="tab">
+                        <i class="bi bi-bullseye me-1 text-danger"></i> 3. Mission & Values
+                    </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link fw-semibold" id="tab-content" data-bs-toggle="tab" data-bs-target="#pane-content" type="button" role="tab"><i class="bi bi-file-text me-1"></i> Rich Content</button>
+                    <button class="nav-link fw-semibold text-nowrap" id="tab-pillars" data-bs-toggle="tab" data-bs-target="#pane-pillars" type="button" role="tab">
+                        <i class="bi bi-grid-3x3-gap-fill me-1 text-success"></i> 4. Core Pillars
+                    </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link fw-semibold" id="tab-layout" data-bs-toggle="tab" data-bs-target="#pane-layout" type="button" role="tab"><i class="bi bi-grid-1x2 me-1"></i> Layout</button>
+                    <button class="nav-link fw-semibold text-nowrap" id="tab-stats" data-bs-toggle="tab" data-bs-target="#pane-stats" type="button" role="tab">
+                        <i class="bi bi-123 me-1 text-warning"></i> 5. Stats Counters
+                    </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link fw-semibold" id="tab-faq" data-bs-toggle="tab" data-bs-target="#pane-faq" type="button" role="tab"><i class="bi bi-patch-question me-1"></i> FAQs</button>
+                    <button class="nav-link fw-semibold text-nowrap" id="tab-amenities" data-bs-toggle="tab" data-bs-target="#pane-amenities" type="button" role="tab">
+                        <i class="bi bi-shield-check me-1 text-primary"></i> 6. Facilities
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link fw-semibold text-nowrap" id="tab-principal" data-bs-toggle="tab" data-bs-target="#pane-principal" type="button" role="tab">
+                        <i class="bi bi-person-badge me-1 text-secondary"></i> 7. Leadership
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link fw-semibold text-nowrap" id="tab-cta" data-bs-toggle="tab" data-bs-target="#pane-cta" type="button" role="tab">
+                        <i class="bi bi-megaphone me-1 text-danger"></i> 8. CTA Banner
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link fw-semibold text-nowrap" id="tab-content" data-bs-toggle="tab" data-bs-target="#pane-content" type="button" role="tab">
+                        <i class="bi bi-file-text me-1 text-dark"></i> 9. Rich Article
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link fw-semibold text-nowrap" id="tab-faq" data-bs-toggle="tab" data-bs-target="#pane-faq" type="button" role="tab">
+                        <i class="bi bi-patch-question me-1 text-success"></i> 10. FAQs
+                    </button>
                 </li>
             </ul>
         </div>
@@ -49,118 +114,369 @@
                 
                 <div class="tab-content" id="aboutUsTabsContent">
                     
-                    {{-- Tab 1: Hero & Intro --}}
+                    {{-- ─── TAB 1: HERO & HEADER ─────────────────────────── --}}
                     <div class="tab-pane fade show active" id="pane-hero" role="tabpanel">
+                        <div class="p-3 bg-light rounded-3 mb-4 border-start border-primary border-4">
+                            <h6 class="fw-bold mb-1 text-primary"><i class="bi bi-info-circle me-1"></i> Hero Section Settings</h6>
+                            <small class="text-muted">This is the top banner visitors see when they open the About Us page.</small>
+                        </div>
+
                         <div class="row g-4">
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">Hero Banner Image</label>
-                                @if($siteSettings->about_hero_image)
-                                    <div class="mb-2">
-                                        <img src="{{ asset($siteSettings->about_hero_image) }}" style="max-height: 120px; border-radius: 10px;" alt="Hero">
-                                        <div class="form-check mt-1">
+                                <label class="form-label fw-bold">Hero Top Badge Text</label>
+                                <input type="text" name="about_badge_text" class="form-control" placeholder="e.g. Est. 2061 • Quality Education You Can Trust" value="{{ old('about_badge_text', $siteSettings->about_badge_text) }}">
+                                <small class="text-muted">Displays in the small rounded badge right above the main title.</small>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Hero Background Image (Optional)</label>
+                                @if($siteSettings->about_hero_image && file_exists(public_path($siteSettings->about_hero_image)))
+                                    <div class="mb-2 d-flex align-items-center gap-3">
+                                        <img src="{{ asset($siteSettings->about_hero_image) }}" style="max-height: 80px; border-radius: 8px; border: 1px solid #ddd;" alt="Hero">
+                                        <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="remove_about_hero_image" value="1" id="rmHero">
-                                            <label class="form-check-label text-danger small" for="rmHero">Remove image</label>
+                                            <label class="form-check-label text-danger small fw-semibold" for="rmHero">Remove image</label>
                                         </div>
                                     </div>
                                 @endif
                                 <input type="file" name="about_hero_image" class="form-control" accept="image/*">
+                                <small class="text-muted">Recommended: High-resolution landscape photo (1920x800px).</small>
                             </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-bold">Hero Main Heading</label>
+                                <textarea name="about_hero_title" class="form-control" rows="2" placeholder="Fostering Curiosity, Character & Academic Excellence">{{ old('about_hero_title', $siteSettings->about_hero_title) }}</textarea>
+                                <small class="text-muted">Leave empty to use the default heading.</small>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-bold">Hero Subheading</label>
+                                <textarea name="about_hero_subtitle" class="form-control" rows="3" placeholder="At Bless Itahari, we empower students from Playgroup to Grade 12...">{{ old('about_hero_subtitle', $siteSettings->about_hero_subtitle) }}</textarea>
+                                <small class="text-muted">Descriptive subtitle shown beneath the hero heading.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- ─── TAB 2: STORY & HERITAGE ───────────────────────── --}}
+                    <div class="tab-pane fade" id="pane-story" role="tabpanel">
+                        <div class="p-3 bg-light rounded-3 mb-4 border-start border-info border-4">
+                            <h6 class="fw-bold mb-1 text-info"><i class="bi bi-buildings me-1"></i> School Story & Heritage</h6>
+                            <small class="text-muted">Manage the narrative story, campus image, and foundational history.</small>
+                        </div>
+
+                        <div class="row g-4">
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">School / Campus Photo</label>
-                                @if($siteSettings->about_school_image)
-                                    <div class="mb-2">
-                                        <img src="{{ asset($siteSettings->about_school_image) }}" style="max-height: 120px; border-radius: 10px;" alt="School">
-                                        <div class="form-check mt-1">
+                                <label class="form-label fw-bold">Section Story Headline</label>
+                                <input type="text" name="about_story_title" class="form-control" placeholder="A Premier Educational Sanctuary in Itahari, Sunsari" value="{{ old('about_story_title', $siteSettings->about_story_title) }}">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Established Year</label>
+                                <input type="text" name="about_established_year" class="form-control" placeholder="e.g. 2061 B.S. (2004 A.D.)" value="{{ old('about_established_year', $siteSettings->about_established_year) }}">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Affiliation Board</label>
+                                <input type="text" name="about_affiliation" class="form-control" placeholder="e.g. CDC Nepal & NEB" value="{{ old('about_affiliation', $siteSettings->about_affiliation) }}">
+                            </div>
+
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold">Campus / School Photo</label>
+                                @if($siteSettings->about_school_image && file_exists(public_path($siteSettings->about_school_image)))
+                                    <div class="mb-2 d-flex align-items-center gap-3">
+                                        <img src="{{ asset($siteSettings->about_school_image) }}" style="max-height: 100px; border-radius: 8px; border: 1px solid #ddd;" alt="School">
+                                        <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="remove_about_school_image" value="1" id="rmSchool">
-                                            <label class="form-check-label text-danger small" for="rmSchool">Remove image</label>
+                                            <label class="form-check-label text-danger small fw-semibold" for="rmSchool">Remove image</label>
                                         </div>
                                     </div>
                                 @endif
                                 <input type="file" name="about_school_image" class="form-control" accept="image/*">
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Established Year</label>
-                                <input type="text" name="about_established_year" class="form-control" placeholder="e.g. 1993 A.D. (2050 B.S.)" value="{{ $siteSettings->about_established_year }}">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Affiliation</label>
-                                <input type="text" name="about_affiliation" class="form-control" placeholder="e.g. NEB Nepal" value="{{ $siteSettings->about_affiliation }}">
-                            </div>
+
                             <div class="col-12">
-                                <label class="form-label fw-semibold">Introduction Paragraph</label>
-                                <textarea name="about_intro" class="form-control" rows="4" placeholder="Write a brief introduction about your school...">{{ $siteSettings->about_intro }}</textarea>
+                                <label class="form-label fw-bold">Introduction Lead Paragraph</label>
+                                <textarea name="about_intro" class="form-control" rows="3" placeholder="Founded with a profound commitment to academic distinction, moral development...">{{ old('about_intro', $siteSettings->about_intro) }}</textarea>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-bold">Extended Narrative Paragraph</label>
+                                <textarea name="about_story_body" class="form-control" rows="4" placeholder="Bless Itahari combines experiential learning pedagogy, dedicated teacher mentorship...">{{ old('about_story_body', $siteSettings->about_story_body) }}</textarea>
                             </div>
                         </div>
                     </div>
 
-                    {{-- Tab 2: Mission & Values --}}
+                    {{-- ─── TAB 3: MISSION, VISION & VALUES ───────────────── --}}
                     <div class="tab-pane fade" id="pane-mission" role="tabpanel">
+                        <div class="p-3 bg-light rounded-3 mb-4 border-start border-danger border-4">
+                            <h6 class="fw-bold mb-1 text-danger"><i class="bi bi-compass me-1"></i> Vision, Mission & Values</h6>
+                            <small class="text-muted">Set your institution's guiding principles and core moral anchors.</small>
+                        </div>
+
                         <div class="row g-4">
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">Mission Statement</label>
-                                <textarea name="about_mission" class="form-control" rows="5" placeholder="Our mission is to...">{{ $siteSettings->about_mission }}</textarea>
+                                <label class="form-label fw-bold">Our Vision Statement</label>
+                                <textarea name="about_vision" class="form-control" rows="5" placeholder="To stand as an exemplary center of academic and ethical excellence...">{{ old('about_vision', $siteSettings->about_vision) }}</textarea>
                             </div>
+
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">Vision Statement</label>
-                                <textarea name="about_vision" class="form-control" rows="5" placeholder="Our vision is to...">{{ $siteSettings->about_vision }}</textarea>
+                                <label class="form-label fw-bold">Our Mission Statement</label>
+                                <textarea name="about_mission" class="form-control" rows="5" placeholder="To impart comprehensive, inclusive, and learner-centered education...">{{ old('about_mission', $siteSettings->about_mission) }}</textarea>
                             </div>
+
                             <div class="col-12">
-                                <label class="form-label fw-semibold">Core Values</label>
+                                <label class="form-label fw-bold">Core Values (संस्कार र मर्यादा)</label>
+                                <p class="text-muted small mb-2">Add each core value below with title and translation or explanation.</p>
                                 <div id="valuesContainer">
                                     @forelse($existingValues as $i => $val)
                                         <div class="input-group mb-2 value-row">
                                             <span class="input-group-text"><i class="bi bi-star-fill text-warning"></i></span>
-                                            <input type="text" name="about_values[]" class="form-control" value="{{ $val }}" placeholder="e.g. Discipline">
+                                            <input type="text" name="about_values[]" class="form-control" value="{{ $val }}" placeholder="e.g. Integrity (सत्यता): Honesty in thought, speech, and pursuit.">
                                             <button type="button" class="btn btn-outline-danger" onclick="this.closest('.value-row').remove()"><i class="bi bi-trash"></i></button>
                                         </div>
                                     @empty
                                         <div class="input-group mb-2 value-row">
                                             <span class="input-group-text"><i class="bi bi-star-fill text-warning"></i></span>
-                                            <input type="text" name="about_values[]" class="form-control" placeholder="e.g. Discipline">
+                                            <input type="text" name="about_values[]" class="form-control" value="Integrity (सत्यता): Honesty in thought, speech, and academic pursuit." placeholder="e.g. Integrity">
+                                            <button type="button" class="btn btn-outline-danger" onclick="this.closest('.value-row').remove()"><i class="bi bi-trash"></i></button>
+                                        </div>
+                                        <div class="input-group mb-2 value-row">
+                                            <span class="input-group-text"><i class="bi bi-star-fill text-warning"></i></span>
+                                            <input type="text" name="about_values[]" class="form-control" value="Discipline (अनुशासन): Punctuality, self-regulation, and mutual respect." placeholder="e.g. Discipline">
+                                            <button type="button" class="btn btn-outline-danger" onclick="this.closest('.value-row').remove()"><i class="bi bi-trash"></i></button>
+                                        </div>
+                                        <div class="input-group mb-2 value-row">
+                                            <span class="input-group-text"><i class="bi bi-star-fill text-warning"></i></span>
+                                            <input type="text" name="about_values[]" class="form-control" value="Innovation (सिर्जनशीलता): Creative questioning and modern practical solutions." placeholder="e.g. Innovation">
+                                            <button type="button" class="btn btn-outline-danger" onclick="this.closest('.value-row').remove()"><i class="bi bi-trash"></i></button>
+                                        </div>
+                                        <div class="input-group mb-2 value-row">
+                                            <span class="input-group-text"><i class="bi bi-star-fill text-warning"></i></span>
+                                            <input type="text" name="about_values[]" class="form-control" value="Empathy (सद्भाव): Kindness, community responsibility, and mutual aid." placeholder="e.g. Empathy">
                                             <button type="button" class="btn btn-outline-danger" onclick="this.closest('.value-row').remove()"><i class="bi bi-trash"></i></button>
                                         </div>
                                     @endforelse
                                 </div>
                                 <button type="button" class="btn btn-outline-success btn-sm mt-2" id="addValueBtn">
-                                    <i class="bi bi-plus-lg me-1"></i> Add Value
+                                    <i class="bi bi-plus-lg me-1"></i> Add Another Core Value
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    {{-- Tab 3: Principal's Message --}}
+                    {{-- ─── TAB 4: 4 CORE PILLARS ─────────────────────────── --}}
+                    <div class="tab-pane fade" id="pane-pillars" role="tabpanel">
+                        <div class="p-3 bg-light rounded-3 mb-4 border-start border-success border-4">
+                            <h6 class="fw-bold mb-1 text-success"><i class="bi bi-grid-3x3-gap-fill me-1"></i> 4 Core Pillars of Excellence</h6>
+                            <small class="text-muted">These 4 pillars appear directly next to the school image on the About Us page.</small>
+                        </div>
+
+                        <div class="row g-4">
+                            @foreach($features as $idx => $feat)
+                                <div class="col-md-6">
+                                    <div class="card border rounded-3 p-3 h-100 bg-white shadow-sm">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1 rounded-pill">Pillar #{{ $idx + 1 }}</span>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <small class="text-muted">Color:</small>
+                                                <input type="color" name="about_features[{{ $idx }}][color]" value="{{ $feat['color'] ?? '#0d6efd' }}" class="form-control form-control-color p-0 border-0" style="width: 32px; height: 32px;">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold small">Bootstrap Icon Class</label>
+                                            <div class="input-group input-group-sm">
+                                                <span class="input-group-text"><i class="bi {{ $feat['icon'] ?? 'bi-star-fill' }}"></i></span>
+                                                <input type="text" name="about_features[{{ $idx }}][icon]" class="form-control" value="{{ $feat['icon'] ?? 'bi-star-fill' }}" placeholder="e.g. bi-person-hearts">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold small">Pillar Title</label>
+                                            <input type="text" name="about_features[{{ $idx }}][title]" class="form-control" value="{{ $feat['title'] ?? '' }}" placeholder="e.g. Child-Centered Care">
+                                        </div>
+                                        <div>
+                                            <label class="form-label fw-semibold small">Pillar Subtitle / Description</label>
+                                            <input type="text" name="about_features[{{ $idx }}][subtitle]" class="form-control" value="{{ $feat['subtitle'] ?? '' }}" placeholder="e.g. Personalized pacing & emotional safety">
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    {{-- ─── TAB 5: STATISTICAL MILESTONES ─────────────────── --}}
+                    <div class="tab-pane fade" id="pane-stats" role="tabpanel">
+                        <div class="p-3 bg-light rounded-3 mb-4 border-start border-warning border-4">
+                            <h6 class="fw-bold mb-1 text-warning"><i class="bi bi-123 me-1"></i> Key Statistics & Counters</h6>
+                            <small class="text-muted">These prominent counter badges showcase your institution's heritage, size, and pass rates.</small>
+                        </div>
+
+                        <div class="row g-4">
+                            {{-- Stat 1 --}}
+                            <div class="col-md-6 col-lg-3">
+                                <div class="card border rounded-3 p-3 bg-white shadow-sm h-100">
+                                    <span class="badge bg-warning bg-opacity-15 text-warning fw-bold mb-2 align-self-start">Counter 1</span>
+                                    <label class="form-label fw-semibold small">Number / Stat</label>
+                                    <input type="text" name="about_stat_1_number" class="form-control mb-2" value="{{ old('about_stat_1_number', $siteSettings->about_stat_1_number ?: '30+') }}" placeholder="e.g. 30+">
+                                    <label class="form-label fw-semibold small">Label</label>
+                                    <input type="text" name="about_stat_1_label" class="form-control" value="{{ old('about_stat_1_label', $siteSettings->about_stat_1_label ?: 'Years of Heritage') }}" placeholder="e.g. Years of Heritage">
+                                </div>
+                            </div>
+
+                            {{-- Stat 2 --}}
+                            <div class="col-md-6 col-lg-3">
+                                <div class="card border rounded-3 p-3 bg-white shadow-sm h-100">
+                                    <span class="badge bg-primary bg-opacity-15 text-primary fw-bold mb-2 align-self-start">Counter 2</span>
+                                    <label class="form-label fw-semibold small">Number / Stat</label>
+                                    <input type="text" name="about_stat_2_number" class="form-control mb-2" value="{{ old('about_stat_2_number', $siteSettings->about_stat_2_number ?: '1,200+') }}" placeholder="e.g. 1,200+">
+                                    <label class="form-label fw-semibold small">Label</label>
+                                    <input type="text" name="about_stat_2_label" class="form-control" value="{{ old('about_stat_2_label', $siteSettings->about_stat_2_label ?: 'Enrolled Students') }}" placeholder="e.g. Enrolled Students">
+                                </div>
+                            </div>
+
+                            {{-- Stat 3 --}}
+                            <div class="col-md-6 col-lg-3">
+                                <div class="card border rounded-3 p-3 bg-white shadow-sm h-100">
+                                    <span class="badge bg-success bg-opacity-15 text-success fw-bold mb-2 align-self-start">Counter 3</span>
+                                    <label class="form-label fw-semibold small">Number / Stat</label>
+                                    <input type="text" name="about_stat_3_number" class="form-control mb-2" value="{{ old('about_stat_3_number', $siteSettings->about_stat_3_number ?: '100%') }}" placeholder="e.g. 100%">
+                                    <label class="form-label fw-semibold small">Label</label>
+                                    <input type="text" name="about_stat_3_label" class="form-control" value="{{ old('about_stat_3_label', $siteSettings->about_stat_3_label ?: 'SEE & NEB Success') }}" placeholder="e.g. SEE & NEB Success">
+                                </div>
+                            </div>
+
+                            {{-- Stat 4 --}}
+                            <div class="col-md-6 col-lg-3">
+                                <div class="card border rounded-3 p-3 bg-white shadow-sm h-100">
+                                    <span class="badge bg-info bg-opacity-15 text-info fw-bold mb-2 align-self-start">Counter 4</span>
+                                    <label class="form-label fw-semibold small">Number / Stat</label>
+                                    <input type="text" name="about_stat_4_number" class="form-control mb-2" value="{{ old('about_stat_4_number', $siteSettings->about_stat_4_number ?: '45+') }}" placeholder="e.g. 45+">
+                                    <label class="form-label fw-semibold small">Label</label>
+                                    <input type="text" name="about_stat_4_label" class="form-control" value="{{ old('about_stat_4_label', $siteSettings->about_stat_4_label ?: 'Qualified Teachers') }}" placeholder="e.g. Qualified Teachers">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- ─── TAB 6: CAMPUS AMENITIES & FACILITIES ──────────── --}}
+                    <div class="tab-pane fade" id="pane-amenities" role="tabpanel">
+                        <div class="p-3 bg-light rounded-3 mb-4 border-start border-primary border-4">
+                            <h6 class="fw-bold mb-1 text-primary"><i class="bi bi-shield-check me-1"></i> Campus Amenities & Infrastructure</h6>
+                            <small class="text-muted">Customize the 6 facility highlights on the About Us page.</small>
+                        </div>
+
+                        <div class="row g-4">
+                            @foreach($amenities as $idx => $amenity)
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="card border rounded-3 p-3 h-100 bg-white shadow-sm">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="badge bg-light text-dark border px-2 py-1">Facility #{{ $idx + 1 }}</span>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <small class="text-muted">Color:</small>
+                                                <input type="color" name="about_amenities[{{ $idx }}][color]" value="{{ $amenity['color'] ?? '#0d6efd' }}" class="form-control form-control-color p-0 border-0" style="width: 28px; height: 28px;">
+                                            </div>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label fw-semibold small">Icon Class</label>
+                                            <div class="input-group input-group-sm">
+                                                <span class="input-group-text"><i class="bi {{ $amenity['icon'] ?? 'bi-check-circle' }}"></i></span>
+                                                <input type="text" name="about_amenities[{{ $idx }}][icon]" class="form-control" value="{{ $amenity['icon'] ?? 'bi-check-circle' }}">
+                                            </div>
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label fw-semibold small">Facility Title</label>
+                                            <input type="text" name="about_amenities[{{ $idx }}][title]" class="form-control form-control-sm" value="{{ $amenity['title'] ?? '' }}">
+                                        </div>
+                                        <div>
+                                            <label class="form-label fw-semibold small">Description</label>
+                                            <textarea name="about_amenities[{{ $idx }}][desc]" class="form-control form-control-sm" rows="2">{{ $amenity['desc'] ?? '' }}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    {{-- ─── TAB 7: LEADERSHIP & PRINCIPAL ─────────────────── --}}
                     <div class="tab-pane fade" id="pane-principal" role="tabpanel">
+                        <div class="p-3 bg-light rounded-3 mb-4 border-start border-secondary border-4 d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="fw-bold mb-1 text-dark"><i class="bi bi-person-badge me-1"></i> Leadership Section</h6>
+                                <small class="text-muted">Manage the default principal quote and view multi-leader messages.</small>
+                            </div>
+                            <a href="{{ route('college_message.table') }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-people me-1"></i> Open All Leadership Messages
+                            </a>
+                        </div>
+
                         <div class="row g-4">
                             <div class="col-md-4">
-                                <label class="form-label fw-semibold">Photo</label>
-                                @if($siteSettings->about_principal_image)
-                                    <div class="mb-2">
-                                        <img src="{{ asset($siteSettings->about_principal_image) }}" style="max-height: 100px; border-radius: 50%;" alt="Principal">
-                                        <div class="form-check mt-1">
+                                <label class="form-label fw-bold">Principal Photo</label>
+                                @if($siteSettings->about_principal_image && file_exists(public_path($siteSettings->about_principal_image)))
+                                    <div class="mb-2 d-flex align-items-center gap-3">
+                                        <img src="{{ asset($siteSettings->about_principal_image) }}" style="max-height: 80px; width: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #ddd;" alt="Principal">
+                                        <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="remove_about_principal_image" value="1" id="rmPrincipal">
-                                            <label class="form-check-label text-danger small" for="rmPrincipal">Remove</label>
+                                            <label class="form-check-label text-danger small fw-semibold" for="rmPrincipal">Remove</label>
                                         </div>
                                     </div>
                                 @endif
                                 <input type="file" name="about_principal_image" class="form-control" accept="image/*">
                             </div>
+
                             <div class="col-md-4">
-                                <label class="form-label fw-semibold">Full Name</label>
-                                <input type="text" name="about_principal_name" class="form-control" placeholder="e.g. Mr. Ram Bahadur" value="{{ $siteSettings->about_principal_name }}">
+                                <label class="form-label fw-bold">Principal Full Name</label>
+                                <input type="text" name="about_principal_name" class="form-control" placeholder="e.g. Mr. Ramesh Koirala" value="{{ old('about_principal_name', $siteSettings->about_principal_name) }}">
                             </div>
+
                             <div class="col-md-4">
-                                <label class="form-label fw-semibold">Designation</label>
-                                <input type="text" name="about_principal_designation" class="form-control" placeholder="e.g. Principal" value="{{ $siteSettings->about_principal_designation }}">
+                                <label class="form-label fw-bold">Designation</label>
+                                <input type="text" name="about_principal_designation" class="form-control" placeholder="e.g. Principal / Campus Chief" value="{{ old('about_principal_designation', $siteSettings->about_principal_designation) }}">
                             </div>
+
                             <div class="col-12">
-                                <label class="form-label fw-semibold">Message / Quote</label>
-                                <textarea name="about_principal_message" class="form-control" rows="5" placeholder="Write the principal's message here...">{{ $siteSettings->about_principal_message }}</textarea>
+                                <label class="form-label fw-bold">Principal Message / Quote</label>
+                                <textarea name="about_principal_message" class="form-control" rows="5" placeholder="Write the principal's message here...">{{ old('about_principal_message', $siteSettings->about_principal_message) }}</textarea>
                             </div>
                         </div>
                     </div>
 
-                    {{-- Tab 4: Rich Content --}}
+                    {{-- ─── TAB 8: CALL TO ACTION BANNER ──────────────────── --}}
+                    <div class="tab-pane fade" id="pane-cta" role="tabpanel">
+                        <div class="p-3 bg-light rounded-3 mb-4 border-start border-danger border-4">
+                            <h6 class="fw-bold mb-1 text-danger"><i class="bi bi-megaphone me-1"></i> Bottom Call-to-Action (CTA) Banner</h6>
+                            <small class="text-muted">Customize the closing invitation banner at the bottom of the page.</small>
+                        </div>
+
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">CTA Banner Heading</label>
+                                <input type="text" name="about_cta_title" class="form-control" placeholder="Join Our Academic Family Today" value="{{ old('about_cta_title', $siteSettings->about_cta_title ?: 'Join Our Academic Family Today') }}">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Primary Button Text</label>
+                                <input type="text" name="about_cta_button_text" class="form-control" placeholder="Apply for Admission" value="{{ old('about_cta_button_text', $siteSettings->about_cta_button_text ?: 'Apply for Admission') }}">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Primary Button URL</label>
+                                <input type="text" name="about_cta_button_url" class="form-control" placeholder="/apply" value="{{ old('about_cta_button_url', $siteSettings->about_cta_button_url ?: '/apply') }}">
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-bold">CTA Subtitle / Paragraph</label>
+                                <textarea name="about_cta_subtitle" class="form-control" rows="3" placeholder="Give your child the foundation of academic brilliance...">{{ old('about_cta_subtitle', $siteSettings->about_cta_subtitle ?: 'Give your child the foundation of academic brilliance, moral integrity, and modern capabilities. Admissions are currently welcoming inquiries across all levels.') }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- ─── TAB 9: SUMMERNOTE RICH ARTICLE ─────────────────── --}}
                     <div class="tab-pane fade" id="pane-content" role="tabpanel">
+                        <div class="p-3 bg-light rounded-3 mb-4 border-start border-dark border-4">
+                            <h6 class="fw-bold mb-1 text-dark"><i class="bi bi-file-text me-1"></i> Additional Custom Rich Article</h6>
+                            <small class="text-muted">Optional detailed article or custom institutional history rendered cleanly under the amenities section.</small>
+                        </div>
+
                         <div class="editor-workspace border rounded-3 p-3 bg-light">
                             <div class="editor-toolbar-row d-flex justify-content-between align-items-center mb-3">
                                 <div class="editor-mode-switch d-flex gap-2">
@@ -169,11 +485,6 @@
                                     </button>
                                     <button type="button" class="btn btn-outline-dark btn-sm" id="htmlEditorBtn">
                                         <i class="bi bi-code-square"></i> HTML Source
-                                    </button>
-                                </div>
-                                <div class="editor-action-switch">
-                                    <button type="button" class="btn btn-outline-secondary btn-sm" id="loadTemplateBtn">
-                                        <i class="bi bi-magic"></i> Insert Template
                                     </button>
                                 </div>
                             </div>
@@ -185,66 +496,36 @@
 
                                 <div id="htmlEditorWrap" class="d-none p-3">
                                     <label class="form-label fw-semibold mb-2">Raw HTML Source</label>
-                                    <textarea id="htmlSourceEditor" class="form-control editor-code-surface border-0" rows="18" spellcheck="false" style="background: #f8f9fa;">{{ old('desc', $aboutus->desc ?? '') }}</textarea>
-                                    <small class="text-muted d-block mt-2">Paste complete HTML, inline styles, embed blocks, or custom sections here.</small>
+                                    <textarea id="htmlSourceEditor" class="form-control editor-code-surface border-0" rows="16" spellcheck="false" style="background: #f8f9fa;">{{ old('desc', $aboutus->desc ?? '') }}</textarea>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {{-- Tab 5: Layout --}}
-                    <div class="tab-pane fade" id="pane-layout" role="tabpanel">
-                        <h5 class="fw-bold mb-3"><i class="bi bi-grid-1x2 me-2"></i> Choose Page Layout</h5>
-                        <p class="text-muted mb-4">Select how you want all the data you entered to be presented to visitors.</p>
-                        
-                        <div class="row g-3">
-                            @php
-                                $currentLayout = old('about_layout', $siteSettings->about_layout ?? 'classic');
-                                $layouts = [
-                                    'classic' => ['label' => 'Classic', 'icon' => 'bi-layout-text-sidebar-reverse', 'desc' => 'Traditional top-down: hero → intro → mission/vision → principal → content'],
-                                    'modern' => ['label' => 'Modern Split', 'icon' => 'bi-layout-split', 'desc' => 'Full-width hero → two-column intro → gradient cards → principal spotlight'],
-                                    'timeline' => ['label' => 'Timeline', 'icon' => 'bi-clock-history', 'desc' => 'Vertical timeline with milestone nodes and alternating content blocks'],
-                                    'magazine' => ['label' => 'Magazine', 'icon' => 'bi-newspaper', 'desc' => 'Editorial style: bold hero → pull-quote → 3-column values grid'],
-                                ];
-                            @endphp
-                            @foreach($layouts as $key => $layout)
-                                <div class="col-lg-3 col-md-6">
-                                    <label class="layout-card-selector {{ $currentLayout === $key ? 'active' : '' }}" for="layout_{{ $key }}">
-                                        <input type="radio" name="about_layout" id="layout_{{ $key }}" value="{{ $key }}"
-                                               {{ $currentLayout === $key ? 'checked' : '' }} class="d-none layout-radio">
-                                        <div class="layout-card-inner">
-                                            <i class="bi {{ $layout['icon'] }} layout-card-icon"></i>
-                                            <strong>{{ $layout['label'] }}</strong>
-                                            <small class="text-muted d-block mt-1">{{ $layout['desc'] }}</small>
-                                        </div>
-                                    </label>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-
-                    {{-- Tab 6: Manage FAQs --}}
+                    {{-- ─── TAB 10: FAQS MANAGER ──────────────────────────── --}}
                     <div class="tab-pane fade" id="pane-faq" role="tabpanel">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <div>
-                                <h5 class="fw-bold mb-1"><i class="bi bi-patch-question me-2"></i> Manage FAQs</h5>
-                                <p class="text-muted mb-0">These FAQs appear on the public About Us page for students. You can add, edit, delete, hide, and show them here.</p>
+                                <h5 class="fw-bold mb-1"><i class="bi bi-patch-question me-2 text-success"></i> Manage About Us FAQs</h5>
+                                <p class="text-muted mb-0">These FAQs appear inside the modern accordion on the About Us page.</p>
                             </div>
-                            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addFaqModal">+ Add FAQ</button>
+                            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addFaqModal">
+                                <i class="bi bi-plus-lg me-1"></i> Add FAQ
+                            </button>
                         </div>
 
                         @forelse($faqs as $faq)
                             @if($loop->first)
                                 <div class="table-responsive">
-                                    <table class="table table-hover align-middle">
+                                    <table class="table table-hover align-middle border">
                                         <thead class="table-light">
                                             <tr>
-                                                <th style="width: 70px;">#</th>
+                                                <th style="width: 50px;">#</th>
                                                 <th>Question</th>
                                                 <th>Answer</th>
-                                                <th style="width: 90px;">Order</th>
-                                                <th style="width: 110px;">Status</th>
-                                                <th style="width: 260px;">Actions</th>
+                                                <th style="width: 80px;">Order</th>
+                                                <th style="width: 100px;">Status</th>
+                                                <th style="width: 220px;">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -252,7 +533,7 @@
                                             <tr>
                                                 <td>{{ $faq->id }}</td>
                                                 <td class="fw-semibold">{{ $faq->question }}</td>
-                                                <td>{{ \Illuminate\Support\Str::limit($faq->answer, 120) }}</td>
+                                                <td>{{ \Illuminate\Support\Str::limit($faq->answer, 110) }}</td>
                                                 <td>{{ $faq->sort_order }}</td>
                                                 <td>
                                                     <span class="badge {{ $faq->status ? 'bg-success' : 'bg-secondary' }}">
@@ -260,12 +541,16 @@
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <div class="d-flex flex-wrap gap-2">
-                                                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editFaqModal{{ $faq->id }}">Edit</button>
+                                                    <div class="d-flex gap-2">
+                                                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editFaqModal{{ $faq->id }}">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
                                                         <a href="{{ route('aboutus.faq.status', $faq->id) }}" class="btn btn-sm {{ $faq->status ? 'btn-outline-warning' : 'btn-outline-success' }}">
                                                             {{ $faq->status ? 'Hide' : 'Show' }}
                                                         </a>
-                                                        <a href="{{ route('aboutus.faq.destroy', $faq->id) }}" class="btn btn-danger btn-sm deleteBtn" data-href="{{ route('aboutus.faq.destroy', $faq->id) }}">Delete</a>
+                                                        <a href="{{ route('aboutus.faq.destroy', $faq->id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Delete this FAQ?')">
+                                                            <i class="bi bi-trash"></i>
+                                                        </a>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -275,58 +560,61 @@
                                 </div>
                             @endif
                         @empty
-                            <p class="text-muted mb-0">No FAQs added yet.</p>
+                            <div class="text-center p-4 bg-light rounded-3">
+                                <i class="bi bi-question-circle text-muted" style="font-size: 2.5rem;"></i>
+                                <p class="text-muted mt-2 mb-0">No custom FAQs created yet. The website will display standard school FAQs.</p>
+                            </div>
                         @endforelse
                     </div>
 
                 </div>
 
-                <div class="mt-4 pt-3 border-top d-flex flex-wrap gap-2">
-                    <button type="submit" class="btn btn-primary px-4">
-                        <i class="bi bi-save me-1"></i> Save All Changes
+                <div class="mt-4 pt-3 border-top d-flex justify-content-between align-items-center">
+                    <button type="submit" class="btn btn-primary px-4 py-2 fw-bold shadow-sm">
+                        <i class="bi bi-check2-circle me-1"></i> Save All About Us Changes
                     </button>
-                    <button type="button" class="btn btn-light border" id="previewFromCurrentModeBtn">
-                        <i class="bi bi-display me-1"></i> Preview Current Content
-                    </button>
+                    <a href="{{ url('about/us') }}" target="_blank" class="btn btn-outline-secondary px-3">
+                        <i class="bi bi-eye me-1"></i> Preview Live Page
+                    </a>
                 </div>
             </form>
         </div>
     </div>
 
-
-
+    {{-- ADD FAQ MODAL --}}
     <div class="modal fade" id="addFaqModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <form action="{{ route('aboutus.faq.store') }}" method="POST">
                     @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title">Add New FAQ</h5>
+                        <h5 class="modal-title fw-bold">Add New FAQ</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label class="form-label">Question</label>
-                            <input type="text" name="question" class="form-control" placeholder="Example: Is Shiksha Sandesh affiliated with NEB Nepal?" required>
+                            <label class="form-label fw-semibold">Question</label>
+                            <input type="text" name="question" class="form-control" placeholder="e.g. What are the school operating hours?" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Answer</label>
-                            <textarea name="answer" class="form-control" rows="6" placeholder="Write a clear answer for students..." required></textarea>
+                            <label class="form-label fw-semibold">Answer</label>
+                            <textarea name="answer" class="form-control" rows="5" placeholder="Write a clear answer..." required></textarea>
                         </div>
                         <div class="mb-0">
-                            <label class="form-label">Display Order</label>
-                            <input type="text" name="sort_order" class="form-control no-spinner" inputmode="numeric" pattern="[0-9]*" value="{{ old('sort_order', $faqs->count() + 1) }}" required>
+                            <label class="form-label fw-semibold">Display Order</label>
+                            <input type="number" name="sort_order" class="form-control" value="{{ old('sort_order', $faqs->count() + 1) }}" required>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-success">Add FAQ</button>
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success fw-bold">Save FAQ</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
+    {{-- EDIT FAQ MODALS --}}
     @foreach($faqs as $faq)
         <div class="modal fade" id="editFaqModal{{ $faq->id }}" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -334,26 +622,26 @@
                     <form action="{{ route('aboutus.faq.update', $faq->id) }}" method="POST">
                         @csrf
                         <div class="modal-header">
-                            <h5 class="modal-title">Edit FAQ</h5>
+                            <h5 class="modal-title fw-bold">Edit FAQ #{{ $faq->id }}</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <div class="mb-3">
-                                <label class="form-label">Question</label>
+                                <label class="form-label fw-semibold">Question</label>
                                 <input type="text" name="question" class="form-control" value="{{ $faq->question }}" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Answer</label>
-                                <textarea name="answer" class="form-control" rows="6" required>{{ $faq->answer }}</textarea>
+                                <label class="form-label fw-semibold">Answer</label>
+                                <textarea name="answer" class="form-control" rows="5" required>{{ $faq->answer }}</textarea>
                             </div>
                             <div class="mb-0">
-                                <label class="form-label">Display Order</label>
-                                <input type="text" name="sort_order" class="form-control no-spinner" inputmode="numeric" pattern="[0-9]*" value="{{ $faq->sort_order }}" required>
+                                <label class="form-label fw-semibold">Display Order</label>
+                                <input type="number" name="sort_order" class="form-control" value="{{ $faq->sort_order }}" required>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary fw-bold">Update FAQ</button>
                         </div>
                     </form>
                 </div>
@@ -361,406 +649,64 @@
         </div>
     @endforeach
 
-    {{-- Preview Modal --}}
-    <div class="modal fade" id="previewModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-centered">
-            <div class="modal-content border-0 shadow">
-                <div class="modal-header border-bottom-0 bg-light">
-                    <h5 class="modal-title"><i class="bi bi-display me-2"></i> Live Preview</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-0">
-                    <div id="aboutPreviewPanel" class="p-4" style="min-height: 400px; max-height: 70vh; overflow-y: auto;">
-                        <p class="text-muted">Start writing to preview your About Us content here.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-@push('styles')
-    <style>
-        /* Layout Selector Cards */
-        .layout-card-selector {
-            display: block; cursor: pointer;
-            border: 2px solid #e5e7eb; border-radius: 16px;
-            padding: 20px 16px; text-align: center;
-            transition: all 0.3s; height: 100%;
-        }
-        .layout-card-selector:hover {
-            border-color: #93c5fd; background: #f0f7ff;
-        }
-        .layout-card-selector.active {
-            border-color: #2563eb; background: #eff6ff;
-            box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
-        }
-        .layout-card-icon { font-size: 28px; color: #6b7280; display: block; margin-bottom: 8px; }
-        .layout-card-selector.active .layout-card-icon { color: #2563eb; }
-        .layout-card-inner strong { font-size: 14px; color: #1f2937; }
-        .layout-card-inner small { font-size: 12px; line-height: 1.4; }
-
-        .about-editor-shell {
-            background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
-        }
-
-        .about-editor-hero {
-            background:
-                radial-gradient(circle at top right, rgba(13, 122, 62, 0.10), transparent 26%),
-                linear-gradient(135deg, #f9fffb 0%, #f5f8ff 100%);
-        }
-
-        .about-editor-kicker {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 7px 12px;
-            border-radius: 999px;
-            background: #eaf7ef;
-            color: #0d7a3e;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: .08em;
-            text-transform: uppercase;
-        }
-
-        .about-editor-title {
-            font-size: 2rem;
-            font-weight: 800;
-            color: #132238;
-        }
-
-        .about-editor-badges {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .about-editor-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 14px;
-            border-radius: 14px;
-            background: #fff;
-            border: 1px solid #e6edf5;
-            color: #334a68;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .editor-workspace,
-        .editor-panel-card {
-            background: #fff;
-            border: 1px solid #e8eef5;
-            border-radius: 20px;
-            box-shadow: 0 12px 35px rgba(19, 34, 56, 0.06);
-        }
-
-        .editor-workspace {
-            padding: 22px;
-        }
-
-        .editor-toolbar-row {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            gap: 14px;
-            margin-bottom: 18px;
-        }
-
-        .editor-mode-switch,
-        .editor-action-switch {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .editor-surface {
-            border-radius: 18px;
-            overflow: hidden;
-            border: 1px solid #e8eef5;
-            background: #fff;
-        }
-
-        .editor-code-surface {
-            border: 0;
-            border-radius: 0;
-            min-height: 560px;
-            font-family: Consolas, "Courier New", monospace;
-            font-size: 14px;
-            line-height: 1.7;
-            color: #17324d;
-            background: #fbfdff;
-        }
-
-        .editor-footer-note {
-            display: flex;
-            gap: 10px;
-            align-items: flex-start;
-            margin-top: 14px;
-            color: #57718f;
-            font-size: 14px;
-        }
-
-        .editor-footer-note i {
-            color: #0d6efd;
-            margin-top: 2px;
-        }
-
-        .editor-side-panel {
-            display: grid;
-            gap: 18px;
-        }
-
-        .editor-panel-card {
-            padding: 22px;
-        }
-
-        .editor-panel-card h5 {
-            font-weight: 800;
-            color: #132238;
-            margin-bottom: 10px;
-        }
-
-        .about-preview-panel {
-            min-height: 260px;
-            max-height: 560px;
-            overflow: auto;
-            padding: 18px;
-            border-radius: 18px;
-            background: linear-gradient(180deg, #fbfcfe 0%, #f5f9fd 100%);
-            border: 1px solid #e6edf5;
-            color: #29405b;
-            line-height: 1.75;
-        }
-
-        .about-preview-panel h1,
-        .about-preview-panel h2,
-        .about-preview-panel h3,
-        .about-preview-panel h4,
-        .about-preview-panel h5,
-        .about-preview-panel h6 {
-            color: #10243e;
-            font-weight: 800;
-        }
-
-        .editor-checklist {
-            margin: 0;
-            padding-left: 1.2rem;
-            color: #425d7d;
-            line-height: 1.85;
-        }
-
-        input.no-spinner::-webkit-outer-spin-button,
-        input.no-spinner::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
-        input.no-spinner {
-            -moz-appearance: textfield;
-        }
-    </style>
-@endpush
-
 @push('scripts')
-    <script>
-        // Restore Active Tab
-        document.addEventListener("DOMContentLoaded", function() {
-            var activeTab = localStorage.getItem('aboutUsActiveTab');
-            if (activeTab) {
-                var tabEl = document.querySelector('#' + activeTab);
-                if (tabEl) {
-                    new bootstrap.Tab(tabEl).show();
-                }
-            }
-        });
-
-        // Save Active Tab
-        document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tab => {
-            tab.addEventListener('shown.bs.tab', function (e) {
-                localStorage.setItem('aboutUsActiveTab', e.target.id);
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Values repeater
+        const addValueBtn = document.getElementById('addValueBtn');
+        const valuesContainer = document.getElementById('valuesContainer');
+        if (addValueBtn && valuesContainer) {
+            addValueBtn.addEventListener('click', function () {
+                const row = document.createElement('div');
+                row.className = 'input-group mb-2 value-row';
+                row.innerHTML = `
+                    <span class="input-group-text"><i class="bi bi-star-fill text-warning"></i></span>
+                    <input type="text" name="about_values[]" class="form-control" placeholder="e.g. Mutual Respect (सद्भाव)">
+                    <button type="button" class="btn btn-outline-danger" onclick="this.closest('.value-row').remove()"><i class="bi bi-trash"></i></button>
+                `;
+                valuesContainer.appendChild(row);
             });
-        });
+        }
 
-        // Dynamic Core Values
-        document.getElementById('addValueBtn').addEventListener('click', function() {
-            const container = document.getElementById('valuesContainer');
-            const row = document.createElement('div');
-            row.className = 'input-group mb-2 value-row';
-            row.innerHTML = `
-                <span class="input-group-text"><i class="bi bi-star-fill text-warning"></i></span>
-                <input type="text" name="about_values[]" class="form-control" placeholder="e.g. Excellence">
-                <button type="button" class="btn btn-outline-danger" onclick="this.closest('.value-row').remove()"><i class="bi bi-trash"></i></button>
-            `;
-            container.appendChild(row);
-        });
-    </script>
-    <script>
-        const initialAboutHtml = @json(old('desc', $aboutus->desc ?? ''));
-        const starterTemplate = `<section class="sses-about-block">
-  <style>
-    .sses-about-block {font-family: var(--font-body, Arial, sans-serif); color: #1f2937; line-height: 1.7;}
-    .sses-about-hero {padding: 30px; border-radius: 12px; background: #f3f4f6; margin-bottom: 30px; border-left: 4px solid var(--primary);}
-    .sses-about-hero h3 {margin-top: 0; color: #111827;}
-    .sses-about-content {font-size: 1.05rem;}
-    .sses-about-content ul {margin-top: 15px; padding-left: 20px;}
-    .sses-about-content li {margin-bottom: 10px;}
-  </style>
-  <div class="sses-about-hero">
-    <h3>Welcome to Shiksha Sandesh English School</h3>
-    <p>Established in 1993 A.D. (2050 B.S.), Shiksha Sandesh English School is a premier educational institution located in Belbari, Morang. We are dedicated to providing value-based, quality education that nurtures the academic, physical, and moral growth of our students.</p>
-  </div>
-  <div class="sses-about-content">
-    <h4>Why Choose Us?</h4>
-    <ul>
-      <li><strong>Experienced Faculty:</strong> Learn from highly qualified and dedicated teachers.</li>
-      <li><strong>Modern Facilities:</strong> Well-equipped science and computer labs, and a resourceful library.</li>
-      <li><strong>Holistic Development:</strong> Strong focus on extracurricular activities and sports.</li>
-      <li><strong>Affiliation:</strong> Proudly affiliated with the National Examination Board (NEB) Nepal.</li>
-    </ul>
-    <p>Join us in shaping tomorrow's leaders through excellence in education.</p>
-  </div>
-</section>`;
-
-        $('#summernote').summernote({
-            placeholder: 'Write a strong, informative About Us page for students and parents',
-            tabsize: 2,
-            height: 620,
-            codeviewFilter: false,
-            codeviewIframeFilter: false,
-            toolbar: [
-                ['style', ['style']],
-                ['font', ['bold', 'underline', 'clear']],
-                ['fontname', ['fontname']],
-                ['fontsize', ['fontsize']],
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['table', ['table']],
-                ['insert', ['hr']],
-                ['misc', ['fullscreen', 'codeview']],
-                ['insert', ['link', 'picture', 'video']],
-                ['view', ['codeview', 'help']]
-            ]
-        });
-
-        $('#summernote').summernote('code', initialAboutHtml);
-
-        const summernoteEl = $('#summernote');
-        const htmlEditorWrap = document.getElementById('htmlEditorWrap');
-        const htmlSourceEditor = document.getElementById('htmlSourceEditor');
-        const visualEditorBtn = document.getElementById('visualEditorBtn');
-        const htmlEditorBtn = document.getElementById('htmlEditorBtn');
-        const loadTemplateBtn = document.getElementById('loadTemplateBtn');
-        const previewFromCurrentModeBtn = document.getElementById('previewFromCurrentModeBtn');
-        const aboutPreviewPanel = document.getElementById('aboutPreviewPanel');
-        const visualEditorWrap = document.getElementById('visualEditorWrap');
-        const setEditorMode = (mode) => {
-            if (mode === 'html') {
-                htmlEditorWrap.classList.remove('d-none');
-                visualEditorWrap.classList.add('d-none');
-                htmlSourceEditor.value = summernoteEl.summernote('code'); // Auto-sync to HTML
-                htmlEditorBtn.classList.remove('btn-outline-dark');
-                htmlEditorBtn.classList.add('btn-dark');
-                visualEditorBtn.classList.remove('btn-primary');
-                visualEditorBtn.classList.add('btn-outline-primary');
-            } else {
-                htmlEditorWrap.classList.add('d-none');
-                visualEditorWrap.classList.remove('d-none');
-                summernoteEl.summernote('code', htmlSourceEditor.value); // Auto-sync back to Visual
-                visualEditorBtn.classList.remove('btn-outline-primary');
-                visualEditorBtn.classList.add('btn-primary');
-                htmlEditorBtn.classList.remove('btn-dark');
-                htmlEditorBtn.classList.add('btn-outline-dark');
-            }
-        };
-
-        const renderPreview = (html) => {
-            if(aboutPreviewPanel) {
-                aboutPreviewPanel.innerHTML = html && html.trim() !== '' ? html : '<p class="text-muted mb-0">Start writing to preview your About Us content here.</p>';
-            }
-        };
-
-        const getCurrentEditorHtml = () => {
-            return htmlEditorWrap.classList.contains('d-none')
-                ? summernoteEl.summernote('code')
-                : htmlSourceEditor.value;
-        };
-
-        visualEditorBtn.addEventListener('click', () => setEditorMode('visual'));
-        htmlEditorBtn.addEventListener('click', () => setEditorMode('html'));
-
-        loadTemplateBtn.addEventListener('click', () => {
-            if (htmlEditorWrap.classList.contains('d-none')) {
-                summernoteEl.summernote('code', starterTemplate);
-            } else {
-                htmlSourceEditor.value = starterTemplate;
-            }
-            renderPreview(getCurrentEditorHtml());
-        });
-
-
-        previewFromCurrentModeBtn.addEventListener('click', () => renderPreview(getCurrentEditorHtml()));
-
-        htmlSourceEditor.addEventListener('input', () => {
-            if (!htmlEditorWrap.classList.contains('d-none')) {
-                renderPreview(htmlSourceEditor.value);
-            }
-        });
-
-        $('#summernote').on('summernote.change', function(_, contents) {
-            if (htmlEditorWrap.classList.contains('d-none')) {
-                renderPreview(contents);
-            }
-        });
-
-        document.getElementById('aboutContentForm').addEventListener('submit', function () {
-            if (!htmlEditorWrap.classList.contains('d-none')) {
-                summernoteEl.summernote('code', htmlSourceEditor.value);
-            }
-        });
-
-        // Auto-save layout selection and current form data via AJAX
-        document.querySelectorAll('.layout-radio').forEach(radio => {
-            radio.addEventListener('change', function() {
-                const form = document.getElementById('aboutContentForm');
-                
-                // Sync visual editor to HTML source first so it saves the rich text too
-                if (!htmlEditorWrap.classList.contains('d-none')) {
-                    summernoteEl.summernote('code', htmlSourceEditor.value);
-                } else {
-                    htmlSourceEditor.value = summernoteEl.summernote('code');
-                }
-
-                const formData = new FormData(form);
-
-                // Update styling instantly
-                document.querySelectorAll('.layout-card-selector').forEach(card => {
-                    card.classList.remove('active');
-                });
-                this.closest('.layout-card-selector').classList.add('active');
-
-                // Fire AJAX request with ALL form data
-                fetch(form.action, {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json'
-                    },
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if(data.success) {
-                        console.log('Layout and current data saved automatically!');
-                    }
-                })
-                .catch(error => console.error('Error saving layout:', error));
+        // Summernote init
+        if ($('#summernote').length) {
+            $('#summernote').summernote({
+                height: 320,
+                placeholder: 'Write any custom institutional background or article content here...'
             });
-        });
+        }
 
-        setEditorMode('visual');
-        renderPreview(initialAboutHtml);
-    </script>
+        // Visual / HTML mode switcher
+        const visualBtn = document.getElementById('visualEditorBtn');
+        const htmlBtn = document.getElementById('htmlEditorBtn');
+        const visualWrap = document.getElementById('visualEditorWrap');
+        const htmlWrap = document.getElementById('htmlEditorWrap');
+        const htmlSource = document.getElementById('htmlSourceEditor');
+
+        if (visualBtn && htmlBtn && visualWrap && htmlWrap && htmlSource) {
+            visualBtn.addEventListener('click', function () {
+                $('#summernote').summernote('code', htmlSource.value);
+                visualWrap.classList.remove('d-none');
+                htmlWrap.classList.add('d-none');
+                visualBtn.className = 'btn btn-primary btn-sm';
+                htmlBtn.className = 'btn btn-outline-dark btn-sm';
+            });
+
+            htmlBtn.addEventListener('click', function () {
+                htmlSource.value = $('#summernote').summernote('code');
+                htmlWrap.classList.remove('d-none');
+                visualWrap.classList.add('d-none');
+                htmlBtn.className = 'btn btn-primary btn-sm';
+                visualBtn.className = 'btn btn-outline-primary btn-sm';
+            });
+
+            document.getElementById('aboutContentForm').addEventListener('submit', function () {
+                if (!htmlWrap.classList.contains('d-none')) {
+                    $('#summernote').summernote('code', htmlSource.value);
+                }
+            });
+        }
+    });
+</script>
 @endpush
 @endsection
