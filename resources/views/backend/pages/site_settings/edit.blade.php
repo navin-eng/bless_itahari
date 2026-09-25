@@ -15,38 +15,10 @@
     <form id="settingsForm" action="{{ route('site.settings.update') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4">
-                <ul class="nav nav-tabs border-bottom-0" id="settingsTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active px-4 py-3 fw-semibold" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab"><i class="bi bi-gear-fill me-1"></i> General</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link px-4 py-3 fw-semibold" id="display-tab" data-bs-toggle="tab" data-bs-target="#display" type="button" role="tab"><i class="bi bi-palette-fill me-1"></i> Display & Theme</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link px-4 py-3 fw-semibold" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab"><i class="bi bi-envelope-fill me-1"></i> Contact & Social</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link px-4 py-3 fw-semibold" id="widgets-tab" data-bs-toggle="tab" data-bs-target="#widgets" type="button" role="tab"><i class="bi bi-grid-fill me-1"></i> Widgets & Buttons</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link px-4 py-3 fw-semibold" id="analytics-tab" data-bs-toggle="tab" data-bs-target="#analytics" type="button" role="tab"><i class="bi bi-graph-up-arrow me-1"></i> Analytics</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link px-4 py-3 fw-semibold" id="logs-tab" data-bs-toggle="tab" data-bs-target="#logs" type="button" role="tab"><i class="bi bi-clock-history me-1"></i> Activity Log</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link px-4 py-3 fw-semibold" id="admissions-tab" data-bs-toggle="tab" data-bs-target="#admissions" type="button" role="tab"><i class="bi bi-door-open-fill me-1"></i> Admissions</button>
-                    </li>
-                </ul>
-            </div>
-            
-            <div class="card-body p-4 bg-light border-top">
-                <div class="tab-content" id="settingsTabsContent">
-                    
-                    {{-- General Tab --}}
-                    <div class="tab-pane fade show active" id="general" role="tabpanel">
+                <div class="settings-container">
+            {{-- General Section --}}
+            <div class="settings-section mb-5">
+                <h4 class="mb-4 text-primary border-bottom pb-2"><i class="bi bi-gear-fill me-2"></i>General</h4>
                         <div class="row g-4">
                             <div class="col-lg-7">
                                 <div class="card border-0 shadow-sm h-100">
@@ -145,8 +117,9 @@
                         </div>
                     </div>
 
-                    {{-- Display & Theme Tab --}}
-                    <div class="tab-pane fade" id="display" role="tabpanel">
+                    {-- Display & Theme Section --}
+                    <div class="settings-section mb-5">
+                        <h4 class="mb-4 text-primary border-bottom pb-2"><i class="bi bi-palette-fill me-2"></i>Display & Theme</h4>
                         <div class="row g-4">
                             <div class="col-lg-6">
                                 <div class="card border-0 shadow-sm h-100">
@@ -259,8 +232,9 @@
                         </div>
                     </div>
 
-                    {{-- Contact & Social Tab --}}
-                    <div class="tab-pane fade" id="contact" role="tabpanel">
+                    {-- Contact & Social Section --}
+                    <div class="settings-section mb-5">
+                        <h4 class="mb-4 text-primary border-bottom pb-2"><i class="bi bi-envelope-fill me-2"></i>Contact & Social</h4>
                         <div class="row g-4">
                             <div class="col-lg-6">
                                 <div class="card border-0 shadow-sm h-100">
@@ -313,8 +287,9 @@
                         </div>
                     </div>
 
-                    {{-- Widgets & Buttons Tab --}}
-                    <div class="tab-pane fade" id="widgets" role="tabpanel">
+                    {-- Widgets & Buttons Section --}
+                    <div class="settings-section mb-5">
+                        <h4 class="mb-4 text-primary border-bottom pb-2"><i class="bi bi-grid-fill me-2"></i>Widgets & Buttons</h4>
                         <div class="row g-4">
                             <div class="col-lg-6">
                                 <div class="card border-0 shadow-sm h-100">
@@ -373,9 +348,10 @@
                             </div>
                         </div>
                     </div>
-                    
-                    {{-- Admissions Tab --}}
-                    <div class="tab-pane fade" id="admissions" role="tabpanel">
+
+                    {-- Admissions Section --}
+                    <div class="settings-section mb-5">
+                        <h4 class="mb-4 text-primary border-bottom pb-2"><i class="bi bi-door-open-fill me-2"></i>Admissions</h4>
                         <div class="row g-4">
                             <div class="col-lg-6">
                                 <div class="card border-0 shadow-sm h-100">
@@ -416,8 +392,9 @@
                         </div>
                     </div>
 
-                    {{-- Analytics Tab --}}
-                    <div class="tab-pane fade" id="analytics" role="tabpanel">
+                    {-- Analytics Section --}
+                    <div class="settings-section mb-5">
+                        <h4 class="mb-4 text-primary border-bottom pb-2"><i class="bi bi-graph-up-arrow me-2"></i>Analytics</h4>
                         <div class="row g-4">
                             <div class="col-lg-6">
                                 <div class="card border-0 shadow-sm h-100">
@@ -464,8 +441,9 @@
                         </div>
                     </div>
 
-                    {{-- Activity Log Tab --}}
-                    <div class="tab-pane fade" id="logs" role="tabpanel">
+                    {-- Activity Log Section --}
+                    <div class="settings-section mb-5">
+                        <h4 class="mb-4 text-primary border-bottom pb-2"><i class="bi bi-clock-history me-2"></i>Activity Log</h4>
                         <div class="card border-0 shadow-sm">
                             <div class="card-body">
                                 <h5 class="mb-4">Recent Changes</h5>
@@ -498,8 +476,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
         </div>
     </form>
 @endsection
