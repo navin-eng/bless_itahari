@@ -186,6 +186,26 @@ const lgEl = document.getElementById('galleryRow');
 if (lgEl && typeof lightGallery !== 'undefined') {
   lightGallery(lgEl, { speed: 500, download: false });
 }
+
+/* Ensure Admin Panel is free from stale service worker caches */
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(function(regs) {
+    for (let r of regs) {
+      if (r.scope.includes('/admin')) {
+        r.unregister();
+      }
+    }
+  });
+}
+if ('caches' in window) {
+  caches.keys().then(function(names) {
+    for (let name of names) {
+      if (name.includes('sses-pwa-cache')) {
+        caches.delete(name);
+      }
+    }
+  });
+}
 </script>
 
 @stack('scripts')

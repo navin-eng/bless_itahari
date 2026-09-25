@@ -44,6 +44,25 @@
     <script>
         (() => {
             const swalConfig = {!! Session::pull('alert.config') !!};
+            @php
+                Session::forget('alert');
+            @endphp
+
+            if (!swalConfig || typeof swalConfig !== 'object') return;
+
+            // Prevent cached HTML pages, back-forward cache, or multiple tabs from re-triggering stale alerts
+            try {
+                const rawContent = (swalConfig.title || '') + '|' + (swalConfig.text || '') + '|' + (swalConfig.html || '');
+                const alertSignature = 'swal_seen_' + btoa(unescape(encodeURIComponent(rawContent))).substring(0, 36);
+                const lastFired = sessionStorage.getItem(alertSignature);
+                if (lastFired && (Date.now() - parseInt(lastFired, 10)) < 15000) {
+                    return; // Suppress duplicate popup
+                }
+                sessionStorage.setItem(alertSignature, Date.now().toString());
+            } catch (e) {
+                // Ignore storage error
+            }
+
             const simpleFeedbackIcons = ['success', 'error', 'info', 'warning', 'question'];
             const isSimpleFeedback =
                 !swalConfig.toast &&
@@ -59,7 +78,7 @@
                     position: 'top-end',
                     showConfirmButton: false,
                     showCloseButton: true,
-                    timer: swalConfig.timer || 2200,
+                    timer: swalConfig.timer || 2500,
                     timerProgressBar: true,
                     backdrop: false,
                     customClass: Object.assign({}, swalConfig.customClass || {}, {
