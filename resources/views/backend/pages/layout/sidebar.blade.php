@@ -49,11 +49,7 @@
           <i class="bi bi-inbox-fill"></i><span class="sb-text">Admissions</span>
         </a>
       </li>
-      <li class="sb-item">
-        <a href="{{ route('campus.calendar.index') }}" class="sb-link {{ request()->routeIs('campus.calendar.*') ? 'active' : '' }}" title="Calendar">
-          <i class="bi bi-calendar3"></i><span class="sb-text">Calendar</span>
-        </a>
-      </li>
+
 
       {{-- Content Management --}}
       <li class="sb-group-label"><span class="sb-text">Content Management</span></li>

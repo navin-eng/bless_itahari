@@ -208,24 +208,21 @@ class Frontend extends Controller
         $settings = SiteSetting::current();
         $format = isset($settings->calendar_format) ? $settings->calendar_format : 'ad';
 
-        $calendarEntries = CampusCalendarEntry::where('status', 1)->orderBy('start_date')->get();
         $publicEvents = Event::where('status', 1)->orderBy('visit_date')->get();
 
-        $eventsAsEntries = $publicEvents->map(function ($event) {
+        $entries = $publicEvents->map(function ($event) {
             return (object) [
                 'id' => 'evt_' . $event->id,
                 'title' => $event->name,
-                'start_date' => $event->visit_date,
-                'end_date' => $event->visit_date,
+                'start_date' => $event->getRawOriginal('visit_date'),
+                'end_date' => $event->getRawOriginal('visit_date'),
                 'entry_type' => $event->event_type ?? 'event',
                 'entry_type_label' => ucfirst($event->event_type ?? 'Event'),
                 'is_event' => true,
                 'event_id' => $event->id,
                 'event_slug' => $event->slug
             ];
-        });
-
-        $entries = $calendarEntries->concat($eventsAsEntries)->sortBy('start_date')->values();
+        })->values();
 
         $todayAD = Carbon::now();
         $isCurrentMonth = false;
