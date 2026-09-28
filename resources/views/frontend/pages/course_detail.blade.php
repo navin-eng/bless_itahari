@@ -1,4 +1,27 @@
 @extends('frontend.layout.master')
+
+@section('title', $course->name . ' - Academic Program')
+@section('meta_description', Str::limit(strip_tags($course->description ?? $course->tagline ?? $course->name), 155))
+@if(!empty($course->image))
+@section('og_image', asset($course->image))
+@endif
+
+@push('schema')
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "{{ $course->name }}",
+  "description": "{{ Str::limit(strip_tags($course->description ?? ''), 250) }}",
+  "provider": {
+    "@type": "School",
+    "name": "{{ $siteSettings->site_name ?? 'Bless Itahari' }}",
+    "sameAs": "{{ url('/') }}"
+  }
+}
+</script>
+@endpush
+
 @section('frontend-content')
 
 @php

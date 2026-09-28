@@ -40,6 +40,7 @@ use Illuminate\Support\Facades\Auth;
 
 Route::get('/', [Frontend::class, 'home'])->name('home');
 Route::get('/manifest.json', [Frontend::class, 'manifest'])->name('manifest');
+Route::get('/sitemap.xml', [Frontend::class, 'sitemap'])->name('sitemap');
 Route::get('/gallery', [Frontend::class, 'gallery'])->name('gallery');
 Route::get('/contact', [Frontend::class, 'contact'])->name('contact');
 Route::get('/member', function () {
@@ -90,7 +91,7 @@ Route::middleware('webGuard')->group(function () {
     Route::get('/admin/dashboard/course/add', [CourseController::class, 'create'])->name('course.add');
     Route::get('/admin/dashboard/course/table', [CourseController::class, 'index'])->name('course.table');
     Route::post('/admin/dashboard/course/store', [CourseController::class, 'store'])->name('course.store');
-    Route::get('/admin/dashboard/course/delete/{id}', [CourseController::class, 'destroy'])->name('course.destroy');
+    Route::match(['get', 'delete', 'post'], '/admin/dashboard/course/delete/{id}', [CourseController::class, 'destroy'])->name('course.destroy');
     Route::get('/admin/dashboard/course/status/{id}', [CourseController::class, 'status'])->name('course.status');
     Route::get('/admin/dashboard/course/edit/{id}', [CourseController::class, 'edit'])->name('course.edit');
     Route::post('/admin/dashboard/course/edit/update/{id}', [CourseController::class, 'update'])->name('course.update');

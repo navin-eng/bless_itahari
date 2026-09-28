@@ -91,15 +91,14 @@ class CourseController extends Controller
         }
         $save = $course->save();
         if ($save == true) {
+            Cache::forget('home.courses');
+            Cache::forget('courses.all');
 
-                        Cache::forget('home.courses');
-
-
-            Alert::success('Saved', 'course saved successfully');
-            return back();
+            Alert::success('Saved', 'Course saved successfully');
+            return redirect()->route('course.table')->with('success', 'Academic level saved successfully.');
         } else {
-            Alert::error('oops', 'Course couldnot saved');
-            return back();
+            Alert::error('Oops', 'Course could not be saved');
+            return back()->with('error', 'Course could not be saved.');
         }
     }
     public function edit($id)
@@ -107,8 +106,8 @@ class CourseController extends Controller
         $course = Course::find($id);
         if(is_null($course))
         {
-            Alert::error('oops','Something went wrong');
-            return redirect()->route('course.table');
+            Alert::error('Oops','Academic level not found');
+            return redirect()->route('course.table')->with('error', 'Academic level not found.');
         }
         else
         {
@@ -119,29 +118,29 @@ class CourseController extends Controller
     {
         $course = Course::find($id);
         if (is_null($course)) {
-            Alert::error('oops', 'We Couldnot find course');
+            Alert::error('Oops', 'Could not find course');
+            return back()->with('error', 'Academic level not found.');
         } else {
-            if ($course->status == 1) {
-                $course->status = null;
-                $course->update();
-                                Cache::forget('home.courses');
+            $newStatus = ($course->status == 1) ? null : 1;
+            $course->status = $newStatus;
+            $course->save();
+            Cache::forget('home.courses');
+            Cache::forget('courses.all');
 
-                Alert::success('Updated', 'Status Deactivate');
-                return back();
-            } else {
-                $course->status = 1;
-                $course->update();
-                                Cache::forget('home.courses');
-
-                Alert::success('Updated', 'Status Activate');
-                return back();
-            }
+            $statusText = $newStatus == 1 ? 'Activated' : 'Deactivated';
+            Alert::success('Updated', "Status {$statusText}");
+            return back()->with('success', "Academic level {$statusText} successfully.");
         }
     }
     public function update(Request $request, Course $course,$id)
     {
         $request->validate($this->rules($id));
         $course = Course::find($id);
+        if (!$course) {
+            Alert::error('Oops', 'Academic level not found.');
+            return redirect()->route('course.table')->with('error', 'Academic level not found.');
+        }
+
         $course->name = $request->name;
         $course->academic_level = $request->academic_level;
         $course->grade_span = $request->grade_span ?: '';
@@ -165,66 +164,129 @@ class CourseController extends Controller
         }
         $course->description = $request->description;
         $course->fulldescription = $request->fulldescription ?: '';
-        $course->status = 1;
 
         if ($request->hasFile('image')) {
+            // Delete old image if custom
+            if (!empty($course->image) && file_exists(public_path($course->image)) && !str_contains($course->image, 'default')) {
+                @unlink(public_path($course->image));
+            }
             $image = $request->file('image');
             $extension = $image->getClientOriginalExtension();
             $imageName = Str::random(20) . time() . '.' . $extension;
             $image->move('backend/images/courses/', $imageName);
             $course->image = 'backend/images/courses/' . $imageName;
         }
+
         if ($request->hasFile('gallery')) {
-            $images = [];
+            $existingGallery = [];
+            if (!empty($course->gallery)) {
+                $decoded = json_decode($course->gallery, true);
+                if (is_array($decoded)) {
+                    $existingGallery = $decoded;
+                }
+            }
             foreach ($request->file('gallery') as $img) {
                 $extension = $img->getClientOriginalExtension();
                 $imageName = Str::random(20) . time() . '.' . $extension;
                 $img->move('backend/images/courses/', $imageName);
-                $images[] = $imageName;
+                $existingGallery[] = $imageName;
             }
-            $course->gallery = json_encode($images);
+            $course->gallery = json_encode(array_values($existingGallery));
         }
-        $save = $course->update();
+
+        $save = $course->save();
         if ($save == true) {
+            Cache::forget('home.courses');
+            Cache::forget('courses.all');
 
-                        Cache::forget('home.courses');
-
-
-            Alert::success('Saved', 'course update successfully');
-            return redirect()->route('course.table');
+            Alert::success('Saved', 'Course updated successfully');
+            return redirect()->route('course.table')->with('success', 'Academic level updated successfully.');
         } else {
-            Alert::error('oops', 'Course couldnot update');
-            return redirect()->route('course.table');
+            Alert::error('Oops', 'Course could not be updated');
+            return redirect()->route('course.table')->with('error', 'Academic level could not be updated.');
         }
     }
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         $course = Course::find($id);
         if ($course) {
+            $courseName = $course->name;
+
+            // Delete cover image if custom
+            if (!empty($course->image) && file_exists(public_path($course->image)) && !str_contains($course->image, 'default')) {
+                @unlink(public_path($course->image));
+            }
+
+            // Delete gallery images
+            if (!empty($course->gallery)) {
+                $gallery = json_decode($course->gallery, true);
+                if (is_array($gallery)) {
+                    foreach ($gallery as $gImg) {
+                        $path = public_path('backend/images/courses/' . $gImg);
+                        if (file_exists($path)) {
+                            @unlink($path);
+                        }
+                    }
+                }
+            }
+
             $course->delete();
             Cache::forget('home.courses');
-            Alert::success('Deleted', 'course deleted');
-        } else {
-            Alert::error('oops', 'Course not found');
+            Cache::forget('courses.all');
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => "Academic level '{$courseName}' was successfully deleted."
+                ]);
+            }
+
+            Alert::success('Deleted', "Academic level '{$courseName}' deleted successfully.");
+            return redirect()->route('course.table')->with('success', "Academic level '{$courseName}' was deleted successfully.");
         }
-        return redirect()->route('course.table');
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Academic level not found.'
+            ], 404);
+        }
+
+        Alert::error('Oops', 'Course not found');
+        return redirect()->route('course.table')->with('error', 'Academic level not found.');
     }
 
-    public function galleryDelete($id,$index)
+    public function galleryDelete($id, $index)
     {
-        $gallery = Course::find($id);
-        foreach(json_decode($gallery->gallery) as $img)
-        {
-            $images[] = $img;
+        $course = Course::find($id);
+        if (!$course) {
+            Alert::error('Oops', 'Academic level not found');
+            return back()->with('error', 'Academic level not found.');
         }
-        unset($images[$index]);
-        $galleries = json_encode($images);
-        $gallery->gallery = $galleries;
-        $gallery->update();
-                Cache::forget('home.courses');
 
-        Alert::success('Success','Image Deleted');
-        return back();
+        $gallery = json_decode($course->gallery, true);
+        if (!is_array($gallery)) {
+            $gallery = [];
+        }
+
+        if (isset($gallery[$index])) {
+            $fileName = $gallery[$index];
+            $path = public_path('backend/images/courses/' . $fileName);
+            if (file_exists($path)) {
+                @unlink($path);
+            }
+            array_splice($gallery, $index, 1);
+            $course->gallery = json_encode(array_values($gallery));
+            $course->save();
+            Cache::forget('home.courses');
+            Cache::forget('courses.all');
+
+            Alert::success('Success', 'Gallery image deleted.');
+            return back()->with('success', 'Gallery image deleted.');
+        }
+
+        Alert::error('Oops', 'Image not found in gallery.');
+        return back()->with('error', 'Image not found in gallery.');
     }
 
     public function seedDefaults()
@@ -232,10 +294,13 @@ class CourseController extends Controller
         try {
             (new \Database\Seeders\SchoolLevelsSeeder())->run();
             Cache::forget('home.courses');
+            Cache::forget('courses.all');
             Alert::success('Success', 'Standard Nepal School levels (PG to Grade 12) have been loaded successfully.');
+            return redirect()->route('course.table')->with('success', 'Standard Nepal School levels loaded successfully.');
         } catch (\Throwable $e) {
             Alert::error('Error', 'Could not load levels: ' . $e->getMessage());
+            return redirect()->route('course.table')->with('error', 'Could not load levels: ' . $e->getMessage());
         }
-        return redirect()->route('course.table');
     }
 }
+

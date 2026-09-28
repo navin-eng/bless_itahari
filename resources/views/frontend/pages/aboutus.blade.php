@@ -1,5 +1,8 @@
 @extends('frontend.layout.master')
 
+@section('title', 'About Us - Our Legacy, Mission & Vision')
+@section('meta_description', 'Learn about our educational vision, mission, infrastructure, and leadership. Providing holistic education in Itahari, Nepal.')
+
 @php
     $siteSettings = $siteSettings ?? \App\Models\SiteSetting::current();
     $messages = $messages ?? collect();

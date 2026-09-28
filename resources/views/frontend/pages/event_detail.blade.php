@@ -1,4 +1,42 @@
 @extends('frontend.layout.master')
+
+@section('title', $event->name . ' - Campus Event')
+@section('meta_description', Str::limit(strip_tags($event->description ?? $event->name), 155))
+@if(!empty($event->image))
+@section('og_image', asset($event->image))
+@endif
+
+@push('schema')
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Event",
+  "name": "{{ $event->name }}",
+  "startDate": "{{ $event->visit_date ? \Carbon\Carbon::parse($event->visit_date)->toIso8601String() : '' }}",
+  "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+  "eventStatus": "https://schema.org/EventScheduled",
+  "location": {
+    "@type": "Place",
+    "name": "{{ $event->venue ?? 'School Campus' }}",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "{{ $siteSettings->contact_address ?? 'Itahari' }}",
+      "addressCountry": "NP"
+    }
+  },
+  "image": [
+    "{{ !empty($event->image) ? asset($event->image) : asset('backend/images/logo.png') }}"
+  ],
+  "description": "{{ Str::limit(strip_tags($event->description ?? ''), 250) }}",
+  "organizer": {
+    "@type": "Organization",
+    "name": "{{ $siteSettings->site_name ?? 'Bless Itahari' }}",
+    "url": "{{ url('/') }}"
+  }
+}
+</script>
+@endpush
+
 @section('frontend-content')
 
 {{-- Hero Section --}}

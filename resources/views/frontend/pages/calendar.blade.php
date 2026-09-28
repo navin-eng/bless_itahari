@@ -1,4 +1,8 @@
 @extends('frontend.layout.master')
+
+@section('title', 'Academic Calendar & Holidays')
+@section('meta_description', 'View our official academic calendar in Bikram Sambat (BS) & AD, featuring holidays, exam schedules, ECA activities, and term events.')
+
 @section('frontend-content')
 
     @php

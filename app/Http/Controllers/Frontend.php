@@ -404,4 +404,97 @@ class Frontend extends Controller
 
         return view('frontend.pages.contact', compact('captchaQuestion'));
     }
+
+    public function sitemap()
+    {
+        $urls = [
+            ['loc' => route('home'), 'priority' => '1.0', 'changefreq' => 'daily'],
+            ['loc' => route('about.us'), 'priority' => '0.8', 'changefreq' => 'monthly'],
+            ['loc' => route('courses.index'), 'priority' => '0.9', 'changefreq' => 'weekly'],
+            ['loc' => route('events.index'), 'priority' => '0.8', 'changefreq' => 'weekly'],
+            ['loc' => route('notices.index'), 'priority' => '0.8', 'changefreq' => 'daily'],
+            ['loc' => route('calendar'), 'priority' => '0.7', 'changefreq' => 'weekly'],
+            ['loc' => route('gallery'), 'priority' => '0.7', 'changefreq' => 'weekly'],
+            ['loc' => route('contact'), 'priority' => '0.8', 'changefreq' => 'monthly'],
+            ['loc' => route('privacy.policy'), 'priority' => '0.3', 'changefreq' => 'yearly'],
+        ];
+
+        // Courses
+        try {
+            $courses = Course::where('status', 1)->get();
+            foreach ($courses as $course) {
+                if (!empty($course->slug)) {
+                    $urls[] = [
+                        'loc' => route('course.detail', $course->slug),
+                        'lastmod' => $course->updated_at ? $course->updated_at->toAtomString() : null,
+                        'priority' => '0.8',
+                        'changefreq' => 'weekly',
+                    ];
+                }
+            }
+        } catch (\Throwable $e) {}
+
+        // Events
+        try {
+            $events = Event::where('status', 1)->get();
+            foreach ($events as $event) {
+                if (!empty($event->slug)) {
+                    $urls[] = [
+                        'loc' => route('event.detail', $event->slug),
+                        'lastmod' => $event->updated_at ? $event->updated_at->toAtomString() : null,
+                        'priority' => '0.7',
+                        'changefreq' => 'weekly',
+                    ];
+                }
+            }
+        } catch (\Throwable $e) {}
+
+        // Notices
+        try {
+            $notices = Notice::all();
+            foreach ($notices as $notice) {
+                $urls[] = [
+                    'loc' => route('notice.detail', $notice->id),
+                    'lastmod' => $notice->updated_at ? $notice->updated_at->toAtomString() : null,
+                    'priority' => '0.7',
+                    'changefreq' => 'monthly',
+                ];
+            }
+        } catch (\Throwable $e) {}
+
+        // Custom Pages
+        try {
+            $pages = Page::where('status', 1)->get();
+            foreach ($pages as $page) {
+                if (!empty($page->slug)) {
+                    $urls[] = [
+                        'loc' => url('/page/' . $page->slug),
+                        'lastmod' => $page->updated_at ? $page->updated_at->toAtomString() : null,
+                        'priority' => '0.6',
+                        'changefreq' => 'monthly',
+                    ];
+                }
+            }
+        } catch (\Throwable $e) {}
+
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>';
+        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+        foreach ($urls as $url) {
+            $xml .= '<url>';
+            $xml .= '<loc>' . htmlspecialchars($url['loc']) . '</loc>';
+            if (!empty($url['lastmod'])) {
+                $xml .= '<lastmod>' . $url['lastmod'] . '</lastmod>';
+            }
+            if (!empty($url['changefreq'])) {
+                $xml .= '<changefreq>' . $url['changefreq'] . '</changefreq>';
+            }
+            if (!empty($url['priority'])) {
+                $xml .= '<priority>' . $url['priority'] . '</priority>';
+            }
+            $xml .= '</url>';
+        }
+        $xml .= '</urlset>';
+
+        return response($xml, 200)->header('Content-Type', 'text/xml');
+    }
 }

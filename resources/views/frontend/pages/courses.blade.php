@@ -1,4 +1,8 @@
 @extends('frontend.layout.master')
+
+@section('title', 'Academic Programs & Levels')
+@section('meta_description', 'Explore our comprehensive school education programs from Playgroup (PG) through Grade 10 and Secondary (+2). NEB & CDC Nepal aligned.')
+
 @section('frontend-content')
 
 {{-- ===== PAGE HERO ===== --}}

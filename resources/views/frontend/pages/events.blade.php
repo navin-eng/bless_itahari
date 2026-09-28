@@ -1,4 +1,8 @@
 @extends('frontend.layout.master')
+
+@section('title', 'Campus Events & Activities')
+@section('meta_description', 'Discover upcoming campus events, academic competitions, sports meets, and cultural programs happening at our school.')
+
 @section('frontend-content')
 
 <div class="page-hero">

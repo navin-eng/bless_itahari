@@ -1,4 +1,8 @@
 @extends('frontend.layout.master')
+
+@section('title', 'Contact Us - Get in Touch')
+@section('meta_description', 'Contact our school administration for admissions, inquiries, or visit us in Itahari, Nepal. We are here to help.')
+
 @section('frontend-content')
 
 {{-- ===== PAGE HERO ===== --}}

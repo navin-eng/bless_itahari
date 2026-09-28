@@ -1,4 +1,8 @@
 @extends('frontend.layout.master')
+
+@section('title', 'Notices & Announcements')
+@section('meta_description', 'Stay updated with the latest official announcements, circulars, exam schedules, and news from our school.')
+
 @section('frontend-content')
 
 <div class="page-hero">

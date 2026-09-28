@@ -12,9 +12,83 @@
     @endphp
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="{{ $siteSettings->site_name ?? 'Bless Itahari' }} — Quality education from Playgroup to Secondary in {{ $siteSettings->contact_address ?? 'Itahari, Nepal' }}.">
-    <meta name="keywords" content="{{ $siteSettings->site_short_name ?? 'Bless Itahari' }}, {{ $siteSettings->site_name ?? 'Bless Itahari' }}, Itahari, Nepal, School in Belbari">
-    <title>{{ $siteSettings->site_name ?? 'Bless Itahari' }} | {{ $siteSettings->site_tagline ?? 'Itahari' }}</title>
+
+    @php
+        $defaultTitle = ($siteSettings->site_name ?? 'Bless Itahari') . ' | ' . ($siteSettings->site_tagline ?? 'Excellence in Education');
+        $pageTitle = trim($__env->yieldContent('title'));
+        $metaTitle = $pageTitle ? $pageTitle . ' - ' . ($siteSettings->site_name ?? 'Bless Itahari') : $defaultTitle;
+
+        $defaultDesc = ($siteSettings->site_name ?? 'Bless Itahari') . ' — Quality education from Playgroup to Secondary level in ' . ($siteSettings->contact_address ?? 'Itahari, Nepal') . '.';
+        $pageDesc = trim($__env->yieldContent('meta_description'));
+        $metaDescription = $pageDesc ?: $defaultDesc;
+
+        $defaultKeywords = ($siteSettings->site_short_name ?? 'Bless Itahari') . ', ' . ($siteSettings->site_name ?? 'Bless Itahari') . ', School in Itahari, Nepal, Quality Education, Admissions, Curriculum';
+        $pageKeywords = trim($__env->yieldContent('meta_keywords'));
+        $metaKeywords = $pageKeywords ?: $defaultKeywords;
+
+        $ogImage = trim($__env->yieldContent('og_image'));
+        if (!$ogImage) {
+            $ogImage = ($siteSettings && !empty($siteSettings->site_logo)) ? asset($siteSettings->site_logo) : asset('backend/images/logo.png');
+        }
+    @endphp
+
+    <title>{{ $metaTitle }}</title>
+    <meta name="description" content="{{ $metaDescription }}">
+    <meta name="keywords" content="{{ $metaKeywords }}">
+    <meta name="robots" content="@yield('meta_robots', 'index, follow')">
+    <link rel="canonical" href="@yield('canonical_url', url()->current())">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="@yield('og_type', 'website')">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="{{ $metaTitle }}">
+    <meta property="og:description" content="{{ $metaDescription }}">
+    <meta property="og:image" content="{{ $ogImage }}">
+    <meta property="og:site_name" content="{{ $siteSettings->site_name ?? 'Bless Itahari' }}">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ url()->current() }}">
+    <meta name="twitter:title" content="{{ $metaTitle }}">
+    <meta name="twitter:description" content="{{ $metaDescription }}">
+    <meta name="twitter:image" content="{{ $ogImage }}">
+
+    <!-- Schema.org JSON-LD Structured Data for School / LocalBusiness -->
+    @php
+        $sameAsLinks = array_values(array_filter([
+            $siteSettings->facebook_url ?? null,
+            $siteSettings->instagram_url ?? null,
+            $siteSettings->youtube_url ?? null,
+        ]));
+    @endphp
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": ["School", "LocalBusiness", "EducationalOrganization"],
+      "@id": "{{ url('/') }}#school",
+      "name": "{{ $siteSettings->site_name ?? 'Blooming Lotus English Secondary School' }}",
+      "alternateName": "{{ $siteSettings->site_short_name ?? 'BLESS' }}",
+      "url": "{{ url('/') }}",
+      "logo": "{{ !empty($siteSettings->site_logo) ? asset($siteSettings->site_logo) : asset('backend/images/logo.png') }}",
+      "image": [
+        "{{ !empty($siteSettings->site_logo) ? asset($siteSettings->site_logo) : asset('backend/images/logo.png') }}"
+      ],
+      "description": "{{ $metaDescription }}",
+      "telephone": "{{ $siteSettings->contact_phone ?? '' }}",
+      "email": "{{ $siteSettings->contact_email ?? '' }}",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{{ $siteSettings->contact_address ?? 'Itahari, Koshi Province, Nepal' }}",
+        "addressLocality": "Itahari",
+        "addressRegion": "Koshi Province",
+        "postalCode": "56705",
+        "addressCountry": "NP"
+      },
+      "sameAs": {!! json_encode($sameAsLinks) !!}
+    }
+    </script>
+    @stack('schema')
     @php
         $favIconRelPath = null;
         if ($siteSettings && !empty($siteSettings->site_favicon) && file_exists(public_path($siteSettings->site_favicon))) {

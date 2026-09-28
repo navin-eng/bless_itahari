@@ -1,4 +1,35 @@
 @extends('frontend.layout.master')
+
+@section('title', $notice->title . ' - Official Notice')
+@section('meta_description', Str::limit(strip_tags($notice->description ?? $notice->title), 155))
+@if(!empty($notice->image))
+@section('og_image', asset($notice->image))
+@endif
+
+@push('schema')
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "NewsArticle",
+  "headline": "{{ $notice->title }}",
+  "datePublished": "{{ $notice->created_at ? $notice->created_at->toIso8601String() : '' }}",
+  "dateModified": "{{ $notice->updated_at ? $notice->updated_at->toIso8601String() : '' }}",
+  "description": "{{ Str::limit(strip_tags($notice->description ?? ''), 250) }}",
+  "image": [
+    "{{ !empty($notice->image) ? asset($notice->image) : asset('backend/images/logo.png') }}"
+  ],
+  "publisher": {
+    "@type": "Organization",
+    "name": "{{ $siteSettings->site_name ?? 'Bless Itahari' }}",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ asset($siteSettings->site_logo ?? 'favicon.png') }}"
+    }
+  }
+}
+</script>
+@endpush
+
 @section('frontend-content')
 
 {{-- Hero Section --}}

@@ -1,4 +1,8 @@
 @extends('frontend.layout.master')
+
+@section('title', 'Photo & Video Gallery')
+@section('meta_description', 'Explore moments, events, campus infrastructure, sports, and student activities captured in our photo and video gallery.')
+
 @section('frontend-content')
 
 @php
