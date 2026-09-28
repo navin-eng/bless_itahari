@@ -16,7 +16,7 @@ use App\Models\Page;
 use App\Models\Testimonial;
 use App\Models\SiteSetting;
 use Illuminate\Support\Carbon;
-use Pratiksh\Nepalidate\Services\NepaliDate;
+use App\Helpers\NepaliDate;
 use Pratiksh\Nepalidate\Services\EnglishDate;
 use App\Helpers\NepaliCalendarHelper;
 
