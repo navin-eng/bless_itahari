@@ -127,9 +127,9 @@ class Admin extends Controller
         ]);
 
         $mail_data = [
-            'sender'   => 'donotreplygplc@gmail.com',
+            'sender'   => config('mail.from.address', 'donotreplybless@gmail.com'),
             'reciever' => $request->email,
-            'from'     => 'Shiksha Sandesh',
+            'from'     => config('mail.from.name', 'Blooming Lotus English Secondary School'),
             'subject'  => 'Forgot Password - OTP',
             'body'     => $otp,
         ];

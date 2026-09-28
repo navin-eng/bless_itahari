@@ -5,8 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up()
     {
         Schema::table('events', function (Blueprint $table) {
@@ -17,7 +16,7 @@ return new class extends Migration
 
         DB::table('events')->update([
             'event_type' => 'event',
-            'venue' => 'GPLC Campus, Itahari',
+            'venue' => 'BLESS, Itahari',
         ]);
     }
 

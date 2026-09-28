@@ -2,10 +2,10 @@
 
   {{-- Logo --}}
   <a href="{{ url('admin/dashboard') }}" class="sb-logo">
-    <img src="{{ asset('backend/images/logo.png') }}" alt="GPLC">
+    <img src="{{ asset('backend/images/logo.png') }}" alt="BLESS">
     <div class="sb-logo-text">
-      <span class="sb-name">GPLC Admin</span>
-      <span class="sb-sub">Shiksha Sandesh English School</span>
+      <span class="sb-name">BLESS Admin</span>
+      <span class="sb-sub">Blooming Lotus English Secondary School</span>
     </div>
   </a>
 

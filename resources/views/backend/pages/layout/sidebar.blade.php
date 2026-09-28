@@ -5,10 +5,10 @@
 
   {{-- Logo --}}
   <a href="{{ url('admin/dashboard') }}" class="sb-logo">
-    <img src="{{ $sidebarSettings->site_logo ? asset($sidebarSettings->site_logo) : asset('backend/images/logo.png') }}" alt="{{ $sidebarSettings->site_name ?? 'GPLC' }}">
+    <img src="{{ $sidebarSettings->site_logo ? asset($sidebarSettings->site_logo) : asset('backend/images/logo.png') }}" alt="{{ $sidebarSettings->site_name ?? 'BLESS' }}">
     <div class="sb-logo-text">
-      <span class="sb-name">{{ $sidebarSettings->site_short_name ?? 'SSES' }} Admin</span>
-      <span class="sb-sub">{{ $sidebarSettings->site_name ?? 'Shiksha Sandesh English School' }}</span>
+      <span class="sb-name">{{ $sidebarSettings->site_short_name ?? 'BLESS' }} Admin</span>
+      <span class="sb-sub">{{ $sidebarSettings->site_name ?? 'Blooming Lotus English Secondary School' }}</span>
     </div>
   </a>
 

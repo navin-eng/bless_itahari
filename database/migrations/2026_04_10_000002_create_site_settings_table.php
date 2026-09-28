@@ -5,8 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up()
     {
         Schema::create('site_settings', function (Blueprint $table) {
@@ -38,10 +37,10 @@ return new class extends Migration
             'primary_light' => '#40916c',
             'accent_color' => '#52b788',
             'contact_phone' => '025-586701',
-            'contact_email' => 'info@gplc.edu.np',
+            'contact_email' => 'info@blessitahari.edu.np',
             'contact_address' => 'Itahari-2, Sunsari, Nepal',
-            'whatsapp_number' => '9812355717',
-            'facebook_url' => 'https://www.facebook.com/GplcIth',
+            'whatsapp_number' => '',
+            'facebook_url' => 'https://www.facebook.com/blessitahari',
             'youtube_url' => '#',
             'instagram_url' => '#',
             'gallery_layout' => 'masonry',

@@ -132,7 +132,7 @@
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
     <!-- LightGallery -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@2.7.1/css/lightgallery-bundle.min.css">
-    <!-- GPLC Brand CSS -->
+    <!-- BLESS Brand CSS -->
     <link rel="stylesheet" href="{{ asset('frontend/css/style.css') }}?v={{ time() }}">
 
     {{-- Page-level styles injected by child views --}}
