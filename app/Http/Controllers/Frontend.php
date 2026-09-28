@@ -17,7 +17,7 @@ use App\Models\Testimonial;
 use App\Models\SiteSetting;
 use Illuminate\Support\Carbon;
 use App\Helpers\NepaliDate;
-use Pratiksh\Nepalidate\Services\EnglishDate;
+use App\Helpers\EnglishDate;
 use App\Helpers\NepaliCalendarHelper;
 
 class Frontend extends Controller
