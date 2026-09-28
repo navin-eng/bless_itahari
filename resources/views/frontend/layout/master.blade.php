@@ -12,6 +12,7 @@
     @endphp
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="google5306b42d493521c9">
 
     @php
         $defaultTitle = ($siteSettings->site_name ?? 'Bless Itahari') . ' | ' . ($siteSettings->site_tagline ?? 'Excellence in Education');
