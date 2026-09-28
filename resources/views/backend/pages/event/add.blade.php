@@ -50,7 +50,7 @@
             </div>
             <div class="mb-3" data-event-field="venue">
                 <label for="" class="form-label">Venue / Notes</label>
-                <input type="text" name="venue" value="{{ old('venue', 'GPLC Campus, Itahari') }}" class="form-control">
+                <input type="text" name="venue" value="{{ old('venue', 'Bless Itahari School Campus') }}" class="form-control">
             </div>
             <div class="mb-3" data-event-field="result_link">
                 <label for="" class="form-label">Result Link (optional)</label>

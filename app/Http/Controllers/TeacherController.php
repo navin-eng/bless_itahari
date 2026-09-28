@@ -39,6 +39,7 @@ class TeacherController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $extension = $image->getClientOriginalExtension();
+            $imageName = Str::random(20) . time() . '.' . $extension;
             $destinationPath = public_path('backend/images/teachers');
             if (!file_exists($destinationPath)) {
                 mkdir($destinationPath, 0777, true);
