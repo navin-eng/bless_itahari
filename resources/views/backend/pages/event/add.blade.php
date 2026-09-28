@@ -2,7 +2,7 @@
 @push('b-title', 'Add Event')
 
 @push('styles')
-    <link href="https://nepalidatepicker.sajanmaharjan.com.np/nepali.datepicker/css/nepali.datepicker.v4.0.1.min.css"
+    <link href="https://nepalidatepicker.sajanmaharjan.com.np/v5/nepali.datepicker/css/nepali.datepicker.v5.0.6.min.css"
         rel="stylesheet" type="text/css" />
 @endpush
 
@@ -180,7 +180,7 @@
                 });
             })();
         </script>
-        <script src="https://nepalidatepicker.sajanmaharjan.com.np/nepali.datepicker/js/nepali.datepicker.v4.0.1.min.js"
+        <script src="https://nepalidatepicker.sajanmaharjan.com.np/v5/nepali.datepicker/js/nepali.datepicker.v5.0.6.min.js"
             type="text/javascript"></script>
     @endpush
 @endsection
