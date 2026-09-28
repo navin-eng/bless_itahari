@@ -49,19 +49,19 @@
                 <small class="text-muted" id="dateHelperText" style="display: none; margin-top:5px;">This automatically saves the standard English date behind the scenes.</small>
             </div>
             <div class="mb-3" data-event-field="venue">
-                <label for="" class="form-label">Venue / Notes</label>
-                <input type="text" name="venue" value="{{ $event->venue }}" class="form-control">
+                <label for="" class="form-label" id="venueLabel">Venue / Location / Notes</label>
+                <input type="text" name="venue" value="{{ $event->venue }}" class="form-control" id="venueInput" placeholder="e.g. School Auditorium">
             </div>
             <div class="mb-3" data-event-field="result_link">
-                <label for="" class="form-label">Result Link (optional)</label>
-                <input type="text" name="result_link" value="{{ $event->result_link }}" class="form-control">
+                <label for="" class="form-label">Result Link</label>
+                <input type="text" name="result_link" value="{{ $event->result_link }}" class="form-control" placeholder="https://neb.gov.np/result">
             </div>
-            <div class="mb-3">
-                <label for="" class="form-label">Upload a Image</label>
-                <input type="file" name="image" class="form-control">
+            <div class="mb-3" data-event-field="image">
+                <label for="" class="form-label">Upload Cover Image <span class="text-muted">(leave blank to keep current)</span></label>
+                <input type="file" name="image" class="form-control" accept="image/*">
             </div>
-            <div class="mb-3">
-                <label for="" class="form-label">Event Gallery Images</label>
+            <div class="mb-3" data-event-field="gallery">
+                <label for="" class="form-label">Event Gallery Images <span class="text-muted">(adds to existing)</span></label>
                 <input type="file" name="gallery[]" multiple class="form-control" accept="image/*">
                 <small class="text-muted">Upload multiple supporting images for this event.</small>
             </div>
@@ -117,21 +117,32 @@
         const resultField = document.querySelector('[data-event-field="result_link"]');
 
         const config = {
-            event: { date: 'Event Date', showVenue: true, showResult: false, hint: 'Use this for seminars, programs, celebrations, and other regular events.' },
-            holiday: { date: 'Holiday Date', showVenue: false, showResult: false, hint: 'Use this for holidays and breaks. Venue is not required here.' },
-            exam: { date: 'Exam Date', showVenue: true, showResult: false, hint: 'Use this for exams. You can mention the hall, room, or exam notes in venue.' },
-            test: { date: 'Test Date', showVenue: true, showResult: false, hint: 'Use this for class tests, internal tests, or assessment dates.' },
-            cca_eca: { date: 'Activity Date', showVenue: true, showResult: false, hint: 'Use this for CCA/ECA activities, competitions, and student participation events.' },
-            result: { date: 'Result Publish Date', showVenue: false, showResult: true, hint: 'Use this for result publication. Add the result link so students can open it quickly.' },
+            event:   { date: 'Event Date',          showVenue: true,  venueLabel: 'Venue / Location',         venuePlaceholder: 'e.g. School Auditorium, Main Hall', showResult: false, showImage: true,  showGallery: true,  hint: '📅 General Event — for seminars, programs, celebrations, and school activities.' },
+            holiday: { date: 'Holiday Date',         showVenue: false, venueLabel: '',                         venuePlaceholder: '',                                  showResult: false, showImage: false, showGallery: false, hint: '🎉 Holiday / Break — no venue or images needed.' },
+            exam:    { date: 'Exam Date',             showVenue: true,  venueLabel: 'Exam Hall / Room / Notes', venuePlaceholder: 'e.g. Exam Hall A, Ground Floor',   showResult: false, showImage: false, showGallery: false, hint: '📝 Exam — specify the hall or room. No gallery needed.' },
+            test:    { date: 'Test Date',             showVenue: true,  venueLabel: 'Classroom / Location',    venuePlaceholder: 'e.g. Classroom 5B, Science Lab',   showResult: false, showImage: false, showGallery: false, hint: '✏️ Class Test — specify the classroom. No images needed.' },
+            cca_eca: { date: 'Activity Date',         showVenue: true,  venueLabel: 'Activity Venue',          venuePlaceholder: 'e.g. School Ground, Music Room',   showResult: false, showImage: true,  showGallery: true,  hint: '🏆 CCA / ECA — for competitions, clubs, sports, and student activities.' },
+            result:  { date: 'Result Publish Date',  showVenue: false, venueLabel: '',                         venuePlaceholder: '',                                  showResult: true,  showImage: false, showGallery: false, hint: '📊 Result — add the result URL. No venue or gallery needed.' },
         };
+
+        const venueLabel = document.getElementById('venueLabel');
+        const venueInput = document.getElementById('venueInput');
 
         const syncEventFields = () => {
             const selected = eventTypeSelector.value || 'event';
-            const current = config[selected] || config.event;
-            eventDateLabel.textContent = current.date;
-            eventCategoryHint.textContent = current.hint;
-            venueField.style.display = current.showVenue ? '' : 'none';
-            resultField.style.display = current.showResult ? '' : 'none';
+            const c = config[selected] || config.event;
+            if (eventDateLabel)    eventDateLabel.textContent    = c.date;
+            if (eventCategoryHint) eventCategoryHint.textContent = c.hint;
+            if (venueField)  venueField.style.display  = c.showVenue  ? '' : 'none';
+            if (resultField) resultField.style.display = c.showResult ? '' : 'none';
+            const imageField   = document.querySelector('[data-event-field="image"]');
+            const galleryField = document.querySelector('[data-event-field="gallery"]');
+            if (imageField)   imageField.style.display   = c.showImage   ? '' : 'none';
+            if (galleryField) galleryField.style.display = c.showGallery ? '' : 'none';
+            if (c.showVenue && venueLabel) {
+                venueLabel.textContent = c.venueLabel;
+                if (venueInput) venueInput.placeholder = c.venuePlaceholder;
+            }
         };
 
         eventTypeSelector?.addEventListener('change', syncEventFields);

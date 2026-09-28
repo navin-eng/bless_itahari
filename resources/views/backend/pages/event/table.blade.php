@@ -82,19 +82,21 @@
                     <input type="date" name="visit_date" value="{{ old('visit_date') }}" class="admin-input" required>
                 </div>
                 <div class="mb-3" data-event-field="venue">
-                    <label class="admin-label">Venue / Notes</label>
-                    <input type="text" name="venue" value="{{ old('venue', 'Bless Itahari School Campus') }}" class="admin-input">
+                    <label class="admin-label" id="modalVenueLabel">Venue / Location / Notes</label>
+                    <input type="text" name="venue" value="{{ old('venue', 'Bless Itahari School Campus') }}" class="admin-input" id="modalVenueInput" placeholder="e.g. School Auditorium">
+                    <span class="admin-input-hint">Specify the location or add short notes.</span>
                 </div>
                 <div class="mb-3" data-event-field="result_link">
-                    <label class="admin-label">Result Link (optional)</label>
-                    <input type="text" name="result_link" value="{{ old('result_link') }}" class="admin-input" placeholder="Paste result page URL">
+                    <label class="admin-label">Result Link <span style="color:#e53e3e">*</span></label>
+                    <input type="text" name="result_link" value="{{ old('result_link') }}" class="admin-input" placeholder="https://neb.gov.np/result or paste result URL">
+                    <span class="admin-input-hint">Students will see a direct button to open this result link.</span>
                 </div>
-                <div class="mb-3">
-                    <label class="admin-label">Upload Cover Image (optional)</label>
-                    <input type="file" name="image" class="admin-input">
+                <div class="mb-3" data-event-field="image">
+                    <label class="admin-label">Cover Image <span class="text-muted">(optional)</span></label>
+                    <input type="file" name="image" class="admin-input" accept="image/*">
                 </div>
-                <div class="mb-3">
-                    <label class="admin-label">Event Gallery Images</label>
+                <div class="mb-3" data-event-field="gallery">
+                    <label class="admin-label">Gallery Images <span class="text-muted">(optional)</span></label>
                     <input type="file" name="gallery[]" multiple class="admin-input" accept="image/*">
                     <small class="text-muted">Upload multiple supporting images for the public event gallery.</small>
                 </div>
@@ -141,21 +143,37 @@
         const resultField = document.querySelector('[data-event-field="result_link"]');
 
         const config = {
-            event: { date: 'Event Date', showVenue: true, showResult: false, hint: 'Use this for seminars, programs, celebrations, and other regular events.' },
-            holiday: { date: 'Holiday Date', showVenue: false, showResult: false, hint: 'Use this for holidays and breaks. Venue is not required here.' },
-            exam: { date: 'Exam Date', showVenue: true, showResult: false, hint: 'Use this for exams. You can mention the hall, room, or exam notes in venue.' },
-            test: { date: 'Test Date', showVenue: true, showResult: false, hint: 'Use this for class tests, internal tests, or assessment dates.' },
-            cca_eca: { date: 'Activity Date', showVenue: true, showResult: false, hint: 'Use this for CCA/ECA activities, competitions, and student participation events.' },
-            result: { date: 'Result Publish Date', showVenue: false, showResult: true, hint: 'Use this for result publication. Add the result link so students can open it quickly.' },
+            event:   { date: 'Event Date',          showVenue: true,  venueLabel: 'Venue / Location',        venuePlaceholder: 'e.g. School Auditorium, Main Hall',    venueDefault: 'Bless Itahari School Campus', showResult: false, showImage: true,  showGallery: true,  hint: '📅 General Event — for seminars, programs, celebrations, and school activities.' },
+            holiday: { date: 'Holiday Date',         showVenue: false, venueLabel: '',                        venuePlaceholder: '',                                       venueDefault: '',                            showResult: false, showImage: false, showGallery: false, hint: '🎉 Holiday / Break — no venue or images needed. Just the date and name.' },
+            exam:    { date: 'Exam Date',             showVenue: true,  venueLabel: 'Exam Hall / Room / Notes', venuePlaceholder: 'e.g. Exam Hall A, Ground Floor',         venueDefault: 'Bless Itahari School Campus', showResult: false, showImage: false, showGallery: false, hint: '📝 Exam — specify the hall or room. No gallery needed.' },
+            test:    { date: 'Test Date',             showVenue: true,  venueLabel: 'Classroom / Location',    venuePlaceholder: 'e.g. Classroom 5B, Science Lab',         venueDefault: 'Bless Itahari School Campus', showResult: false, showImage: false, showGallery: false, hint: '✏️ Class Test — specify the classroom. No images needed.' },
+            cca_eca: { date: 'Activity Date',         showVenue: true,  venueLabel: 'Activity Venue',          venuePlaceholder: 'e.g. School Ground, Music Room',         venueDefault: 'Bless Itahari School Campus', showResult: false, showImage: true,  showGallery: true,  hint: '🏆 CCA / ECA — for competitions, clubs, sports, and student activities.' },
+            result:  { date: 'Result Publish Date',  showVenue: false, venueLabel: '',                        venuePlaceholder: '',                                       venueDefault: '',                            showResult: true,  showImage: false, showGallery: false, hint: '📊 Result Publication — add the result URL. No venue or gallery needed.' },
         };
+
+        const modalVenueLabel = document.getElementById('modalVenueLabel');
+        const modalVenueInput = document.getElementById('modalVenueInput');
 
         const syncEventFields = () => {
             const selected = eventTypeSelector.value || 'event';
-            const current = config[selected] || config.event;
-            eventDateLabel.textContent = current.date;
-            eventCategoryHint.textContent = current.hint;
-            venueField.style.display = current.showVenue ? '' : 'none';
-            resultField.style.display = current.showResult ? '' : 'none';
+            const c = config[selected] || config.event;
+            if (eventDateLabel)    eventDateLabel.textContent = c.date;
+            if (eventCategoryHint) eventCategoryHint.textContent = c.hint;
+            if (venueField)  venueField.style.display  = c.showVenue  ? '' : 'none';
+            if (resultField) resultField.style.display = c.showResult ? '' : 'none';
+            const imageField   = document.querySelector('[data-event-field="image"]');
+            const galleryField = document.querySelector('[data-event-field="gallery"]');
+            if (imageField)   imageField.style.display   = c.showImage   ? '' : 'none';
+            if (galleryField) galleryField.style.display = c.showGallery ? '' : 'none';
+            if (c.showVenue && modalVenueLabel) {
+                modalVenueLabel.textContent = c.venueLabel;
+                if (modalVenueInput) {
+                    modalVenueInput.placeholder = c.venuePlaceholder;
+                    if (!modalVenueInput.value || Object.values(config).some(x => x.venueDefault === modalVenueInput.value)) {
+                        modalVenueInput.value = c.venueDefault;
+                    }
+                }
+            }
         };
 
         eventTypeSelector?.addEventListener('change', syncEventFields);
