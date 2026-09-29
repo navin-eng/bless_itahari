@@ -164,21 +164,39 @@
                 <hr style="border-color:var(--admin-border);margin:14px 0;">
 
                 <div class="admin-form-group">
-                    <label class="admin-label">Cover Image {{ $isEdit ? '' : '*' }}</label>
-                    <div class="mb-2">
-                        <div class="input-group">
-                            <input type="text" name="image_url" id="courseImageUrl" class="admin-input" placeholder="Select from Media Library or upload..." value="{{ old('image_url', $isEdit ? $course->image : '') }}">
-                            <button type="button" class="btn btn-outline-primary" data-media-picker data-target-input="#courseImageUrl" data-target-preview="#courseImagePreview">
-                                <i class="bi bi-images me-1"></i> Media Library
-                            </button>
-                        </div>
+                    <label class="admin-label">Cover Image {{ $isEdit ? '' : '' }}</label>
+                    <div class="input-group mb-2">
+                        <input type="text"
+                               name="image_url"
+                               id="courseImageUrl"
+                               class="admin-input"
+                               placeholder="No image selected — click Choose Image"
+                               value="{{ old('image_url', $isEdit ? $course->image : '') }}"
+                               readonly
+                               style="cursor:pointer; flex:1; border-radius:8px 0 0 8px;"
+                               onclick="window.openMediaLibrary({targetInput:'#courseImageUrl', targetPreview:'#courseImagePreview'})">
+                        <button type="button"
+                                class="btn btn-outline-primary"
+                                data-media-picker
+                                data-target-input="#courseImageUrl"
+                                data-target-preview="#courseImagePreview"
+                                style="border-radius:0 8px 8px 0; white-space:nowrap; font-size:13px; font-weight:600;">
+                            <i class="bi bi-images me-1"></i> Choose Image
+                        </button>
                     </div>
-                    <label class="admin-label text-muted fs-8">Or Upload New File:</label>
-                    <input type="file" name="image" class="admin-input" accept="image/*">
-                    <span class="admin-input-hint">Choose an existing image from Media Library or upload a new file.</span>
-                    <div class="mt-2">
-                        <img id="courseImagePreview" src="{{ !empty(old('image_url', $isEdit ? $course->image : '')) ? asset(old('image_url', $isEdit ? $course->image : '')) : '' }}" alt="Preview" style="max-height: 80px; border-radius: 6px; border: 1px solid #e2e8f0; {{ !empty(old('image_url', $isEdit ? $course->image : '')) ? '' : 'display:none;' }}">
+                    @php $courseImgVal = old('image_url', $isEdit ? $course->image : ''); @endphp
+                    <div id="courseImagePreview_wrap" style="{{ $courseImgVal ? '' : 'display:none;' }} margin-top:6px;">
+                        <img id="courseImagePreview"
+                             src="{{ $courseImgVal ? asset($courseImgVal) : '' }}"
+                             alt="Cover preview"
+                             style="max-height:100px; max-width:220px; border-radius:8px; border:1px solid #e2e8f0; object-fit:cover; display:block;">
+                        <button type="button"
+                                onclick="clearImagePicker('courseImageUrl','courseImagePreview')"
+                                style="margin-top:4px; background:none; border:none; color:#e53e3e; font-size:12px; cursor:pointer; padding:0;">
+                            <i class="bi bi-x-circle me-1"></i> Remove
+                        </button>
                     </div>
+                    <span class="admin-input-hint">Select an image from the Media Library.</span>
                 </div>
 
                 <div class="admin-form-group mb-0">
@@ -301,5 +319,15 @@
             ]
         });
     });
+
+    function clearImagePicker(inputId, previewId) {
+        const inp = document.getElementById(inputId);
+        const img = document.getElementById(previewId);
+        const wrap = document.getElementById(previewId + '_wrap');
+        if (inp)  inp.value = '';
+        if (img)  { img.src = ''; img.style.display = 'none'; }
+        if (wrap) wrap.style.display = 'none';
+    }
+
 </script>
 @endpush

@@ -6,6 +6,7 @@ use App\Models\Course;
 use Dflydev\DotAccessData\Data;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
@@ -15,7 +16,10 @@ class CourseController extends Controller
 {
     protected function rules($courseId = null, $hasImageUrl = false)
     {
-        $nameRule = 'required|min:2|max:120|unique:courses,name' . ($courseId ? ',' . $courseId : '');
+        $nameRule = [
+            'required', 'min:2', 'max:120',
+            Rule::unique('courses', 'name')->ignore($courseId),
+        ];
 
         return [
             'name' => $nameRule,
@@ -32,7 +36,7 @@ class CourseController extends Controller
             'closing_time' => 'nullable',
             'description' => 'required|string|max:1000',
             'fulldescription' => 'nullable|string',
-            'image' => ($courseId || $hasImageUrl) ? 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120' : 'required_without:image_url|nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
+            'image' => ($courseId || $hasImageUrl) ? 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120' : 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
             'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
         ];
     }
