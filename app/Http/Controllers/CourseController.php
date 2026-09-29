@@ -13,13 +13,9 @@ use PHPUnit\Framework\Constraint\Count;
 
 class CourseController extends Controller
 {
-    protected function rules($courseId = null)
+    protected function rules($courseId = null, $hasImageUrl = false)
     {
-        $nameRule = 'required|min:2|max:120|unique:courses,name';
-
-        if ($courseId) {
-            $nameRule .= ',' . $courseId;
-        }
+        $nameRule = 'required|min:2|max:120|unique:courses,name' . ($courseId ? ',' . $courseId : '');
 
         return [
             'name' => $nameRule,
@@ -36,8 +32,8 @@ class CourseController extends Controller
             'closing_time' => 'nullable',
             'description' => 'required|string|max:1000',
             'fulldescription' => 'nullable|string',
-            'image' => $courseId ? 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048' : 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'image' => ($courseId || $hasImageUrl) ? 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120' : 'required_without:image_url|nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
+            'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
         ];
     }
 
@@ -52,12 +48,25 @@ class CourseController extends Controller
     }
     public function store(Request $request)
     {
-        $request->validate($this->rules());
+        $request->validate($this->rules(null, $request->filled('image_url')), [
+            'name.unique' => 'A course or level with this name already exists in the system. Please enter a unique name (e.g. Science - Grade 11).',
+            'image.required_without' => 'Please select an image from the Media Library or upload a new image file.',
+        ]);
+
         $course = new Course();
         $course->name = $request->name;
         $course->academic_level = $request->academic_level;
         $course->grade_span = $request->grade_span ?: '';
-        $course->slug = Str::slug($request->name);
+
+        // Auto-generate unique slug
+        $baseSlug = Str::slug($request->name);
+        $slug = $baseSlug;
+        $count = 1;
+        while (Course::where('slug', $slug)->exists()) {
+            $slug = $baseSlug . '-' . $count++;
+        }
+        $course->slug = $slug;
+
         $course->duration = $request->duration;
         $course->semester = $request->semester ?: ($request->academic_level ? $request->academic_level . ' (Annual)' : 'Annual Session');
         $course->requirement = $request->requirement ?: 'As per School & NEB Criteria';
@@ -78,6 +87,8 @@ class CourseController extends Controller
             $imageName = Str::random(20) . time() . '.' . $extension;
             $image->move('backend/images/courses/', $imageName);
             $course->image = 'backend/images/courses/' . $imageName;
+        } elseif ($request->filled('image_url')) {
+            $course->image = $request->image_url;
         }
         if ($request->hasFile('gallery')) {
             $images = [];
@@ -121,7 +132,7 @@ class CourseController extends Controller
             Alert::error('Oops', 'Could not find course');
             return back()->with('error', 'Academic level not found.');
         } else {
-            $newStatus = ($course->status == 1) ? null : 1;
+            $newStatus = ($course->status == 1) ? 0 : 1;
             $course->status = $newStatus;
             $course->save();
             Cache::forget('home.courses');
@@ -134,7 +145,9 @@ class CourseController extends Controller
     }
     public function update(Request $request, Course $course,$id)
     {
-        $request->validate($this->rules($id));
+        $request->validate($this->rules($id, $request->filled('image_url')), [
+            'name.unique' => 'A course or level with this name already exists. Please enter a unique name.',
+        ]);
         $course = Course::find($id);
         if (!$course) {
             Alert::error('Oops', 'Academic level not found.');
@@ -175,6 +188,8 @@ class CourseController extends Controller
             $imageName = Str::random(20) . time() . '.' . $extension;
             $image->move('backend/images/courses/', $imageName);
             $course->image = 'backend/images/courses/' . $imageName;
+        } elseif ($request->filled('image_url')) {
+            $course->image = $request->image_url;
         }
 
         if ($request->hasFile('gallery')) {

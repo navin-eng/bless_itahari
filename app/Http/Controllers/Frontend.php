@@ -144,9 +144,7 @@ class Frontend extends Controller
         $courses = collect();
         try {
             if (\Illuminate\Support\Facades\Schema::hasTable('courses')) {
-                $courses = \App\Models\Course::where(function ($q) {
-                    $q->where('status', 1)->orWhereNull('status');
-                })->get();
+                $courses = \App\Models\Course::where('status', 1)->get();
             }
         } catch (\Throwable $e) {
             $courses = collect();
@@ -157,16 +155,12 @@ class Frontend extends Controller
 
     public function coursesIndex()
     {
-        $courses = Course::where(function ($q) {
-            $q->where('status', 1)->orWhereNull('status');
-        })->get();
+        $courses = Course::where('status', 1)->get();
 
         if ($courses->isEmpty() && Course::count() === 0) {
             try {
                 (new \Database\Seeders\SchoolLevelsSeeder())->run();
-                $courses = Course::where(function ($q) {
-                    $q->where('status', 1)->orWhereNull('status');
-                })->get();
+                $courses = Course::where('status', 1)->get();
             } catch (\Throwable $e) {
                 // Fallback gracefully
             }
@@ -177,7 +171,7 @@ class Frontend extends Controller
 
     public function courseDetail($slug)
     {
-        $course = Course::where('slug', $slug)->first();
+        $course = Course::where('slug', $slug)->where('status', 1)->first();
         if (!$course) {
             abort(404);
         }

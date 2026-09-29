@@ -165,13 +165,20 @@
 
                 <div class="admin-form-group">
                     <label class="admin-label">Cover Image {{ $isEdit ? '' : '*' }}</label>
-                    <input type="file" name="image" class="admin-input" accept="image/*" {{ $isEdit ? '' : 'required' }}>
-                    <span class="admin-input-hint">Recommended: 800×500px</span>
-                    @if($isEdit && $course->image)
-                        <div class="mt-2">
-                            <img src="{{ asset($course->image) }}" alt="Preview" style="max-height: 60px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                    <div class="mb-2">
+                        <div class="input-group">
+                            <input type="text" name="image_url" id="courseImageUrl" class="admin-input" placeholder="Select from Media Library or upload..." value="{{ old('image_url', $isEdit ? $course->image : '') }}">
+                            <button type="button" class="btn btn-outline-primary" data-media-picker data-target-input="#courseImageUrl" data-target-preview="#courseImagePreview">
+                                <i class="bi bi-images me-1"></i> Media Library
+                            </button>
                         </div>
-                    @endif
+                    </div>
+                    <label class="admin-label text-muted fs-8">Or Upload New File:</label>
+                    <input type="file" name="image" class="admin-input" accept="image/*">
+                    <span class="admin-input-hint">Choose an existing image from Media Library or upload a new file.</span>
+                    <div class="mt-2">
+                        <img id="courseImagePreview" src="{{ !empty(old('image_url', $isEdit ? $course->image : '')) ? asset(old('image_url', $isEdit ? $course->image : '')) : '' }}" alt="Preview" style="max-height: 80px; border-radius: 6px; border: 1px solid #e2e8f0; {{ !empty(old('image_url', $isEdit ? $course->image : '')) ? '' : 'display:none;' }}">
+                    </div>
                 </div>
 
                 <div class="admin-form-group mb-0">

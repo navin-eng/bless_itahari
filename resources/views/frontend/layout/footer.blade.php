@@ -4,9 +4,7 @@
     });
     try {
         $footerCourses = \Illuminate\Support\Facades\Cache::remember('footer_courses_list', 3600, function() {
-            return \App\Models\Course::where(function ($q) {
-                $q->where('status', 1)->orWhereNull('status');
-            })->get();
+            return \App\Models\Course::where('status', 1)->get();
         });
     } catch (\Throwable $e) {
         $footerCourses = collect();

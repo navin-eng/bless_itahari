@@ -211,6 +211,8 @@ window.addEventListener('pageshow', function(event) {
 });
 </script>
 
+@include('backend.pages.layout.media_modal')
+
 @stack('scripts')
 </body>
 </html>

@@ -87,6 +87,8 @@ Route::middleware('webGuard')->group(function () {
     // Backend Routes
     Route::get('/admin/dashboard', [App\Http\Controllers\AdminDashboardController::class, 'index'])->name('admin.dashboard');
     Route::post('/admin/dashboard/clear-cache', [App\Http\Controllers\AdminDashboardController::class, 'clearCache'])->name('admin.clear-cache');
+    Route::get('/admin/media-library/images', [App\Http\Controllers\MediaLibraryController::class, 'index'])->name('admin.media.index');
+    Route::post('/admin/media-library/upload', [App\Http\Controllers\MediaLibraryController::class, 'upload'])->name('admin.media.upload');
 
     // Course Routes
     Route::get('/admin/dashboard/course/add', [CourseController::class, 'create'])->name('course.add');
