@@ -33,8 +33,7 @@
 @section('frontend-content')
 
 {{-- Hero Section --}}
-<div class="notice-hero" style="background-image: url('{{ $notice->image ? asset($notice->image) : asset('frontend/images/default-notice-bg.jpg') }}');">
-    <div class="hero-overlay"></div>
+<div class="notice-hero">
     <div class="container position-relative" style="z-index: 2;">
         <div class="row">
             <div class="col-lg-10" data-aos="fade-up">
@@ -53,12 +52,25 @@
     </div>
 </div>
 
-<section class="section-block" style="padding: 80px 0; background: #f9fafb;">
+<section class="section-block" style="padding: 60px 0; background: #f9fafb;">
     <div class="container">
         <div class="row g-5">
             {{-- Main Content --}}
             <div class="col-lg-8" data-aos="fade-up">
                 <div class="notice-content-card">
+                    @if(!empty($notice->image))
+                        <div class="notice-featured-image-wrapper mb-4 text-center">
+                            <a href="{{ asset($notice->image) }}" target="_blank" title="Click to view full image">
+                                <img src="{{ asset($notice->image) }}" alt="{{ $notice->title }}" class="img-fluid rounded-3 shadow-sm notice-featured-img">
+                            </a>
+                            <div class="text-end mt-2">
+                                <a href="{{ asset($notice->image) }}" target="_blank" class="btn btn-sm btn-light border text-secondary" style="font-size: 12px;">
+                                    <i class="fa-solid fa-expand me-1"></i> View Full Resolution
+                                </a>
+                            </div>
+                        </div>
+                    @endif
+
                     <div class="notice-body-text">
                         {!! $notice->description !!}
                     </div>
@@ -127,17 +139,21 @@
 <style>
     .notice-hero {
         position: relative;
-        padding: 100px 0;
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
-        background-color: #1f2937;
+        padding: 60px 0;
+        background: linear-gradient(135deg, var(--primary, #1e293b) 0%, var(--primary-dark, #0f172a) 100%);
+        color: #fff;
     }
-    .hero-overlay {
-        position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: linear-gradient(to right, rgba(17, 24, 39, 0.9) 0%, rgba(17, 24, 39, 0.6) 100%);
-        z-index: 1;
+    .notice-featured-img {
+        max-height: 600px;
+        width: auto;
+        max-width: 100%;
+        object-fit: contain;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        transition: transform 0.2s ease;
+    }
+    .notice-featured-img:hover {
+        transform: scale(1.01);
     }
     .notice-hero-badge {
         display: inline-block;
