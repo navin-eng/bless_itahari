@@ -3,7 +3,7 @@
         <div class="swiper-wrapper">
             @forelse($banners as $banner)
                 <div class="swiper-slide gplc-hero-slide">
-                    <img src="{{ asset($banner->image) }}" alt="{{ $banner->title2 }}">
+                    <img src="{{ asset($banner->image) }}" alt="{{ $banner->title2 }}" {{ $loop->first ? 'fetchpriority="high"' : 'loading="lazy"' }} decoding="async">
                     <div class="gplc-hero-overlay"></div>
                     <div class="gplc-hero-content">
                         <span class="tag-line">

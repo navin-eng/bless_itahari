@@ -39,7 +39,7 @@ return new class extends Migration {
             'contact_phone' => '025-586701',
             'contact_email' => 'info@blessitahari.edu.np',
             'contact_address' => 'Itahari-2, Sunsari, Nepal',
-            'whatsapp_number' => '',
+            'whatsapp_number' => '9860694665',
             'facebook_url' => 'https://www.facebook.com/blessitahari',
             'youtube_url' => '#',
             'instagram_url' => '#',

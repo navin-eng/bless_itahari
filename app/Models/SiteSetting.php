@@ -10,6 +10,21 @@ class SiteSetting extends Model
 {
     use HasFactory;
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saved(function () {
+            Cache::forget('site_settings.current');
+            Cache::forget('site_settings_current');
+        });
+
+        static::deleted(function () {
+            Cache::forget('site_settings.current');
+            Cache::forget('site_settings_current');
+        });
+    }
+
     protected $fillable = [
         'site_name',
         'site_short_name',

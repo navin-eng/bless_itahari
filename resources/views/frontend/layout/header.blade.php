@@ -1,27 +1,35 @@
 @php
     try {
-        $siteSettings = \App\Models\SiteSetting::current();
+        $siteSettings = \Illuminate\Support\Facades\Cache::remember('site_settings_current', 3600, function() {
+            return \App\Models\SiteSetting::current();
+        });
     } catch (\Throwable $e) {
         $siteSettings = null;
     }
 
     try {
-        $navCourses = \App\Models\Course::where('status', 1)->get();
+        $navCourses = \Illuminate\Support\Facades\Cache::remember('nav_courses_active', 3600, function() {
+            return \App\Models\Course::where('status', 1)->get();
+        });
     } catch (\Throwable $e) {
         $navCourses = collect([]);
     }
 
     try {
-        $navbarMenus = \Illuminate\Support\Facades\Schema::hasTable('navbar_menus')
-            ? \App\Models\NavbarMenu::where('status', 1)->orderBy('order', 'asc')->get()
-            : collect([]);
+        $navbarMenus = \Illuminate\Support\Facades\Cache::remember('navbar_menus_active', 3600, function() {
+            return \Illuminate\Support\Facades\Schema::hasTable('navbar_menus')
+                ? \App\Models\NavbarMenu::where('status', 1)->orderBy('order', 'asc')->get()
+                : collect([]);
+        });
     } catch (\Throwable $e) {
         $navbarMenus = collect([]);
     }
 
     // Fetch marquee notice directly in header so it's available on all pages
     try {
-        $headerMarqueeNotice = \App\Models\Notice::where('show_in', 'm')->latest()->first();
+        $headerMarqueeNotice = \Illuminate\Support\Facades\Cache::remember('header_marquee_notice', 900, function() {
+            return \App\Models\Notice::where('show_in', 'm')->latest()->first();
+        });
     } catch (\Throwable $e) {
         $headerMarqueeNotice = null;
     }
@@ -138,7 +146,7 @@
 
             {{-- Logo --}}
             <a href="{{ route('home') }}" class="gplc-logo">
-                <img src="{{ $siteSettings->site_logo ? asset($siteSettings->site_logo) : asset('backend/images/logo.png') }}" alt="{{ $siteSettings->site_name }} Logo">
+                <img src="{{ $siteSettings->site_logo ? asset($siteSettings->site_logo) : asset('backend/images/logo.png') }}" alt="{{ $siteSettings->site_name }} Logo" fetchpriority="high" decoding="async" width="60" height="60">
                 <div class="gplc-logo-text">
                     <span class="college-name">{{ $siteSettings->site_name }}</span>
                     <span class="affiliation">{{ $siteSettings->site_tagline }}</span>

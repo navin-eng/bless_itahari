@@ -1,9 +1,13 @@
 @php
-    $siteSettings = \App\Models\SiteSetting::current();
+    $siteSettings = \Illuminate\Support\Facades\Cache::remember('site_settings_current', 3600, function() {
+        return \App\Models\SiteSetting::current();
+    });
     try {
-        $footerCourses = \App\Models\Course::where(function ($q) {
-            $q->where('status', 1)->orWhereNull('status');
-        })->get();
+        $footerCourses = \Illuminate\Support\Facades\Cache::remember('footer_courses_list', 3600, function() {
+            return \App\Models\Course::where(function ($q) {
+                $q->where('status', 1)->orWhereNull('status');
+            })->get();
+        });
     } catch (\Throwable $e) {
         $footerCourses = collect();
     }
@@ -16,7 +20,7 @@
             {{-- Brand --}}
             <div class="col-lg-3 col-md-6">
                 <div class="footer-widget">
-                    <img src="{{ $siteSettings->site_logo ? asset($siteSettings->site_logo) : asset('backend/images/logo.png') }}" width="110" alt="{{ $siteSettings->site_name }} Logo" style="margin-bottom: 20px;">
+                    <img src="{{ $siteSettings->site_logo ? asset($siteSettings->site_logo) : asset('backend/images/logo.png') }}" width="110" height="110" loading="lazy" decoding="async" alt="{{ $siteSettings->site_name }} Logo" style="margin-bottom: 20px;">
                     <p style="font-size: 0.95rem; line-height: 1.8; color: rgba(255,255,255,0.7);">{{ $siteSettings->site_name }}, providing quality education and shaping future leaders in {{ $siteSettings->contact_address }}.</p>
                     <div class="gplc-footer-social" style="display: flex; gap: 12px; margin-top: 24px;">
                         <a href="{{ $siteSettings->facebook_url }}" target="_blank" style="width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none;"><i class="fab fa-facebook-f"></i></a>

@@ -3,9 +3,15 @@
 
 <head>
     @php
-        $siteSettings = \App\Models\SiteSetting::current();
+        $siteSettings = \Illuminate\Support\Facades\Cache::remember('site_settings_current', 3600, function() {
+            return \App\Models\SiteSetting::current();
+        });
         try {
-            $stickyNotices = ($siteSettings->show_sticky_notice ?? true) ? \App\Models\Notice::latest()->take($siteSettings->sticky_notice_limit ?? 5)->get() : collect();
+            $stickyNotices = ($siteSettings->show_sticky_notice ?? true)
+                ? \Illuminate\Support\Facades\Cache::remember('sticky_notices_list', 1800, function() use ($siteSettings) {
+                    return \App\Models\Notice::latest()->take($siteSettings->sticky_notice_limit ?? 5)->get();
+                })
+                : collect();
         } catch (\Throwable $e) {
             $stickyNotices = collect();
         }
@@ -13,6 +19,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="3fbGEwKJ71_UuG5b134BBMD7O5cZSGmTsivu66YonlU">
+
+    <!-- Preconnect resource hints for external CDNs -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://unpkg.com">
 
     @php
         $defaultTitle = ($siteSettings->site_name ?? 'Bless Itahari') . ' | ' . ($siteSettings->site_tagline ?? 'Excellence in Education');
@@ -133,7 +147,7 @@
     <!-- LightGallery -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@2.7.1/css/lightgallery-bundle.min.css">
     <!-- BLESS Brand CSS -->
-    <link rel="stylesheet" href="{{ asset('frontend/css/style.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('frontend/css/style.css') }}?v={{ file_exists(public_path('frontend/css/style.css')) ? filemtime(public_path('frontend/css/style.css')) : '1.0' }}">">
 
     {{-- Page-level styles injected by child views --}}
     @stack('styles')
