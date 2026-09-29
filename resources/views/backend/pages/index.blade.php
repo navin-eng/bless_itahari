@@ -80,6 +80,117 @@
   </div>
 </div>
 
+{{-- Site Health & Storage Overview --}}
+@if(isset($siteHealth))
+<div class="row g-3 mb-4">
+  <div class="col-12">
+    <div class="admin-card border-0 shadow-sm">
+      <div class="admin-card-header d-flex flex-wrap align-items-center justify-content-between gap-2 bg-light py-3 px-4 rounded-top">
+        <div class="d-flex align-items-center gap-2">
+          <div class="rounded-circle bg-success-subtle text-success p-2 d-inline-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+            <i class="bi bi-heart-pulse-fill fs-5"></i>
+          </div>
+          <div>
+            <h5 class="mb-0 fw-bold text-dark fs-6">Site Health & Storage Monitor</h5>
+            <small class="text-muted">Real-time system diagnostics, image payload & server metrics</small>
+          </div>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="badge {{ $siteHealth['health_score'] >= 90 ? 'bg-success' : ($siteHealth['health_score'] >= 70 ? 'bg-warning text-dark' : 'bg-danger') }} px-3 py-2 fs-7 fw-semibold">
+            <i class="bi bi-shield-check me-1"></i> Health Score: {{ $siteHealth['health_score'] }}%
+          </span>
+          <form action="{{ route('admin.clear-cache') }}" method="POST" class="d-inline">
+            @csrf
+            <button type="submit" class="btn btn-sm btn-outline-primary fw-medium" title="Clear system cache and recalculate metrics">
+              <i class="bi bi-arrow-clockwise me-1"></i> Purge Cache & Scan
+            </button>
+          </form>
+        </div>
+      </div>
+      <div class="admin-card-body p-4">
+        <div class="row g-4 align-items-stretch">
+          
+          {{-- Image Assets Storage --}}
+          <div class="col-12 col-md-6 col-xl-3 border-end-md">
+            <div class="p-3 rounded bg-light-subtle h-100 border">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <span class="text-uppercase small fw-bold text-muted tracking-wider"><i class="bi bi-images text-primary me-1"></i> Image Assets</span>
+                <span class="badge bg-primary-subtle text-primary fw-semibold">{{ $siteHealth['image_count'] }} files</span>
+              </div>
+              <h3 class="fw-extrabold text-primary mb-1">{{ $siteHealth['image_size'] }}</h3>
+              <p class="text-muted small mb-0">Total space consumed by uploaded & system images</p>
+            </div>
+          </div>
+
+          {{-- Documents Storage --}}
+          <div class="col-12 col-md-6 col-xl-3 border-end-md">
+            <div class="p-3 rounded bg-light-subtle h-100 border">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <span class="text-uppercase small fw-bold text-muted tracking-wider"><i class="bi bi-file-earmark-pdf text-danger me-1"></i> Documents</span>
+                <span class="badge bg-danger-subtle text-danger fw-semibold">{{ $siteHealth['doc_count'] }} files</span>
+              </div>
+              <h3 class="fw-extrabold text-danger mb-1">{{ $siteHealth['doc_size'] }}</h3>
+              <p class="text-muted small mb-0">PDFs, Word docs & attachment storage space</p>
+            </div>
+          </div>
+
+          {{-- Database Storage --}}
+          <div class="col-12 col-md-6 col-xl-3 border-end-md">
+            <div class="p-3 rounded bg-light-subtle h-100 border">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <span class="text-uppercase small fw-bold text-muted tracking-wider"><i class="bi bi-database text-warning me-1"></i> Database Size</span>
+                <span class="badge bg-warning-subtle text-warning fw-semibold">MySQL</span>
+              </div>
+              <h3 class="fw-extrabold text-warning mb-1">{{ $siteHealth['db_size'] }}</h3>
+              <p class="text-muted small mb-0">Table indexes & database data overhead</p>
+            </div>
+          </div>
+
+          {{-- Server Disk Usage --}}
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="p-3 rounded bg-light-subtle h-100 border">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <span class="text-uppercase small fw-bold text-muted tracking-wider"><i class="bi bi-hdd-network text-info me-1"></i> Server Disk</span>
+                <span class="badge bg-info-subtle text-info fw-semibold">{{ $siteHealth['disk_used_percent'] }}% used</span>
+              </div>
+              <h3 class="fw-extrabold text-info mb-1">{{ $siteHealth['disk_free'] }}</h3>
+              <p class="text-muted small mb-1">Available free space (Total: {{ $siteHealth['disk_total'] }})</p>
+              @if($siteHealth['disk_used_percent'] > 0)
+                <div class="progress" style="height: 6px;">
+                  <div class="progress-bar {{ $siteHealth['disk_used_percent'] > 85 ? 'bg-danger' : 'bg-info' }}" role="progressbar" style="width: {{ $siteHealth['disk_used_percent'] }}%"></div>
+                </div>
+              @endif
+            </div>
+          </div>
+
+        </div>
+
+        {{-- System Diagnostics & Checks --}}
+        <div class="pt-3 mt-3 border-top d-flex flex-wrap align-items-center justify-content-between gap-2">
+          <div class="d-flex flex-wrap align-items-center gap-2">
+            <span class="badge bg-dark-subtle text-dark border px-2 py-1"><i class="bi bi-code-slash me-1"></i> PHP v{{ $siteHealth['php_version'] }}</span>
+            <span class="badge bg-dark-subtle text-dark border px-2 py-1"><i class="bi bi-layers me-1"></i> Laravel v{{ $siteHealth['laravel_version'] }}</span>
+            @foreach($siteHealth['checks'] as $check)
+              @if($check['type'] === 'success')
+                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1"><i class="bi bi-check-circle-fill me-1"></i> {{ $check['message'] }}</span>
+              @elseif($check['type'] === 'warning')
+                <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1"><i class="bi bi-exclamation-triangle-fill me-1"></i> {{ $check['message'] }}</span>
+              @else
+                <span class="badge bg-secondary-subtle text-secondary border px-2 py-1"><i class="bi bi-info-circle me-1"></i> {{ $check['message'] }}</span>
+              @endif
+            @endforeach
+          </div>
+          <div class="text-muted fs-8">
+            <i class="bi bi-clock-history me-1"></i> Last updated: {{ $siteHealth['last_updated'] }}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+@endif
+
 {{-- Google Analytics Widget --}}
 @if(!isset($analyticsDisabled))
 <div class="row g-3 mb-4">
