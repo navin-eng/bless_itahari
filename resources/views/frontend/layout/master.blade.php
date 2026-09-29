@@ -147,7 +147,7 @@
     <!-- LightGallery -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@2.7.1/css/lightgallery-bundle.min.css">
     <!-- BLESS Brand CSS -->
-    <link rel="stylesheet" href="{{ asset('frontend/css/style.css') }}?v={{ file_exists(public_path('frontend/css/style.css')) ? filemtime(public_path('frontend/css/style.css')) : '1.0' }}">">
+    <link rel="stylesheet" href="{{ asset('frontend/css/style.css') }}?v={{ file_exists(public_path('frontend/css/style.css')) ? filemtime(public_path('frontend/css/style.css')) : '1.0' }}">
 
     {{-- Page-level styles injected by child views --}}
     @stack('styles')
