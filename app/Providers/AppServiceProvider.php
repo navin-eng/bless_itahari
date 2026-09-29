@@ -26,6 +26,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        try {
+            $settings = SiteSetting::current();
+            $tz = !empty($settings->timezone) ? $settings->timezone : env('APP_TIMEZONE', 'Asia/Kathmandu');
+            date_default_timezone_set($tz);
+            config(['app.timezone' => $tz]);
+        } catch (\Throwable $e) {
+            date_default_timezone_set('Asia/Kathmandu');
+        }
+
         View::composer('*', function ($view) {
             try {
                 $view->with('siteSettings', SiteSetting::current());

@@ -146,7 +146,22 @@
                                 </div>
                                 <div class="card border-0 shadow-sm mb-4">
                                     <div class="card-body">
-                                        <h5 class="mb-4"><i class="bi bi-calendar-event text-primary me-2"></i>System Calendar</h5>
+                                        <h5 class="mb-4"><i class="bi bi-globe-americas text-primary me-2"></i>Regional & Time Settings</h5>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold text-primary">System Timezone</label>
+                                            <select name="timezone" class="form-select border-primary bg-primary-subtle">
+                                                <option value="Asia/Kathmandu" {{ old('timezone', $settings->timezone ?? 'Asia/Kathmandu') === 'Asia/Kathmandu' ? 'selected' : '' }}>🇳🇵 (UTC+05:45) Asia/Kathmandu (Nepal Time)</option>
+                                                <option value="Asia/Kolkata" {{ old('timezone', $settings->timezone) === 'Asia/Kolkata' ? 'selected' : '' }}>🇮🇳 (UTC+05:30) Asia/Kolkata (India Time)</option>
+                                                <option value="Asia/Dhaka" {{ old('timezone', $settings->timezone) === 'Asia/Dhaka' ? 'selected' : '' }}>🇧🇩 (UTC+06:00) Asia/Dhaka (Bangladesh Time)</option>
+                                                <option value="Asia/Dubai" {{ old('timezone', $settings->timezone) === 'Asia/Dubai' ? 'selected' : '' }}>🇦🇪 (UTC+04:00) Asia/Dubai (Gulf Standard Time)</option>
+                                                <option value="Asia/Singapore" {{ old('timezone', $settings->timezone) === 'Asia/Singapore' ? 'selected' : '' }}>🇸🇬 (UTC+08:00) Asia/Singapore</option>
+                                                <option value="Europe/London" {{ old('timezone', $settings->timezone) === 'Europe/London' ? 'selected' : '' }}>🇬🇧 (UTC+00:00) Europe/London (GMT/BST)</option>
+                                                <option value="America/New_York" {{ old('timezone', $settings->timezone) === 'America/New_York' ? 'selected' : '' }}>🇺🇸 (UTC-05:00) America/New_York (EST)</option>
+                                                <option value="America/Los_Angeles" {{ old('timezone', $settings->timezone) === 'America/Los_Angeles' ? 'selected' : '' }}>🇺🇸 (UTC-08:00) America/Los_Angeles (PST)</option>
+                                                <option value="UTC" {{ old('timezone', $settings->timezone) === 'UTC' ? 'selected' : '' }}>🌐 (UTC+00:00) UTC (Universal Time)</option>
+                                            </select>
+                                            <small class="text-muted d-block mt-1">Controls the local time used across dates, notices, logs, and system timestamps.</small>
+                                        </div>
                                         <div class="mb-0">
                                             <label class="form-label fw-bold text-primary">System Calendar Format</label>
                                             <select name="calendar_format" class="form-select border-primary bg-primary-subtle">
