@@ -95,9 +95,15 @@
                     <option value="non_teaching" {{ old('staff_type') === 'non_teaching' ? 'selected' : '' }}>Non-Teaching Staff</option>
                 </select>
             </div>
-            <div class="col-md-6">
-                <label class="admin-label">Photo <span style="color:#e53e3e">*</span></label>
-                <input type="file" name="image" class="admin-input" accept="image/*" required>
+            <div class="col-12">
+                @include('backend.pages.layout.image_picker', [
+                    'name'      => 'image',
+                    'inputId'   => 'teacherAddModalImageUrl',
+                    'previewId' => 'teacherAddModalImagePreview',
+                    'label'     => 'Photo',
+                    'required'  => true,
+                    'hint'      => 'Required. Select a photo from the Media Library or upload a new one.',
+                ])
             </div>
             <div class="col-md-6">
                 <label class="admin-label">Sort Order</label>

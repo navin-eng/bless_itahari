@@ -66,7 +66,9 @@ class GalleryAlbumController extends Controller
         $album->slug   = Str::slug($request->name) . '-' . time();
         $album->status = $request->status ?? 'active';
 
-        if ($request->hasFile('cover_image')) {
+        if ($request->filled('cover_image_url')) {
+            $album->cover_image = $request->cover_image_url;
+        } elseif ($request->hasFile('cover_image')) {
             $img       = $request->file('cover_image');
             $extension = $img->getClientOriginalExtension();
             $imageName = Str::random(20) . time() . '.' . $extension;
@@ -89,14 +91,17 @@ class GalleryAlbumController extends Controller
         
         $request->validate([
             'name' => 'required|string|max:255',
-            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'cover_image' => 'nullable',
+            'cover_image_url' => 'nullable',
             'status' => 'required|in:active,inactive'
         ]);
 
         $album->name = $request->name;
         $album->status = $request->status;
 
-        if ($request->hasFile('cover_image')) {
+        if ($request->filled('cover_image_url')) {
+            $album->cover_image = $request->cover_image_url;
+        } elseif ($request->hasFile('cover_image')) {
             $image = $request->file('cover_image');
             $filename = time() . '_' . $image->getClientOriginalName();
             
@@ -105,7 +110,6 @@ class GalleryAlbumController extends Controller
                 unlink(public_path('backend/images/gallery/' . $album->cover_image));
             }
 
-            // Simple move without GD compression for cover (or could use GD if preferred, but standard move is fine here)
             $image->move(public_path('backend/images/gallery/'), $filename);
             $album->cover_image = $filename;
         }

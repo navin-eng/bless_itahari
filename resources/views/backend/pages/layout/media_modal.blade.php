@@ -1,6 +1,6 @@
 {{-- WordPress-Style Media Library Modal --}}
-<div class="modal fade" id="wpMediaModal" tabindex="-1" aria-labelledby="wpMediaModalLabel" aria-hidden="true" style="z-index: 1065;">
-  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable" style="max-width: 90vw;">
+<div class="modal fade" id="wpMediaModal" tabindex="-1" aria-labelledby="wpMediaModalLabel" aria-hidden="true" style="z-index: 1080;">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable" style="max-width: 90vw; z-index: 1081;">
     <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden" style="height: 85vh;">
       
       {{-- Modal Header & Tabs --}}
@@ -304,6 +304,23 @@
                 });
             }
         });
+
+        const modalEl = document.getElementById('wpMediaModal');
+        if (modalEl) {
+            modalEl.addEventListener('show.bs.modal', function () {
+                setTimeout(function() {
+                    const backdrops = document.querySelectorAll('.modal-backdrop');
+                    if (backdrops.length > 1) {
+                        backdrops[backdrops.length - 1].style.zIndex = '1079';
+                    }
+                }, 10);
+            });
+            modalEl.addEventListener('hidden.bs.modal', function () {
+                if (document.querySelectorAll('.modal.show').length > 0) {
+                    document.body.classList.add('modal-open');
+                }
+            });
+        }
     });
 })();
 </script>

@@ -80,55 +80,39 @@
                                         <hr class="my-4 text-muted opacity-25">
 
                                         <div class="mb-4">
-                                            <h6 class="fw-bold mb-3"><i class="bi bi-image text-primary me-2"></i>Site Logo (Primary)</h6>
-                                            <div class="d-flex align-items-center gap-3">
-                                                <div class="bg-light p-2 rounded border d-flex align-items-center justify-content-center" style="width: 120px; height: 80px;">
-                                                    <img src="{{ $settings->site_logo ? asset($settings->site_logo) : asset('backend/images/logo.png') }}" alt="Logo" id="logoPreview" class="img-fluid" style="max-height: 60px;">
-                                                </div>
-                                                <div class="flex-grow-1">
-                                                    <input type="file" name="site_logo" id="siteLogoInput" class="form-control" accept="image/*">
-                                                    <small class="text-muted d-block mt-1">Recommended size: 250x80px (PNG/SVG, Max 2MB)</small>
-                                                    @if($settings->site_logo)
-                                                    <div class="form-check mt-2">
-                                                        <input class="form-check-input" type="checkbox" name="remove_logo" value="1" id="removeLogoCheck">
-                                                        <label class="form-check-label text-danger" for="removeLogoCheck">Remove current logo</label>
-                                                    </div>
-                                                    @endif
-                                                </div>
+                                            @include('backend.pages.layout.image_picker', [
+                                                'name'         => 'site_logo',
+                                                'inputId'      => 'siteLogoUrl',
+                                                'previewId'    => 'siteLogoPreviewImg',
+                                                'label'        => 'Site Logo (Primary)',
+                                                'currentImage' => $settings->site_logo,
+                                                'hint'         => 'Recommended size: 250x80px (PNG/SVG/WebP). Select from Media Library.',
+                                            ])
+                                            @if($settings->site_logo)
+                                            <div class="form-check mt-2">
+                                                <input class="form-check-input" type="checkbox" name="remove_logo" value="1" id="removeLogoCheck">
+                                                <label class="form-check-label text-danger" for="removeLogoCheck">Remove current logo</label>
                                             </div>
+                                            @endif
                                         </div>
 
                                         <hr class="my-4 text-muted opacity-25">
 
                                         <div class="mb-0">
-                                            <h6 class="fw-bold mb-3"><i class="bi bi-app-indicator text-primary me-2"></i>Site Favicon</h6>
-                                            <div class="d-flex align-items-center gap-3">
-                                                <div class="bg-light p-2 rounded border d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                                                    @php
-                                                        $editFavUrl = null;
-                                                        if ($settings->site_favicon && file_exists(public_path($settings->site_favicon))) {
-                                                            $editFavUrl = asset($settings->site_favicon);
-                                                        } elseif ($settings->site_logo && file_exists(public_path($settings->site_logo))) {
-                                                            $editFavUrl = asset($settings->site_logo);
-                                                        } elseif (file_exists(public_path('favicon.png'))) {
-                                                            $editFavUrl = asset('favicon.png');
-                                                        } else {
-                                                            $editFavUrl = asset('favicon.ico');
-                                                        }
-                                                    @endphp
-                                                    <img src="{{ $editFavUrl }}?v={{ $settings->updated_at ? $settings->updated_at->timestamp : time() }}" alt="Favicon" id="faviconPreview" class="img-fluid" style="max-height: 44px; width: 44px; object-fit: contain;">
-                                                </div>
-                                                <div class="flex-grow-1">
-                                                    <input type="file" name="site_favicon" id="siteFaviconInput" class="form-control" accept=".ico,.png,.jpg,.jpeg,.svg,.webp">
-                                                    <small class="text-muted d-block mt-1">Recommended: Square PNG, ICO, JPG, or WEBP (32x32, 64x64, 180x180, or 512x512 up to 5MB). Automatically synced across all browsers.</small>
-                                                    @if($settings->site_favicon && file_exists(public_path($settings->site_favicon)))
-                                                    <div class="form-check mt-2">
-                                                        <input class="form-check-input" type="checkbox" name="remove_favicon" value="1" id="removeFaviconCheck">
-                                                        <label class="form-check-label text-danger" for="removeFaviconCheck">Remove custom favicon (restore default school emblem)</label>
-                                                    </div>
-                                                    @endif
-                                                </div>
+                                            @include('backend.pages.layout.image_picker', [
+                                                'name'         => 'site_favicon',
+                                                'inputId'      => 'siteFaviconUrl',
+                                                'previewId'    => 'siteFaviconPreviewImg',
+                                                'label'        => 'Site Favicon',
+                                                'currentImage' => $settings->site_favicon,
+                                                'hint'         => 'Recommended: Square PNG, ICO, JPG, or WEBP (32x32 to 512x512). Select from Media Library.',
+                                            ])
+                                            @if($settings->site_favicon && file_exists(public_path($settings->site_favicon)))
+                                            <div class="form-check mt-2">
+                                                <input class="form-check-input" type="checkbox" name="remove_favicon" value="1" id="removeFaviconCheck">
+                                                <label class="form-check-label text-danger" for="removeFaviconCheck">Remove custom favicon (restore default school emblem)</label>
                                             </div>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>

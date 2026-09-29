@@ -129,18 +129,20 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Hero Background Image (Optional)</label>
+                                @include('backend.pages.layout.image_picker', [
+                                    'name'         => 'about_hero_image',
+                                    'inputId'      => 'aboutHeroImageUrl',
+                                    'previewId'    => 'aboutHeroImagePreview',
+                                    'label'        => 'Hero Background Image (Optional)',
+                                    'currentImage' => $siteSettings->about_hero_image,
+                                    'hint'         => 'Recommended: High-resolution landscape photo. Select from Media Library.',
+                                ])
                                 @if($siteSettings->about_hero_image && file_exists(public_path($siteSettings->about_hero_image)))
-                                    <div class="mb-2 d-flex align-items-center gap-3">
-                                        <img src="{{ asset($siteSettings->about_hero_image) }}" style="max-height: 80px; border-radius: 8px; border: 1px solid #ddd;" alt="Hero">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="remove_about_hero_image" value="1" id="rmHero">
-                                            <label class="form-check-label text-danger small fw-semibold" for="rmHero">Remove image</label>
-                                        </div>
+                                    <div class="form-check mt-1">
+                                        <input class="form-check-input" type="checkbox" name="remove_about_hero_image" value="1" id="rmHero">
+                                        <label class="form-check-label text-danger small fw-semibold" for="rmHero">Remove image</label>
                                     </div>
                                 @endif
-                                <input type="file" name="about_hero_image" class="form-control" accept="image/*">
-                                <small class="text-muted">Recommended: High-resolution landscape photo (1920x800px).</small>
                             </div>
 
                             <div class="col-12">
@@ -181,17 +183,20 @@
                             </div>
 
                             <div class="col-md-12">
-                                <label class="form-label fw-bold">Campus / School Photo</label>
+                                @include('backend.pages.layout.image_picker', [
+                                    'name'         => 'about_school_image',
+                                    'inputId'      => 'aboutSchoolImageUrl',
+                                    'previewId'    => 'aboutSchoolImagePreview',
+                                    'label'        => 'Campus / School Photo',
+                                    'currentImage' => $siteSettings->about_school_image,
+                                    'hint'         => 'Select campus photo from the Media Library.',
+                                ])
                                 @if($siteSettings->about_school_image && file_exists(public_path($siteSettings->about_school_image)))
-                                    <div class="mb-2 d-flex align-items-center gap-3">
-                                        <img src="{{ asset($siteSettings->about_school_image) }}" style="max-height: 100px; border-radius: 8px; border: 1px solid #ddd;" alt="School">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="remove_about_school_image" value="1" id="rmSchool">
-                                            <label class="form-check-label text-danger small fw-semibold" for="rmSchool">Remove image</label>
-                                        </div>
+                                    <div class="form-check mt-1">
+                                        <input class="form-check-input" type="checkbox" name="remove_about_school_image" value="1" id="rmSchool">
+                                        <label class="form-check-label text-danger small fw-semibold" for="rmSchool">Remove image</label>
                                     </div>
                                 @endif
-                                <input type="file" name="about_school_image" class="form-control" accept="image/*">
                             </div>
 
                             <div class="col-12">
@@ -562,22 +567,20 @@
                         {{-- 3. CUSTOM PRINCIPAL / LEADER DETAILS --}}
                         <div class="row g-4">
                             <div class="col-md-4">
-                                <label class="form-label fw-bold">Principal / Leader Photo</label>
+                                @include('backend.pages.layout.image_picker', [
+                                    'name'         => 'about_principal_image',
+                                    'inputId'      => 'aboutPrincipalImageUrl',
+                                    'previewId'    => 'aboutPrincipalImagePreview',
+                                    'label'        => 'Principal / Leader Photo',
+                                    'currentImage' => $siteSettings->about_principal_image,
+                                    'hint'         => 'Select leader photo from the Media Library.',
+                                ])
                                 @if($siteSettings->about_principal_image && file_exists(public_path($siteSettings->about_principal_image)))
-                                    <div class="mb-2 d-flex align-items-center gap-3">
-                                        <img src="{{ asset($siteSettings->about_principal_image) }}" id="previewPrincipalImg" style="max-height: 80px; width: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #ddd;" alt="Principal">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="remove_about_principal_image" value="1" id="rmPrincipal">
-                                            <label class="form-check-label text-danger small fw-semibold" for="rmPrincipal">Remove</label>
-                                        </div>
-                                    </div>
-                                @else
-                                    <div id="previewPrincipalBox" class="mb-2 d-none">
-                                        <img src="" id="previewPrincipalImg" style="max-height: 80px; width: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #0d6efd;" alt="Principal">
-                                        <span class="badge bg-primary-subtle text-primary small d-block mt-1">Fetched image preview</span>
+                                    <div class="form-check mt-1">
+                                        <input class="form-check-input" type="checkbox" name="remove_about_principal_image" value="1" id="rmPrincipal">
+                                        <label class="form-check-label text-danger small fw-semibold" for="rmPrincipal">Remove image</label>
                                     </div>
                                 @endif
-                                <input type="file" name="about_principal_image" class="form-control" accept="image/*">
                             </div>
 
                             <div class="col-md-4">
@@ -907,9 +910,13 @@
             if (fieldDesig) { fieldDesig.value = designation; highlightInput(fieldDesig); }
             if (fieldMsg) { fieldMsg.value = message; highlightInput(fieldMsg); }
 
-            if (image && previewImg) {
-                previewImg.src = image;
-                if (previewBox) previewBox.classList.remove('d-none');
+            if (image) {
+                const inpImg = document.getElementById('aboutPrincipalImageUrl');
+                const previewImg = document.getElementById('aboutPrincipalImagePreview');
+                const previewWrap = document.getElementById('aboutPrincipalImagePreview_wrap');
+                if (inpImg) inpImg.value = image;
+                if (previewImg) previewImg.src = image.startsWith('http') ? image : '{{ asset('') }}' + image;
+                if (previewWrap) previewWrap.style.display = 'block';
             }
         }
 

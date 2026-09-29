@@ -193,7 +193,9 @@ class Admin extends Controller
         // SECURITY FIX: A_type cannot be changed via profile update to prevent privilege escalation
         // a_type is not touched here — it stays whatever it was before.
 
-        if ($request->hasFile('image')) {
+        if ($request->filled('image_url')) {
+            $admin->image = $request->image_url;
+        } elseif ($request->hasFile('image')) {
             $image     = $request->file('image');
             $extension = $image->getClientOriginalExtension();
             $imageName = Str::random(20) . rand(0, 9999) . time() . '.' . $extension;

@@ -150,7 +150,9 @@ class AboutUsController extends Controller
 
         $imageFields = ['about_hero_image', 'about_school_image', 'about_principal_image'];
         foreach ($imageFields as $imageField) {
-            if ($request->hasFile($imageField)) {
+            if ($request->filled($imageField . '_url')) {
+                $settings->$imageField = $request->input($imageField . '_url');
+            } elseif ($request->hasFile($imageField)) {
                 $file = $request->file($imageField);
                 $filename = $imageField . '_' . time() . '.' . $file->getClientOriginalExtension();
                 $file->move($aboutDir, $filename);

@@ -28,7 +28,9 @@ class TeacherController extends Controller
             'staff_type' => 'required|in:teaching,non_teaching,administrative',
             'facebook_link' => 'nullable',
             'sort_order' => 'nullable|integer',
-            'image' => $request->filled('image_url') ? 'nullable|image|mimes:jpeg,png,jpg' : 'required|image|mimes:jpeg,png,jpg',
+            'image_url' => $request->hasFile('image') ? 'nullable' : 'required',
+        ], [
+            'image_url.required' => 'Please select a photo from the Media Library.',
         ]);
         $teacher = new Teacher();
         $teacher->name = $request->name;

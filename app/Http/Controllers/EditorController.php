@@ -25,12 +25,15 @@ class EditorController extends Controller
             'password' => 'required|string|min:8',
         ]);
 
-        $imageName = null;
-        if ($request->hasFile('image')) {
+        $imagePath = 'backend/admin/images/default-avatar.png';
+        if ($request->filled('image_url')) {
+            $imagePath = $request->image_url;
+        } elseif ($request->hasFile('image')) {
             $image     = $request->file('image');
             $extension = $image->getClientOriginalExtension();
             $imageName = Str::random(20) . rand(0, 9999) . time() . '.' . $extension;
             $image->move('backend/admin/images/', $imageName);
+            $imagePath = 'backend/admin/images/' . $imageName;
         }
 
         $editor           = new User();
@@ -38,7 +41,7 @@ class EditorController extends Controller
         $editor->email    = $request->email;
         $editor->password = Hash::make($request->password);
         $editor->a_type   = 'E'; // Always Editor — admin cannot be created from this form
-        $editor->image    = $imageName ? 'backend/admin/images/' . $imageName : 'backend/admin/images/default-avatar.png';
+        $editor->image    = $imagePath;
         $editor->save();
 
         session()->flash('success', 'New editor created successfully.');
@@ -75,7 +78,9 @@ class EditorController extends Controller
         // which silently made every user an Admin. Fixed here.
         $editor->a_type = 'E';
 
-        if ($request->hasFile('image')) {
+        if ($request->filled('image_url')) {
+            $editor->image = $request->image_url;
+        } elseif ($request->hasFile('image')) {
             $image     = $request->file('image');
             $extension = $image->getClientOriginalExtension();
             $imageName = Str::random(20) . rand(0, 9999) . time() . '.' . $extension;

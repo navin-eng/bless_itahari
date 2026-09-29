@@ -92,8 +92,13 @@
                     <span class="admin-input-hint">Students will see a direct button to open this result link.</span>
                 </div>
                 <div class="mb-3" data-event-field="image">
-                    <label class="admin-label">Cover Image <span class="text-muted">(optional)</span></label>
-                    <input type="file" name="image" class="admin-input" accept="image/*">
+                    @include('backend.pages.layout.image_picker', [
+                        'name'      => 'image',
+                        'inputId'   => 'eventTableModalImageUrl',
+                        'previewId' => 'eventTableModalImagePreview',
+                        'label'     => 'Cover Image (optional)',
+                        'hint'      => 'Select cover image from the Media Library.',
+                    ])
                 </div>
                 <div class="mb-3" data-event-field="gallery">
                     <label class="admin-label">Gallery Images <span class="text-muted">(optional)</span></label>

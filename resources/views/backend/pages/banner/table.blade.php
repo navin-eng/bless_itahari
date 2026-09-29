@@ -65,8 +65,14 @@
               <input type="text" name="title2" value="{{ old('title2') }}" class="admin-input" required>
           </div>
           <div class="mb-3">
-              <label class="admin-label">Image <span style="color:#e53e3e">*</span></label>
-              <input type="file" name="image" class="admin-input" accept="image/*" required>
+              @include('backend.pages.layout.image_picker', [
+                  'name'      => 'image',
+                  'inputId'   => 'addBannerImage',
+                  'previewId' => 'addBannerPreview',
+                  'label'     => 'Banner Image',
+                  'required'  => true,
+                  'hint'      => 'Required. Select a banner from the Media Library or upload a new one.',
+              ])
           </div>
         </div>
         <div class="modal-footer" style="border-top: 1px solid #e2e8f0; background-color: #f8fafc; border-radius: 0 0 12px 12px;">
@@ -99,15 +105,14 @@
               <input type="text" name="title2" value="{{ old('title2', $data->title2) }}" class="admin-input" required>
           </div>
           <div class="mb-3">
-              <label class="admin-label">Replace Image</label>
-              <input type="file" name="image" class="admin-input" accept="image/*">
-              <small class="text-muted d-block mt-1">Leave empty to keep current image.</small>
-              @if($data->image)
-              <div class="mt-2" style="background:#f1f5f9; padding:8px; border-radius:8px; display:inline-block;">
-                <p class="mb-1" style="font-size:12px; color:#64748b; font-weight:600;">Current Image Preview:</p>
-                <img src="{{ asset($data->image) }}" alt="Banner" style="max-height: 80px; max-width: 100%; border-radius: 6px; border: 1px solid #cbd5e1; object-fit: cover;">
-              </div>
-              @endif
+              @include('backend.pages.layout.image_picker', [
+                  'name'         => 'image',
+                  'inputId'      => 'editBannerImage'.$data->id,
+                  'previewId'    => 'editBannerPreview'.$data->id,
+                  'label'        => 'Banner Image',
+                  'currentImage' => $data->image,
+                  'hint'         => 'Leave unchanged to keep current banner image.',
+              ])
           </div>
         </div>
         <div class="modal-footer" style="border-top: 1px solid #e2e8f0; background-color: #f8fafc; border-radius: 0 0 12px 12px;">

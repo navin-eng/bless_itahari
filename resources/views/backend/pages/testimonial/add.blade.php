@@ -245,8 +245,19 @@
                         <input type="text" name="testimonials[${currentIndex}][role]" class="form-control testimonial-form-control" placeholder="Example: BBA Student, Parent, Alumni" value="${values.role || ''}" required>
                     </div>
                     <div class="full-span">
-                        <label class="form-label testimonial-form-label">Photo</label>
-                        <input type="file" name="testimonials[${currentIndex}][image]" class="form-control testimonial-form-control" accept=".jpg,.jpeg,.png" required>
+                        <label class="form-label testimonial-form-label">Photo <span style="color:#e53e3e">*</span></label>
+                        <div class="input-group mb-2">
+                            <input type="text" name="testimonials[${currentIndex}][image_url]" id="testi_img_${currentIndex}" class="form-control testimonial-form-control" placeholder="No photo selected — click Choose Image" value="${values.image_url || ''}" readonly style="cursor:pointer;" onclick="window.openMediaLibrary({targetInput:'#testi_img_${currentIndex}', targetPreview:'#testi_preview_${currentIndex}'})" required>
+                            <button type="button" class="btn btn-outline-primary" style="white-space:nowrap; font-weight:600;" onclick="window.openMediaLibrary({targetInput:'#testi_img_${currentIndex}', targetPreview:'#testi_preview_${currentIndex}'})">
+                                <i class="bi bi-images me-1"></i> Choose Image
+                            </button>
+                        </div>
+                        <div id="testi_preview_${currentIndex}_wrap" style="${values.image_url ? '' : 'display:none;'} margin-top:6px;">
+                            <img id="testi_preview_${currentIndex}" src="${values.image_url ? (values.image_url.startsWith('http') ? values.image_url : '{{ asset('') }}' + values.image_url) : ''}" alt="Photo" style="max-height:80px; max-width:120px; border-radius:8px; border:1px solid #e2e8f0; object-fit:cover; display:block;">
+                            <button type="button" onclick="document.getElementById('testi_img_${currentIndex}').value=''; document.getElementById('testi_preview_${currentIndex}').src=''; document.getElementById('testi_preview_${currentIndex}_wrap').style.display='none';" style="margin-top:4px; background:none; border:none; color:#e53e3e; font-size:12px; cursor:pointer; padding:0;">
+                                <i class="bi bi-x-circle me-1"></i> Remove
+                            </button>
+                        </div>
                     </div>
                     <div class="full-span">
                         <label class="form-label testimonial-form-label">Testimonial Message</label>

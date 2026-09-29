@@ -70,8 +70,13 @@
               <input type="text" name="title" value="{{ old('title') }}" class="form-control" style="border-radius: 8px;" required>
             </div>
             <div class="col-md-6">
-              <label class="form-label" style="font-weight: 500;">Image</label>
-              <input type="file" name="image" class="form-control" style="border-radius: 8px;">
+              @include('backend.pages.layout.image_picker', [
+                  'name'      => 'image',
+                  'inputId'   => 'noticeTableModalImageUrl',
+                  'previewId' => 'noticeTableModalImagePreview',
+                  'label'     => 'Image (Optional)',
+                  'hint'      => 'Select notice image from the Media Library.',
+              ])
             </div>
             <div class="col-12">
               <label class="form-label" style="font-weight: 500;">Description</label>

@@ -38,9 +38,11 @@ class BannerController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title1' => 'required|min:2',
-            'title2' => 'required|min:2',
-            'image'  => $request->filled('image_url') ? 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120' : 'required|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'title1'    => 'required|min:2',
+            'title2'    => 'required|min:2',
+            'image_url' => $request->hasFile('image') ? 'nullable' : 'required',
+        ], [
+            'image_url.required' => 'Please select an image from the Media Library.',
         ]);
 
         $banner = new Banner();

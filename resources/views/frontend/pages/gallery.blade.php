@@ -410,6 +410,8 @@
                             @if($album->cover_image)
                                 @if(str_contains($album->cover_image, 'http'))
                                     <img src="{{ $album->cover_image }}" alt="{{ $album->name }}">
+                                @elseif(str_starts_with($album->cover_image, 'backend/') || str_contains($album->cover_image, '/'))
+                                    <img src="{{ asset($album->cover_image) }}" alt="{{ $album->name }}">
                                 @else
                                     <img src="{{ asset('backend/images/gallery/'.$album->cover_image) }}" alt="{{ $album->name }}">
                                 @endif

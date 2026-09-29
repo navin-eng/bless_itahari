@@ -44,31 +44,17 @@
                 </div>
             </div>
             <div class="col-md-5 col-12">
-                <div class="mb-3">
-                    <label class="form-label">Photo</label>
-                    <input type="file" name="image" class="form-control" accept="image/*" onchange="previewImage(this)">
-                </div>
-                <div id="imagePreview" style="display:none; margin-top:10px;">
-                    <img id="previewImg" src="" alt="Preview"
-                        style="width:160px; height:180px; object-fit:cover; border-radius:8px; border:2px solid #dee2e6;">
-                </div>
+                @include('backend.pages.layout.image_picker', [
+                    'name'      => 'image',
+                    'inputId'   => 'messageAddImageUrl',
+                    'previewId' => 'messageAddImagePreview',
+                    'label'     => 'Photo',
+                    'hint'      => 'Select leader photo from the Media Library or upload a new one.',
+                ])
             </div>
         </div>
         <div class="mb-3" style="margin:16px 0;">
             <button type="submit" class="btn btn-primary px-5">Save Message</button>
         </div>
     </form>
-
-    <script>
-        function previewImage(input) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    document.getElementById('previewImg').src = e.target.result;
-                    document.getElementById('imagePreview').style.display = 'block';
-                }
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-    </script>
 @endsection

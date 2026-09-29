@@ -81,8 +81,10 @@ class SiteSettingController extends Controller
 
         $settings = SiteSetting::first();
 
-        // Handle Site Logo Upload
-        if ($request->hasFile('site_logo')) {
+        // Handle Site Logo
+        if ($request->filled('site_logo_url')) {
+            $data['site_logo'] = $request->site_logo_url;
+        } elseif ($request->hasFile('site_logo')) {
             $logo = $request->file('site_logo');
             $ext = $logo->getClientOriginalExtension();
             $logoName = 'logo_' . time() . '_' . Str::random(8) . '.' . $ext;
@@ -105,8 +107,10 @@ class SiteSettingController extends Controller
             unset($data['site_logo']);
         }
 
-        // Handle Site Favicon Upload
-        if ($request->hasFile('site_favicon')) {
+        // Handle Site Favicon
+        if ($request->filled('site_favicon_url')) {
+            $data['site_favicon'] = $request->site_favicon_url;
+        } elseif ($request->hasFile('site_favicon')) {
             $favicon = $request->file('site_favicon');
             $ext = strtolower($favicon->getClientOriginalExtension() ?: 'png');
             $favName = 'favicon_' . time() . '_' . Str::random(8) . '.' . $ext;

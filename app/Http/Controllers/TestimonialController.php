@@ -44,7 +44,6 @@ class TestimonialController extends Controller
                 'testimonials.*.name' => 'required|string|min:2|max:60',
                 'testimonials.*.role' => 'required|string|max:100',
                 'testimonials.*.description' => 'required|string',
-                'testimonials.*.image' => 'required|image|mimes:jpeg,png,jpg,webp|max:5120',
             ]);
 
             $maxOrder = Testimonial::max('sort_order') ?? 0;
@@ -55,7 +54,9 @@ class TestimonialController extends Controller
                 $testimonial->description = $item['description'];
                 $testimonial->sort_order = ++$maxOrder;
 
-                if ($request->hasFile("testimonials.$index.image")) {
+                if (!empty($item['image_url'])) {
+                    $testimonial->image = $item['image_url'];
+                } elseif ($request->hasFile("testimonials.$index.image")) {
                     $testimonial->image = $this->uploadTestimonialImage($request->file("testimonials.$index.image"));
                 }
 
@@ -72,14 +73,18 @@ class TestimonialController extends Controller
             'name' => 'required|min:2|max:60',
             'description' => 'required',
             'role' => 'required|max:100',
-            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'image_url' => $request->hasFile('image') ? 'nullable' : 'required',
+        ], [
+            'image_url.required' => 'Please select a photo from the Media Library.',
         ]);
         $testimonial = new Testimonial();
         $testimonial->name = $request->name;
         $testimonial->role = $request->role;
         $testimonial->description = $request->description;
         $testimonial->sort_order = (Testimonial::max('sort_order') ?? 0) + 1;
-        if ($request->hasFile('image')) {
+        if ($request->filled('image_url')) {
+            $testimonial->image = $request->image_url;
+        } elseif ($request->hasFile('image')) {
             $testimonial->image = $this->uploadTestimonialImage($request->file('image'));
         }
         $save = $testimonial->save();
@@ -124,7 +129,7 @@ class TestimonialController extends Controller
             'name' => 'required|min:2|max:60',
             'description' => 'required',
             'role' => 'required|max:100',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'image_url' => 'nullable',
         ]);
 
         $testimonial = Testimonial::find($id);
@@ -137,7 +142,9 @@ class TestimonialController extends Controller
         $testimonial->role = $request->role;
         $testimonial->description = $request->description;
 
-        if ($request->hasFile('image')) {
+        if ($request->filled('image_url')) {
+            $testimonial->image = $request->image_url;
+        } elseif ($request->hasFile('image')) {
             if ($testimonial->image && file_exists(public_path($testimonial->image))) {
                 @unlink(public_path($testimonial->image));
             }

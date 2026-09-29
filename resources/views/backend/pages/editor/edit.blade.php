@@ -14,8 +14,14 @@
                 <input type="text" class="form-control" name="email" value="{{ $editor->email }}" id="exampleInputEmail1" aria-describedby="emailHelp">
               </div>
               <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Image</label>
-                <input type="file" class="form-control" name="image" id="exampleInputEmail1" aria-describedby="emailHelp">
+                @include('backend.pages.layout.image_picker', [
+                    'name'         => 'image',
+                    'inputId'      => 'editorEditImageUrl',
+                    'previewId'    => 'editorEditImagePreview',
+                    'label'        => 'Profile Photo',
+                    'currentImage' => $editor->image,
+                    'hint'         => 'Leave unchanged to keep current photo.',
+                ])
               </div>
               <div class="mb-3">
                 <label for="exampleInputEmail1" class="form-label">Password </label>

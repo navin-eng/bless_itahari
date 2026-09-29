@@ -80,8 +80,13 @@
           <label class="admin-label">Album Name</label>
           <input type="text" name="name" class="admin-input mb-3" placeholder="e.g. Sports Week 2081" required>
 
-          <label class="admin-label mt-3">Cover Image (Optional)</label>
-          <input type="file" name="cover_image" class="admin-input" accept="image/*">
+          @include('backend.pages.layout.image_picker', [
+              'name'      => 'cover_image',
+              'inputId'   => 'albumCoverImageUrl',
+              'previewId' => 'albumCoverImagePreview',
+              'label'     => 'Cover Image (Optional)',
+              'hint'      => 'Select album cover from Media Library.',
+          ])
         </div>
         <div class="modal-footer" style="border-top:1px solid var(--admin-border);">
           <button type="button" class="btn-admin btn-admin-light" data-bs-dismiss="modal">Cancel</button>
@@ -106,9 +111,13 @@
           <label class="admin-label">Album Name</label>
           <input type="text" name="name" id="edit_album_name" class="admin-input" required>
           
-          <label class="admin-label mt-3">Cover Image (Optional)</label>
-          <input type="file" name="cover_image" class="admin-input" accept="image/*">
-          <p class="admin-input-hint">Leave blank to keep the current cover image.</p>
+          @include('backend.pages.layout.image_picker', [
+              'name'      => 'cover_image',
+              'inputId'   => 'editAlbumCoverImageUrl',
+              'previewId' => 'editAlbumCoverImagePreview',
+              'label'     => 'Cover Image (Optional)',
+              'hint'      => 'Leave unchanged to keep current cover image.',
+          ])
           
           <label class="admin-label mt-2">Status</label>
           <select name="status" id="edit_album_status" class="admin-input">
@@ -459,8 +468,13 @@
                             <span class="badge-admin badge-red">Inactive</span>
                         @endif
                     </td>
-                    <td style="vertical-align:middle;" onclick="event.stopPropagation()">
-                        <button class="btn-admin btn-admin-light" style="padding:4px 8px;" onclick="editAlbum({{ $album->id }}, '{{ addslashes($album->name) }}', '{{ $album->status }}')"><i class="bi bi-pencil"></i></button>
+                        @php
+                            $coverFullUrl = '';
+                            if ($album->cover_image) {
+                                $coverFullUrl = str_starts_with($album->cover_image, 'backend/') ? asset($album->cover_image) : asset('backend/images/gallery/' . $album->cover_image);
+                            }
+                        @endphp
+                        <button class="btn-admin btn-admin-light" style="padding:4px 8px;" onclick="editAlbum({{ $album->id }}, '{{ addslashes($album->name) }}', '{{ $album->status }}', '{{ $coverFullUrl }}', '{{ addslashes($album->cover_image ?? '') }}')"><i class="bi bi-pencil"></i></button>
                         <a href="{{ route('gallery.album.delete', $album->id) }}" class="btn-admin btn-admin-danger" style="padding:4px 8px;" onclick="return confirm('Delete this album and all its photos?');"><i class="bi bi-trash"></i></a>
                     </td>
                 </tr>
@@ -592,10 +606,16 @@
     }
 
     // Edit Album Modal logic
-    function editAlbum(id, name, status) {
+    function editAlbum(id, name, status, coverUrl, coverRelative) {
         document.getElementById('editAlbumForm').action = '/admin/dashboard/gallery/albums/update/' + id;
         document.getElementById('edit_album_name').value = name;
         document.getElementById('edit_album_status').value = status;
+        const covInp = document.getElementById('editAlbumCoverImageUrl');
+        const covPrev = document.getElementById('editAlbumCoverImagePreview');
+        const covWrap = document.getElementById('editAlbumCoverImagePreview_wrap');
+        if (covInp) covInp.value = coverRelative || '';
+        if (covPrev) covPrev.src = coverUrl || '';
+        if (covWrap) covWrap.style.display = coverUrl ? 'block' : 'none';
         var editModal = new bootstrap.Modal(document.getElementById('editAlbumModal'));
         editModal.show();
     }

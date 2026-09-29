@@ -65,8 +65,14 @@
                 <input type="text" name="testimonials[0][role]" value="{{ old('testimonials.0.role') }}" class="admin-input" placeholder="e.g. BBA Student" required>
             </div>
             <div class="col-md-12">
-                <label class="admin-label">Photo <span style="color:#e53e3e">*</span></label>
-                <input type="file" name="testimonials[0][image]" class="admin-input" accept="image/*" required>
+                @include('backend.pages.layout.image_picker', [
+                    'name'      => 'testimonials[0][image_url]',
+                    'inputId'   => 'testimonialAddTableImgUrl',
+                    'previewId' => 'testimonialAddTableImgPreview',
+                    'label'     => 'Photo',
+                    'required'  => true,
+                    'hint'      => 'Select photo from the Media Library.',
+                ])
             </div>
             <div class="col-md-12">
                 <label class="admin-label">Testimonial Message <span style="color:#e53e3e">*</span></label>
@@ -105,15 +111,14 @@
                 <input type="text" name="role" value="{{ old('role', $data->role) }}" class="admin-input" required>
             </div>
             <div class="col-md-12">
-                <label class="admin-label">Replace Photo</label>
-                <input type="file" name="image" class="admin-input" accept="image/*">
-                <small class="text-muted d-block mt-1">Leave empty to keep existing photo.</small>
-                @if($data->image)
-                <div class="mt-2" style="background:#f1f5f9; padding:8px; border-radius:8px; display:inline-block;">
-                  <p class="mb-1" style="font-size:12px; color:#64748b; font-weight:600;">Current Photo:</p>
-                  <img src="{{ asset($data->image) }}" alt="{{ $data->name }}" style="height: 60px; width: 60px; border-radius: 50%; object-fit: cover; border: 1px solid #cbd5e1;">
-                </div>
-                @endif
+                @include('backend.pages.layout.image_picker', [
+                    'name'         => 'image',
+                    'inputId'      => 'testimonialEditTableImgUrl'.$data->id,
+                    'previewId'    => 'testimonialEditTableImgPreview'.$data->id,
+                    'label'        => 'Photo',
+                    'currentImage' => $data->image,
+                    'hint'         => 'Leave unchanged to keep existing photo.',
+                ])
             </div>
             <div class="col-md-12">
                 <label class="admin-label">Testimonial Message <span style="color:#e53e3e">*</span></label>

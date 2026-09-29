@@ -34,8 +34,13 @@
                             <input type="password" class="form-control" name="password" required placeholder="Min. 8 characters">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Profile Photo <span class="text-muted">(optional)</span></label>
-                            <input type="file" class="form-control" name="image" accept="image/*">
+                            @include('backend.pages.layout.image_picker', [
+                                'name'      => 'image',
+                                'inputId'   => 'editorAddImageUrl',
+                                'previewId' => 'editorAddImagePreview',
+                                'label'     => 'Profile Photo',
+                                'hint'      => 'Optional. Select photo from the Media Library.',
+                            ])
                         </div>
                         <div class="modal-footer px-0 pb-0">
                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

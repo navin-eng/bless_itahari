@@ -42,11 +42,15 @@
                         </div>
 
                         <div class="col-12">
-                            <div class="form-group-modern">
-                                <label class="form-label">Photo</label>
-                                <input type="file" name="image" class="form-control form-control-lg" {{ $isEdit ? '' : 'required' }}>
-                                <small class="text-muted d-block mt-2">Use a clear portrait image in JPG or PNG format for the testimonial card.</small>
-                            </div>
+                            @include('backend.pages.layout.image_picker', [
+                                'name'         => 'image',
+                                'inputId'      => 'testimonialImageUrl',
+                                'previewId'    => 'testimonialImagePreview',
+                                'label'        => 'Photo',
+                                'required'     => !$isEdit,
+                                'currentImage' => $isEdit ? $testimonial->image : null,
+                                'hint'         => 'Select a portrait photo from the Media Library.',
+                            ])
                         </div>
 
                         <div class="col-12">
