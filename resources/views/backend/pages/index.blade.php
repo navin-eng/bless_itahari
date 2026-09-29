@@ -24,276 +24,238 @@
   }
 @endphp
 
-<div class="admin-page-header">
-  <div>
-    <h1 class="aph-title">Welcome back, {{ Auth::user()->name }} 👋</h1>
-    <p class="aph-sub">Here is your KPI dashboard and quick actions.</p>
+<!-- Header Row -->
+<div class="dash-welcome-card mb-4 p-4 rounded-4 text-white position-relative overflow-hidden shadow-sm" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid rgba(255,255,255,0.08);">
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 position-relative" style="z-index: 2;">
+    <div>
+      <div class="badge bg-primary-subtle text-primary border border-primary-subtle mb-2 px-3 py-1 rounded-pill">
+        <i class="bi bi-speedometer2 me-1"></i> Admin Command Center
+      </div>
+      <h2 class="dash-greeting fw-extrabold mb-1 fs-3">Welcome back, {{ Auth::user()->name }} 👋</h2>
+      <p class="text-white-50 mb-0 small">Overview of site health, metrics, admissions, and quick management controls.</p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <form action="{{ route('admin.clear-cache') }}" method="POST" class="d-inline">
+        @csrf
+        <button type="submit" class="btn btn-sm btn-light font-weight-bold shadow-sm rounded-3">
+          <i class="bi bi-arrow-clockwise text-primary me-1"></i> Purge Cache
+        </button>
+      </form>
+      <a href="{{ route('site.settings.edit') }}" class="btn btn-sm btn-primary rounded-3">
+        <i class="bi bi-gear-fill me-1"></i> Settings
+      </a>
+    </div>
   </div>
 </div>
 
-{{-- KPI Stat Cards --}}
+<!-- KPI Mini Stat Cards Grid -->
 <div class="row g-3 mb-4">
-  <div class="col-6 col-md-4 col-xl-3">
-    <a href="{{ route('admin.admissions.index') }}" class="stat-card">
-      <div class="stat-icon" style="background: rgba(var(--bs-primary-rgb), 0.1); color: var(--bs-primary);"><i class="bi bi-inbox-fill"></i></div>
-      <div class="stat-body">
-        <div class="stat-num">{{ $admissions }}</div>
-        <div class="stat-label">Admissions</div>
+  <div class="col-6 col-md-4 col-xl-2-4">
+    <a href="{{ route('admin.admissions.index') }}" class="kpi-mini-card shadow-sm text-decoration-none">
+      <div class="kpi-icon bg-primary-subtle text-primary"><i class="bi bi-inbox-fill"></i></div>
+      <div class="kpi-info">
+        <div class="kpi-value text-dark">{{ $admissions }}</div>
+        <div class="kpi-title text-muted">Admissions</div>
       </div>
     </a>
   </div>
-  <div class="col-6 col-md-4 col-xl-2">
-    <a href="{{ route('course.table') }}" class="stat-card">
-      <div class="stat-icon green"><i class="bi bi-mortarboard-fill"></i></div>
-      <div class="stat-body">
-        <div class="stat-num">{{ $courses }}</div>
-        <div class="stat-label">Courses</div>
+  <div class="col-6 col-md-4 col-xl-2-4">
+    <a href="{{ route('course.table') }}" class="kpi-mini-card shadow-sm text-decoration-none">
+      <div class="kpi-icon bg-success-subtle text-success"><i class="bi bi-mortarboard-fill"></i></div>
+      <div class="kpi-info">
+        <div class="kpi-value text-dark">{{ $courses }}</div>
+        <div class="kpi-title text-muted">Courses</div>
       </div>
     </a>
   </div>
-  <div class="col-6 col-md-4 col-xl-2">
-    <a href="{{ route('teacher.table') }}" class="stat-card">
-      <div class="stat-icon blue"><i class="bi bi-person-badge-fill"></i></div>
-      <div class="stat-body">
-        <div class="stat-num">{{ $teachers }}</div>
-        <div class="stat-label">Faculty</div>
+  <div class="col-6 col-md-4 col-xl-2-4">
+    <a href="{{ route('teacher.table') }}" class="kpi-mini-card shadow-sm text-decoration-none">
+      <div class="kpi-icon bg-info-subtle text-info"><i class="bi bi-person-badge-fill"></i></div>
+      <div class="kpi-info">
+        <div class="kpi-value text-dark">{{ $teachers }}</div>
+        <div class="kpi-title text-muted">Faculty</div>
       </div>
     </a>
   </div>
-  <div class="col-6 col-md-4 col-xl-2">
-    <a href="{{ route('event.table') }}" class="stat-card">
-      <div class="stat-icon amber"><i class="bi bi-calendar2-event-fill"></i></div>
-      <div class="stat-body">
-        <div class="stat-num">{{ $events }}</div>
-        <div class="stat-label">Events</div>
+  <div class="col-6 col-md-4 col-xl-2-4">
+    <a href="{{ route('event.table') }}" class="kpi-mini-card shadow-sm text-decoration-none">
+      <div class="kpi-icon bg-warning-subtle text-warning"><i class="bi bi-calendar2-event-fill"></i></div>
+      <div class="kpi-info">
+        <div class="kpi-value text-dark">{{ $events }}</div>
+        <div class="kpi-title text-muted">Events</div>
       </div>
     </a>
   </div>
-  <div class="col-6 col-md-4 col-xl-3">
-    <a href="{{ route('notice.table') }}" class="stat-card">
-      <div class="stat-icon rose"><i class="bi bi-bell-fill"></i></div>
-      <div class="stat-body">
-        <div class="stat-num">{{ $notices }}</div>
-        <div class="stat-label">Notices</div>
+  <div class="col-6 col-md-4 col-xl-2-4">
+    <a href="{{ route('notice.table') }}" class="kpi-mini-card shadow-sm text-decoration-none">
+      <div class="kpi-icon bg-danger-subtle text-danger"><i class="bi bi-bell-fill"></i></div>
+      <div class="kpi-info">
+        <div class="kpi-value text-dark">{{ $notices }}</div>
+        <div class="kpi-title text-muted">Notices</div>
       </div>
     </a>
   </div>
 </div>
 
-{{-- Site Health & Storage Overview --}}
-@if(isset($siteHealth))
-<div class="row g-3 mb-4">
-  <div class="col-12">
-    <div class="admin-card border-0 shadow-sm">
-      <div class="admin-card-header d-flex flex-wrap align-items-center justify-content-between gap-2 bg-light py-3 px-4 rounded-top">
+<!-- Main Cards Grid (2 Equal Columns) -->
+<div class="row g-4 mb-4">
+  
+  <!-- Left Card: Site Health & Storage Monitor -->
+  @if(isset($siteHealth))
+  <div class="col-lg-6">
+    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+      <div class="card-header bg-white py-3 px-4 border-bottom d-flex align-items-center justify-content-between">
         <div class="d-flex align-items-center gap-2">
-          <div class="rounded-circle bg-success-subtle text-success p-2 d-inline-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
-            <i class="bi bi-heart-pulse-fill fs-5"></i>
+          <div class="bg-success-subtle text-success p-2 rounded-circle d-flex align-items-center justify-content-center" style="width: 34px; height: 34px;">
+            <i class="bi bi-heart-pulse-fill"></i>
           </div>
-          <div>
-            <h5 class="mb-0 fw-bold text-dark fs-6">Site Health & Storage Monitor</h5>
-            <small class="text-muted">Real-time system diagnostics, image payload & server metrics</small>
-          </div>
+          <h6 class="mb-0 fw-bold text-dark">Site Health & Storage Monitor</h6>
         </div>
-        <div class="d-flex align-items-center gap-2">
-          <span class="badge {{ $siteHealth['health_score'] >= 90 ? 'bg-success' : ($siteHealth['health_score'] >= 70 ? 'bg-warning text-dark' : 'bg-danger') }} px-3 py-2 fs-7 fw-semibold">
-            <i class="bi bi-shield-check me-1"></i> Health Score: {{ $siteHealth['health_score'] }}%
-          </span>
-          <form action="{{ route('admin.clear-cache') }}" method="POST" class="d-inline">
-            @csrf
-            <button type="submit" class="btn btn-sm btn-outline-primary fw-medium" title="Clear system cache and recalculate metrics">
-              <i class="bi bi-arrow-clockwise me-1"></i> Purge Cache & Scan
-            </button>
-          </form>
-        </div>
+        <span class="badge {{ $siteHealth['health_score'] >= 90 ? 'bg-success' : ($siteHealth['health_score'] >= 70 ? 'bg-warning text-dark' : 'bg-danger') }} rounded-pill px-3 py-1 fs-7">
+          Health: {{ $siteHealth['health_score'] }}%
+        </span>
       </div>
-      <div class="admin-card-body p-4">
-        <div class="row g-4 align-items-stretch">
-          
-          {{-- Image Assets Storage --}}
-          <div class="col-12 col-md-6 col-xl-3 border-end-md">
-            <div class="p-3 rounded bg-light-subtle h-100 border">
-              <div class="d-flex align-items-center justify-content-between mb-2">
-                <span class="text-uppercase small fw-bold text-muted tracking-wider"><i class="bi bi-images text-primary me-1"></i> Image Assets</span>
-                <span class="badge bg-primary-subtle text-primary fw-semibold">{{ $siteHealth['image_count'] }} files</span>
+      <div class="card-body p-4">
+        
+        <!-- 4 Storage Metric Tiles -->
+        <div class="row g-3 mb-3">
+          <div class="col-6">
+            <div class="metric-tile p-3 rounded-3 bg-light border">
+              <div class="d-flex align-items-center justify-content-between mb-1">
+                <span class="fs-8 fw-bold text-muted text-uppercase">Images</span>
+                <i class="bi bi-images text-primary"></i>
               </div>
-              <h3 class="fw-extrabold text-primary mb-1">{{ $siteHealth['image_size'] }}</h3>
-              <p class="text-muted small mb-0">Total space consumed by uploaded & system images</p>
+              <div class="fs-5 fw-bold text-primary">{{ $siteHealth['image_size'] }}</div>
+              <div class="fs-8 text-muted">{{ $siteHealth['image_count'] }} files stored</div>
             </div>
           </div>
-
-          {{-- Documents Storage --}}
-          <div class="col-12 col-md-6 col-xl-3 border-end-md">
-            <div class="p-3 rounded bg-light-subtle h-100 border">
-              <div class="d-flex align-items-center justify-content-between mb-2">
-                <span class="text-uppercase small fw-bold text-muted tracking-wider"><i class="bi bi-file-earmark-pdf text-danger me-1"></i> Documents</span>
-                <span class="badge bg-danger-subtle text-danger fw-semibold">{{ $siteHealth['doc_count'] }} files</span>
+          <div class="col-6">
+            <div class="metric-tile p-3 rounded-3 bg-light border">
+              <div class="d-flex align-items-center justify-content-between mb-1">
+                <span class="fs-8 fw-bold text-muted text-uppercase">Documents</span>
+                <i class="bi bi-file-earmark-pdf text-danger"></i>
               </div>
-              <h3 class="fw-extrabold text-danger mb-1">{{ $siteHealth['doc_size'] }}</h3>
-              <p class="text-muted small mb-0">PDFs, Word docs & attachment storage space</p>
+              <div class="fs-5 fw-bold text-danger">{{ $siteHealth['doc_size'] }}</div>
+              <div class="fs-8 text-muted">{{ $siteHealth['doc_count'] }} files stored</div>
             </div>
           </div>
-
-          {{-- Database Storage --}}
-          <div class="col-12 col-md-6 col-xl-3 border-end-md">
-            <div class="p-3 rounded bg-light-subtle h-100 border">
-              <div class="d-flex align-items-center justify-content-between mb-2">
-                <span class="text-uppercase small fw-bold text-muted tracking-wider"><i class="bi bi-database text-warning me-1"></i> Database Size</span>
-                <span class="badge bg-warning-subtle text-warning fw-semibold">MySQL</span>
+          <div class="col-6">
+            <div class="metric-tile p-3 rounded-3 bg-light border">
+              <div class="d-flex align-items-center justify-content-between mb-1">
+                <span class="fs-8 fw-bold text-muted text-uppercase">Database</span>
+                <i class="bi bi-database text-warning"></i>
               </div>
-              <h3 class="fw-extrabold text-warning mb-1">{{ $siteHealth['db_size'] }}</h3>
-              <p class="text-muted small mb-0">Table indexes & database data overhead</p>
+              <div class="fs-5 fw-bold text-warning">{{ $siteHealth['db_size'] }}</div>
+              <div class="fs-8 text-muted">MySQL Indexes & Tables</div>
             </div>
           </div>
-
-          {{-- Server Disk Usage --}}
-          <div class="col-12 col-md-6 col-xl-3">
-            <div class="p-3 rounded bg-light-subtle h-100 border">
-              <div class="d-flex align-items-center justify-content-between mb-2">
-                <span class="text-uppercase small fw-bold text-muted tracking-wider"><i class="bi bi-hdd-network text-info me-1"></i> Server Disk</span>
-                <span class="badge bg-info-subtle text-info fw-semibold">{{ $siteHealth['disk_used_percent'] }}% used</span>
+          <div class="col-6">
+            <div class="metric-tile p-3 rounded-3 bg-light border">
+              <div class="d-flex align-items-center justify-content-between mb-1">
+                <span class="fs-8 fw-bold text-muted text-uppercase">Server Disk</span>
+                <i class="bi bi-hdd-network text-info"></i>
               </div>
-              <h3 class="fw-extrabold text-info mb-1">{{ $siteHealth['disk_free'] }}</h3>
-              <p class="text-muted small mb-1">Available free space (Total: {{ $siteHealth['disk_total'] }})</p>
-              @if($siteHealth['disk_used_percent'] > 0)
-                <div class="progress" style="height: 6px;">
-                  <div class="progress-bar {{ $siteHealth['disk_used_percent'] > 85 ? 'bg-danger' : 'bg-info' }}" role="progressbar" style="width: {{ $siteHealth['disk_used_percent'] }}%"></div>
-                </div>
-              @endif
+              <div class="fs-5 fw-bold text-info">{{ $siteHealth['disk_free'] }}</div>
+              <div class="fs-8 text-muted">Free space ({{ $siteHealth['disk_used_percent'] }}% used)</div>
             </div>
           </div>
-
         </div>
 
-        {{-- System Diagnostics & Checks --}}
-        <div class="pt-3 mt-3 border-top d-flex flex-wrap align-items-center justify-content-between gap-2">
-          <div class="d-flex flex-wrap align-items-center gap-2">
-            <span class="badge bg-dark-subtle text-dark border px-2 py-1"><i class="bi bi-code-slash me-1"></i> PHP v{{ $siteHealth['php_version'] }}</span>
-            <span class="badge bg-dark-subtle text-dark border px-2 py-1"><i class="bi bi-layers me-1"></i> Laravel v{{ $siteHealth['laravel_version'] }}</span>
+        <!-- Health Badges & Checks -->
+        <div class="pt-2 border-top d-flex flex-wrap align-items-center justify-content-between gap-2">
+          <div class="d-flex flex-wrap align-items-center gap-1">
+            <span class="badge bg-light text-dark border"><i class="bi bi-code-slash me-1 text-secondary"></i> PHP {{ $siteHealth['php_version'] }}</span>
+            <span class="badge bg-light text-dark border"><i class="bi bi-layers me-1 text-secondary"></i> Laravel {{ $siteHealth['laravel_version'] }}</span>
             @foreach($siteHealth['checks'] as $check)
               @if($check['type'] === 'success')
-                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1"><i class="bi bi-check-circle-fill me-1"></i> {{ $check['message'] }}</span>
+                <span class="badge bg-success-subtle text-success border border-success-subtle"><i class="bi bi-check-circle-fill me-1"></i> {{ $check['message'] }}</span>
               @elseif($check['type'] === 'warning')
-                <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1"><i class="bi bi-exclamation-triangle-fill me-1"></i> {{ $check['message'] }}</span>
-              @else
-                <span class="badge bg-secondary-subtle text-secondary border px-2 py-1"><i class="bi bi-info-circle me-1"></i> {{ $check['message'] }}</span>
+                <span class="badge bg-warning-subtle text-warning border border-warning-subtle"><i class="bi bi-exclamation-triangle-fill me-1"></i> {{ $check['message'] }}</span>
               @endif
             @endforeach
           </div>
-          <div class="text-muted fs-8">
-            <i class="bi bi-clock-history me-1"></i> Last updated: {{ $siteHealth['last_updated'] }}
+          <small class="text-muted fs-8"><i class="bi bi-clock me-1"></i> Scan: {{ $siteHealth['last_updated'] }}</small>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  @endif
+
+  <!-- Right Card: Admission Insights Graph -->
+  <div class="col-lg-6">
+    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+      <div class="card-header bg-white py-3 px-4 border-bottom d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+          <div class="bg-primary-subtle text-primary p-2 rounded-circle d-flex align-items-center justify-content-center" style="width: 34px; height: 34px;">
+            <i class="bi bi-graph-up-arrow"></i>
           </div>
+          <h6 class="mb-0 fw-bold text-dark">Admission Insights (Last 6 Months)</h6>
         </div>
-
+        <a href="{{ route('admin.admissions.index') }}" class="btn btn-xs btn-outline-primary rounded-pill px-3">View All</a>
       </div>
-    </div>
-  </div>
-</div>
-@endif
-
-{{-- Google Analytics Widget --}}
-@if(!isset($analyticsDisabled))
-<div class="row g-3 mb-4">
-    <div class="col-12">
-        <div class="admin-card">
-            <div class="admin-card-header d-flex justify-content-between align-items-center">
-                <span class="card-title"><i class="bi bi-google"></i> Google Analytics (Last 30 Days)</span>
-                <a href="{{ route('site.settings.edit') }}#analytics" class="btn btn-sm btn-outline-secondary">Configure <i class="bi bi-gear"></i></a>
-            </div>
-            <div class="admin-card-body p-4">
-                @if(empty(\App\Models\SiteSetting::current()->analytics_property_id))
-                    <div class="text-center text-muted py-3">
-                        <i class="bi bi-bar-chart ms-2 fs-1 text-light"></i>
-                        <h6 class="mt-2 mb-1">Analytics Not Configured</h6>
-                        <p class="small mb-0">Please set your Google Analytics Property ID in the <a href="{{ route('site.settings.edit') }}">Site Settings</a> to view live data.</p>
-                    </div>
-                @elseif(isset($analyticsError) && $analyticsError)
-                    <div class="alert alert-warning mb-0">
-                        <i class="bi bi-exclamation-triangle-fill me-2"></i> <strong>Analytics API Error:</strong> {{ $analyticsError }}
-                    </div>
-                @elseif(isset($analyticsData) && $analyticsData)
-                    <div class="row text-center">
-                        <div class="col-6 col-md-3 border-end">
-                            <h2 class="fw-bold text-primary mb-1">{{ number_format($analyticsData['activeUsers']) }}</h2>
-                            <p class="text-muted mb-0 text-uppercase small fw-bold tracking-wide">Active Users</p>
-                        </div>
-                        <div class="col-6 col-md-3 border-end">
-                            <h2 class="fw-bold text-success mb-1">{{ number_format($analyticsData['screenPageViews']) }}</h2>
-                            <p class="text-muted mb-0 text-uppercase small fw-bold tracking-wide">Page Views</p>
-                        </div>
-                        <div class="col-6 col-md-3 border-end">
-                            <h2 class="fw-bold text-warning mb-1">{{ number_format($analyticsData['sessions']) }}</h2>
-                            <p class="text-muted mb-0 text-uppercase small fw-bold tracking-wide">Sessions</p>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <h2 class="fw-bold text-info mb-1">{{ number_format($analyticsData['newUsers']) }}</h2>
-                            <p class="text-muted mb-0 text-uppercase small fw-bold tracking-wide">New Users</p>
-                        </div>
-                    </div>
-                @endif
-            </div>
+      <div class="card-body p-4 d-flex align-items-center justify-content-center">
+        <div style="width: 100%; height: 215px;">
+          <canvas id="admissionsChart"></canvas>
         </div>
-    </div>
-</div>
-@endif
-
-<div class="row g-3">
-  {{-- Insights Graph --}}
-  <div class="col-lg-7">
-    <div class="admin-card h-100">
-      <div class="admin-card-header">
-        <span class="card-title"><i class="bi bi-graph-up-arrow"></i> Admission Insights (Last 6 Months)</span>
-      </div>
-      <div class="admin-card-body">
-        <canvas id="admissionsChart" height="250"></canvas>
       </div>
     </div>
   </div>
 
-  {{-- Quick Actions (Draggable) --}}
-  <div class="col-lg-5">
-    <div class="admin-card h-100">
-      <div class="admin-card-header d-flex justify-content-between align-items-center">
-        <span class="card-title"><i class="bi bi-lightning-charge-fill"></i> Quick Actions</span>
-        <small class="text-muted"><i class="bi bi-arrows-move"></i> Drag to reorder</small>
+</div>
+
+<!-- Bottom Grid: Quick Actions & Analytics -->
+<div class="row g-4 mb-4">
+  
+  <!-- Left Card: Quick Actions Grid -->
+  <div class="col-lg-6">
+    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+      <div class="card-header bg-white py-3 px-4 border-bottom d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+          <div class="bg-warning-subtle text-warning p-2 rounded-circle d-flex align-items-center justify-content-center" style="width: 34px; height: 34px;">
+            <i class="bi bi-lightning-charge-fill"></i>
+          </div>
+          <h6 class="mb-0 fw-bold text-dark">Quick Actions</h6>
+        </div>
+        <small class="text-muted fs-8"><i class="bi bi-arrows-move me-1"></i> Drag to reorder</small>
       </div>
-      <div class="admin-card-body p-3">
+      <div class="card-body p-3">
         <div id="quickActionsGrid" class="row g-2">
           
-          <div class="col-6 col-sm-4 col-md-6 col-xl-4" data-id="add-course">
-            <a href="{{ route('course.add') }}" class="quick-action-btn">
-              <i class="bi bi-mortarboard text-success"></i>
-              <span>Course</span>
+          <div class="col-4" data-id="add-course">
+            <a href="{{ route('course.add') }}" class="quick-action-card">
+              <div class="qa-icon bg-success-subtle text-success"><i class="bi bi-mortarboard-fill"></i></div>
+              <span class="qa-label">Course</span>
             </a>
           </div>
-          <div class="col-6 col-sm-4 col-md-6 col-xl-4" data-id="add-faculty">
-            <a href="{{ route('teacher.add') }}" class="quick-action-btn">
-              <i class="bi bi-person-plus text-primary"></i>
-              <span>Faculty</span>
+          <div class="col-4" data-id="add-faculty">
+            <a href="{{ route('teacher.add') }}" class="quick-action-card">
+              <div class="qa-icon bg-primary-subtle text-primary"><i class="bi bi-person-plus-fill"></i></div>
+              <span class="qa-label">Faculty</span>
             </a>
           </div>
-          <div class="col-6 col-sm-4 col-md-6 col-xl-4" data-id="post-notice">
-            <a href="{{ route('notice.add') }}" class="quick-action-btn">
-              <i class="bi bi-megaphone text-danger"></i>
-              <span>Notice</span>
+          <div class="col-4" data-id="post-notice">
+            <a href="{{ route('notice.add') }}" class="quick-action-card">
+              <div class="qa-icon bg-danger-subtle text-danger"><i class="bi bi-megaphone-fill"></i></div>
+              <span class="qa-label">Notice</span>
             </a>
           </div>
-          <div class="col-6 col-sm-4 col-md-6 col-xl-4" data-id="create-event">
-            <a href="{{ route('event.add') }}" class="quick-action-btn">
-              <i class="bi bi-calendar-plus text-warning"></i>
-              <span>Event</span>
+          <div class="col-4" data-id="create-event">
+            <a href="{{ route('event.add') }}" class="quick-action-card">
+              <div class="qa-icon bg-warning-subtle text-warning"><i class="bi bi-calendar-plus-fill"></i></div>
+              <span class="qa-label">Event</span>
             </a>
           </div>
-          <div class="col-6 col-sm-4 col-md-6 col-xl-4" data-id="site-settings">
-            <a href="{{ route('site.settings.edit') }}" class="quick-action-btn">
-              <i class="bi bi-sliders2 text-info"></i>
-              <span>Settings</span>
+          <div class="col-4" data-id="site-settings">
+            <a href="{{ route('site.settings.edit') }}" class="quick-action-card">
+              <div class="qa-icon bg-info-subtle text-info"><i class="bi bi-sliders2"></i></div>
+              <span class="qa-label">Settings</span>
             </a>
           </div>
-          <div class="col-6 col-sm-4 col-md-6 col-xl-4" data-id="home-layout">
-            <a href="{{ route('home.sections.index') }}" class="quick-action-btn">
-              <i class="bi bi-layout-text-window-reverse text-secondary"></i>
-              <span>Layout</span>
+          <div class="col-4" data-id="home-layout">
+            <a href="{{ route('home.sections.index') }}" class="quick-action-card">
+              <div class="qa-icon bg-secondary-subtle text-secondary"><i class="bi bi-layout-text-window-reverse"></i></div>
+              <span class="qa-label">Layout</span>
             </a>
           </div>
 
@@ -301,6 +263,58 @@
       </div>
     </div>
   </div>
+
+  <!-- Right Card: Google Analytics / Traffic Overview -->
+  <div class="col-lg-6">
+    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+      <div class="card-header bg-white py-3 px-4 border-bottom d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+          <div class="bg-danger-subtle text-danger p-2 rounded-circle d-flex align-items-center justify-content-center" style="width: 34px; height: 34px;">
+            <i class="bi bi-google"></i>
+          </div>
+          <h6 class="mb-0 fw-bold text-dark">Google Analytics (30 Days)</h6>
+        </div>
+        <a href="{{ route('site.settings.edit') }}#analytics" class="btn btn-xs btn-outline-secondary rounded-pill px-3">Configure</a>
+      </div>
+      <div class="card-body p-4 d-flex align-items-center">
+        @if(!isset($analyticsDisabled) && isset($analyticsData) && $analyticsData)
+          <div class="row g-3 w-100 text-center">
+            <div class="col-6">
+              <div class="p-3 bg-light rounded-3 border">
+                <h3 class="fw-bold text-primary mb-1">{{ number_format($analyticsData['activeUsers']) }}</h3>
+                <span class="fs-8 text-muted text-uppercase fw-semibold">Active Users</span>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="p-3 bg-light rounded-3 border">
+                <h3 class="fw-bold text-success mb-1">{{ number_format($analyticsData['screenPageViews']) }}</h3>
+                <span class="fs-8 text-muted text-uppercase fw-semibold">Page Views</span>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="p-3 bg-light rounded-3 border">
+                <h3 class="fw-bold text-warning mb-1">{{ number_format($analyticsData['sessions']) }}</h3>
+                <span class="fs-8 text-muted text-uppercase fw-semibold">Sessions</span>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="p-3 bg-light rounded-3 border">
+                <h3 class="fw-bold text-info mb-1">{{ number_format($analyticsData['newUsers']) }}</h3>
+                <span class="fs-8 text-muted text-uppercase fw-semibold">New Users</span>
+              </div>
+            </div>
+          </div>
+        @else
+          <div class="w-100 text-center py-3 text-muted">
+            <i class="bi bi-bar-chart fs-1 text-light"></i>
+            <h6 class="mt-2 mb-1 fs-6 text-dark">Analytics Widget Ready</h6>
+            <p class="small mb-0 text-muted">Set your GA Property ID in <a href="{{ route('site.settings.edit') }}">Site Settings</a> to view live metrics.</p>
+          </div>
+        @endif
+      </div>
+    </div>
+  </div>
+
 </div>
 
 {{-- Add Chart.js and SortableJS --}}
@@ -316,12 +330,13 @@
       data: {
           labels: {!! json_encode($chartLabels) !!},
           datasets: [{
-              label: 'New Applications',
+              label: 'Applications',
               data: {!! json_encode($chartData) !!},
-              borderColor: '#1a4d8c',
-              backgroundColor: 'rgba(26, 77, 140, 0.1)',
-              borderWidth: 2,
+              borderColor: '#2563eb',
+              backgroundColor: 'rgba(37, 99, 235, 0.08)',
+              borderWidth: 2.5,
               pointBackgroundColor: '#f59e0b',
+              pointRadius: 4,
               fill: true,
               tension: 0.4
           }]
@@ -333,6 +348,7 @@
               legend: { display: false }
           },
           scales: {
+              x: { grid: { display: false } },
               y: { beginAtZero: true, ticks: { precision: 0 } }
           }
       }
@@ -341,22 +357,19 @@
   // Setup Sortable Quick Actions
   const grid = document.getElementById('quickActionsGrid');
   
-  // 1. Load order from localStorage
   const savedOrder = JSON.parse(localStorage.getItem('quickActionsOrder'));
   if (savedOrder && savedOrder.length > 0) {
       const items = Array.from(grid.children);
       savedOrder.forEach(id => {
           const item = items.find(el => el.dataset.id === id);
-          if (item) grid.appendChild(item); // Reorder by appending
+          if (item) grid.appendChild(item);
       });
   }
 
-  // 2. Initialize SortableJS
   new Sortable(grid, {
       animation: 150,
       ghostClass: 'sortable-ghost',
       onEnd: function () {
-          // Save new order to localStorage
           const newOrder = Array.from(grid.children).map(el => el.dataset.id);
           localStorage.setItem('quickActionsOrder', JSON.stringify(newOrder));
       }
@@ -364,40 +377,97 @@
 </script>
 @endpush
 
-{{-- Custom CSS for Quick Actions Grid --}}
 @push('styles')
 <style>
-  .quick-action-btn {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 15px 10px;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      text-decoration: none;
-      color: #334155;
-      font-weight: 500;
-      font-size: 13px;
-      transition: all 0.2s;
-      height: 100%;
-      cursor: grab;
+  /* 5 Column Grid for KPI Mini Cards */
+  @media (min-width: 1200px) {
+    .col-xl-2-4 {
+      flex: 0 0 auto;
+      width: 20%;
+    }
   }
-  .quick-action-btn:hover {
-      background: #fff;
-      border-color: #cbd5e1;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      transform: translateY(-2px);
+
+  .kpi-mini-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.25s ease-in-out;
   }
-  .quick-action-btn i {
-      font-size: 24px;
-      margin-bottom: 8px;
+  .kpi-mini-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.08) !important;
+    border-color: #cbd5e1;
+  }
+  .kpi-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .kpi-value {
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+  .kpi-title {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  /* Quick Action Grid Card */
+  .quick-action-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 8px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    text-decoration: none;
+    color: #1e293b;
+    transition: all 0.2s ease;
+    height: 100%;
+    cursor: grab;
+  }
+  .quick-action-card:hover {
+    background: #ffffff;
+    border-color: #94a3b8;
+    box-shadow: 0 6px 12px -2px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+    color: #0f172a;
+  }
+  .qa-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+  .qa-label {
+    font-size: 13px;
+    font-weight: 600;
   }
   .sortable-ghost {
-      opacity: 0.4;
-      background: #e2e8f0;
+    opacity: 0.4;
+    background: #cbd5e1;
   }
+  .fs-7 { font-size: 0.825rem; }
+  .fs-8 { font-size: 0.75rem; }
+  .btn-xs { padding: 0.25rem 0.6rem; font-size: 0.75rem; }
 </style>
 @endpush
 @endsection
