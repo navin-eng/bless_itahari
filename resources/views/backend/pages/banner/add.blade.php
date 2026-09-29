@@ -22,10 +22,14 @@
                     <input type="text" name="title2" value="{{ old('title2') }}" class="form-control"
                         placeholder="" required>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Image</label>
-                    <input type="file" name="image" required class="form-control">
-                </div>
+                @include('backend.pages.layout.image_picker', [
+                    'name'      => 'image',
+                    'inputId'   => 'bannerAddImageUrl',
+                    'previewId' => 'bannerAddImagePreview',
+                    'label'     => 'Image',
+                    'required'  => true,
+                    'hint'      => 'Required. Select from library or upload a new banner image.',
+                ])
             </div>
         </div>
         <div class="mb-3" style="margin: 10px 0;">

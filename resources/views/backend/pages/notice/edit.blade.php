@@ -17,10 +17,14 @@
                     <input type="text" name="title" value="{{ $notice->title }}" id="" class="form-control"
                         placeholder="" aria-describedby="helpId">
                 </div>
-                <div class="mb-3">
-                    <label for="" class="form-label">Image</label>
-                    <input type="file" name="image" class="form-control">
-                </div>
+                @include('backend.pages.layout.image_picker', [
+                    'name'         => 'image',
+                    'inputId'      => 'noticeEditImageUrl',
+                    'previewId'    => 'noticeEditImagePreview',
+                    'label'        => 'Image',
+                    'hint'         => 'Leave blank to keep current image.',
+                    'currentImage' => $notice->image ?? null,
+                ])
                 <div class="mb-3">
                     <label for="" class="form-label">Description</label>
                     <textarea class="form-control"  name="description">

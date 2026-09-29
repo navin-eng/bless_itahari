@@ -49,8 +49,11 @@ class EventController extends Controller
             if (!file_exists($destinationPath)) {
                 mkdir($destinationPath, 0777, true);
             }
+            $imageName = Str::random(20) . time() . '.' . $extension;
             $image->move($destinationPath, $imageName);
             $event->image = 'backend/images/events/' . $imageName;
+        } elseif ($request->filled('image_url')) {
+            $event->image = $request->image_url;
         }
 
         if ($request->hasFile('gallery')) {
@@ -140,6 +143,8 @@ class EventController extends Controller
             }
             $image->move($destinationPath, $imageName);
             $event->image = 'backend/images/events/' . $imageName;
+        } elseif ($request->filled('image_url')) {
+            $event->image = $request->image_url;
         }
 
         if ($request->hasFile('gallery')) {

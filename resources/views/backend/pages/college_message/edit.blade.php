@@ -35,24 +35,14 @@
                 </div>
             </div>
             <div class="col-md-5 col-12">
-                <div class="mb-3">
-                    <label class="form-label">Photo</label>
-                    <input type="file" name="image" class="form-control" accept="image/*"
-                        onchange="previewImage(this)">
-                    <small class="text-muted">Leave blank to keep current photo.</small>
-                </div>
-                @if ($msg->image)
-                    <div style="margin-top:10px;">
-                        <p class="text-muted small">Current Photo:</p>
-                        <img id="previewImg" src="{{ asset($msg->image) }}" alt="{{ $msg->name }}"
-                            style="width:160px; height:180px; object-fit:cover; border-radius:8px; border:2px solid #dee2e6;">
-                    </div>
-                @else
-                    <div id="imagePreview" style="display:none; margin-top:10px;">
-                        <img id="previewImg" src="" alt="Preview"
-                            style="width:160px; height:180px; object-fit:cover; border-radius:8px; border:2px solid #dee2e6;">
-                    </div>
-                @endif
+                @include('backend.pages.layout.image_picker', [
+                    'name'         => 'image',
+                    'inputId'      => 'cmsgEditImageUrl',
+                    'previewId'    => 'cmsgEditImagePreview',
+                    'label'        => 'Photo',
+                    'hint'         => 'Leave blank to keep current photo.',
+                    'currentImage' => $msg->image ?? null,
+                ])
             </div>
         </div>
         <div class="mb-3" style="margin:16px 0;">

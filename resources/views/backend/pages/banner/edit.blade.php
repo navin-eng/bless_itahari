@@ -19,10 +19,14 @@
                     <input type="text" name="title2" value="{{ $banner->title2 }}" class="form-control"
                         placeholder="" required>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Image</label>
-                    <input type="file" name="image" class="form-control">
-                </div>
+                @include('backend.pages.layout.image_picker', [
+                    'name'         => 'image',
+                    'inputId'      => 'bannerEditImageUrl',
+                    'previewId'    => 'bannerEditImagePreview',
+                    'label'        => 'Image',
+                    'hint'         => 'Leave blank to keep the current banner image.',
+                    'currentImage' => $banner->image ?? null,
+                ])
             </div>
         </div>
         <div class="mb-3" style="margin: 10px 0;">

@@ -41,6 +41,8 @@ class NoticeController extends Controller
             }
             $image->move($destinationPath, $imageName);
             $notice->image = 'backend/images/notices/' . $imageName;
+        } elseif ($request->filled('image_url')) {
+            $notice->image = $request->image_url;
         } else {
             $notice->image = '';
         }
@@ -118,6 +120,8 @@ class NoticeController extends Controller
             }
             $image->move($destinationPath, $imageName);
             $notice->image = 'backend/images/notices/' . $imageName;
+        } elseif ($request->filled('image_url')) {
+            $notice->image = $request->image_url;
         }
         $notice->description = $request->description;
         $notice->show_in = 'm';

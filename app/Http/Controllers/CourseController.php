@@ -143,16 +143,17 @@ class CourseController extends Controller
             return back()->with('success', "Academic level {$statusText} successfully.");
         }
     }
-    public function update(Request $request, Course $course,$id)
+    public function update(Request $request, $id)
     {
-        $request->validate($this->rules($id, $request->filled('image_url')), [
-            'name.unique' => 'A course or level with this name already exists. Please enter a unique name.',
-        ]);
         $course = Course::find($id);
         if (!$course) {
             Alert::error('Oops', 'Academic level not found.');
             return redirect()->route('course.table')->with('error', 'Academic level not found.');
         }
+
+        $request->validate($this->rules($id, $request->filled('image_url')), [
+            'name.unique' => 'A course or level with this name already exists. Please enter a unique name.',
+        ]);
 
         $course->name = $request->name;
         $course->academic_level = $request->academic_level;

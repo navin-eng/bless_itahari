@@ -17,10 +17,13 @@
                     <input type="text" name="title" value="{{ old('title') }}" id="" class="form-control"
                         placeholder="" aria-describedby="helpId">
                 </div>
-                <div class="mb-3">
-                    <label for="" class="form-label">Image</label>
-                    <input type="file" name="image" class="form-control">
-                </div>
+                @include('backend.pages.layout.image_picker', [
+                    'name'         => 'image',
+                    'inputId'      => 'noticeImageUrl',
+                    'previewId'    => 'noticeImagePreview',
+                    'label'        => 'Image',
+                    'hint'         => 'Optional image to accompany the notice.',
+                ])
                 <div class="mb-3">
                     <label for="" class="form-label">Description</label>
                     <textarea class="form-control"  name="description">{{ old('description') }}

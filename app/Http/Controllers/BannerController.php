@@ -40,7 +40,7 @@ class BannerController extends Controller
         $request->validate([
             'title1' => 'required|min:2',
             'title2' => 'required|min:2',
-            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'image'  => $request->filled('image_url') ? 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120' : 'required|image|mimes:jpeg,png,jpg,webp|max:5120',
         ]);
 
         $banner = new Banner();
@@ -58,6 +58,8 @@ class BannerController extends Controller
             }
             $image->move($destinationPath, $imageName);
             $banner->image = 'backend/images/banners/' . $imageName;
+        } elseif ($request->filled('image_url')) {
+            $banner->image = $request->image_url;
         }
 
         $banner->status = 1;
@@ -133,6 +135,8 @@ class BannerController extends Controller
 
             $image->move($destinationPath, $imageName);
             $banner->image = 'backend/images/banners/' . $imageName;
+        } elseif ($request->filled('image_url')) {
+            $banner->image = $request->image_url;
         }
 
         $save = $banner->save();

@@ -28,7 +28,7 @@ class TeacherController extends Controller
             'staff_type' => 'required|in:teaching,non_teaching,administrative',
             'facebook_link' => 'nullable',
             'sort_order' => 'nullable|integer',
-            'image' => 'required|image|mimes:jpeg,png,jpg',
+            'image' => $request->filled('image_url') ? 'nullable|image|mimes:jpeg,png,jpg' : 'required|image|mimes:jpeg,png,jpg',
         ]);
         $teacher = new Teacher();
         $teacher->name = $request->name;
@@ -46,6 +46,8 @@ class TeacherController extends Controller
             }
             $image->move($destinationPath, $imageName);
             $teacher->image = 'backend/images/teachers/' . $imageName;
+        } elseif ($request->filled('image_url')) {
+            $teacher->image = $request->image_url;
         }
         $save = $teacher->save();
         if ($save == true) {
@@ -122,6 +124,8 @@ class TeacherController extends Controller
             }
             $image->move($destinationPath, $imageName);
             $teacher->image = 'backend/images/teachers/' . $imageName;
+        } elseif ($request->filled('image_url')) {
+            $teacher->image = $request->image_url;
         }
         $save = $teacher->update();
         if ($save == true) {

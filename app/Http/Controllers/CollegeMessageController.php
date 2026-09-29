@@ -41,6 +41,8 @@ class CollegeMessageController extends Controller
             $imageName = Str::random(20) . time() . '.' . $image->getClientOriginalExtension();
             $image->move('backend/images/messages/', $imageName);
             $msg->image = 'backend/images/messages/' . $imageName;
+        } elseif ($request->filled('image_url')) {
+            $msg->image = $request->image_url;
         }
 
         $saved = $msg->save();
@@ -81,6 +83,8 @@ class CollegeMessageController extends Controller
             $imageName = Str::random(20) . time() . '.' . $image->getClientOriginalExtension();
             $image->move('backend/images/messages/', $imageName);
             $msg->image = 'backend/images/messages/' . $imageName;
+        } elseif ($request->filled('image_url')) {
+            $msg->image = $request->image_url;
         }
 
         $saved = $msg->update();

@@ -39,11 +39,14 @@
                             <option value="non_teaching" {{ $teacher->staff_type === 'non_teaching' ? 'selected' : '' }}>Non-Teaching Staff</option>
                         </select>
                     </div>
-                    <div class="admin-form-group">
-                        <label class="admin-label">Photo</label>
-                        <input type="file" name="image" class="admin-input" accept="image/*">
-                        <span class="admin-input-hint">Leave empty to keep current photo.</span>
-                    </div>
+                    @include('backend.pages.layout.image_picker', [
+                        'name'         => 'image',
+                        'inputId'      => 'teacherEditImageUrl',
+                        'previewId'    => 'teacherEditImagePreview',
+                        'label'        => 'Photo',
+                        'hint'         => 'Leave blank to keep the current photo.',
+                        'currentImage' => $teacher->image ?? null,
+                    ])
                     <div class="admin-form-group">
                         <label class="admin-label">Sort Order (lower appears first)</label>
                         <input type="number" name="sort_order" value="{{ $teacher->sort_order }}" class="admin-input">

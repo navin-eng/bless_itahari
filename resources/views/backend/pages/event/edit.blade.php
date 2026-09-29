@@ -56,10 +56,14 @@
                 <label for="" class="form-label">Result Link</label>
                 <input type="text" name="result_link" value="{{ $event->result_link }}" class="form-control" placeholder="https://neb.gov.np/result">
             </div>
-            <div class="mb-3" data-event-field="image">
-                <label for="" class="form-label">Upload Cover Image <span class="text-muted">(leave blank to keep current)</span></label>
-                <input type="file" name="image" class="form-control" accept="image/*">
-            </div>
+            @include('backend.pages.layout.image_picker', [
+                'name'         => 'image',
+                'inputId'      => 'eventEditImageUrl',
+                'previewId'    => 'eventEditImagePreview',
+                'label'        => 'Cover Image',
+                'hint'         => 'Leave blank to keep the current image.',
+                'currentImage' => $event->image ?? null,
+            ])
             <div class="mb-3" data-event-field="gallery">
                 <label for="" class="form-label">Event Gallery Images <span class="text-muted">(adds to existing)</span></label>
                 <input type="file" name="gallery[]" multiple class="form-control" accept="image/*">
