@@ -1371,69 +1371,107 @@ body {
   overflow: hidden;
 }
 
-/* hide all text labels */
-.admin-sidebar.collapsed .sb-text {
-  display: none;
-}
-
-/* hide arrows and submenus */
-.admin-sidebar.collapsed .sb-arrow {
-  display: none;
-}
-
-.admin-sidebar.collapsed .sb-submenu {
-  display: none !important;
-}
-
-/* hide open collapse panels */
+/* ── Hide ALL text, labels, search in collapsed mode ── */
+.admin-sidebar.collapsed .sb-search-wrap,
+.admin-sidebar.collapsed .sb-group-label,
+.admin-sidebar.collapsed .sb-text,
+.admin-sidebar.collapsed .sb-name,
+.admin-sidebar.collapsed .sb-status,
+.admin-sidebar.collapsed .sb-logo-text,
+.admin-sidebar.collapsed .sb-user-info,
+.admin-sidebar.collapsed .sb-user-name,
+.admin-sidebar.collapsed .sb-user-role,
+.admin-sidebar.collapsed .sb-arrow,
+.admin-sidebar.collapsed .sb-submenu,
 .admin-sidebar.collapsed .collapse {
   display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  opacity: 0 !important;
 }
 
-/* logo — center the image only */
+/* ── Logo: center icon only ── */
+.admin-sidebar.collapsed .sb-header {
+  padding: 10px 4px;
+}
 .admin-sidebar.collapsed .sb-logo {
-  justify-content: center;
-  padding: 16px 0;
+  justify-content: center !important;
+  padding: 6px !important;
+  gap: 0 !important;
+  border-radius: 10px;
+}
+.admin-sidebar.collapsed .sb-logo-icon {
+  width: 36px;
+  height: 36px;
+  margin: 0 auto;
+  flex-shrink: 0;
 }
 
-.admin-sidebar.collapsed .sb-logo img {
-  height: 38px;
-  width: 38px;
+/* ── Nav: center icons, no text ── */
+.admin-sidebar.collapsed .sb-nav {
+  padding: 8px 6px;
 }
-
-.admin-sidebar.collapsed .sb-logo-text {
-  display: none;
+.admin-sidebar.collapsed .sb-item {
+  margin-bottom: 2px;
 }
-
-/* group labels — give minimal height so spacing stays clean */
-.admin-sidebar.collapsed .sb-group-label {
-  height: 10px;
-  padding: 4px 0;
-  overflow: hidden;
-}
-
-/* nav links — center icon, remove side padding */
 .admin-sidebar.collapsed .sb-link {
-  justify-content: center;
-  padding: 11px 0;
-  gap: 0;
+  justify-content: center !important;
+  padding: 8px 0 !important;
+  gap: 0 !important;
+  margin: 0 !important;
+  border-radius: 10px;
+}
+.admin-sidebar.collapsed .sb-link:hover {
+  transform: none !important;
+}
+.admin-sidebar.collapsed .sb-icon-box {
+  margin: 0 auto;
+  width: 34px;
+  height: 34px;
+  font-size: 16px;
 }
 
-.admin-sidebar.collapsed .sb-link i {
-  font-size: 18px;
-  width: auto;
-}
-
-/* footer */
+/* ── Footer / User card ── */
 .admin-sidebar.collapsed .sb-footer {
-  padding: 10px 0;
+  padding: 8px 4px;
+}
+.admin-sidebar.collapsed .sb-user-card {
+  padding: 6px 4px;
+}
+.admin-sidebar.collapsed .sb-user-card > div {
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+}
+.admin-sidebar.collapsed .sb-user-card .d-flex.gap-2 {
+  justify-content: center !important;
+}
+.admin-sidebar.collapsed .sb-user-avatar {
+  margin: 0 auto;
+  width: 32px;
+  height: 32px;
+  font-size: 13px;
+}
+.admin-sidebar.collapsed .sb-logout-btn {
+  width: 32px;
+  height: 32px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 0 !important;
+  font-size: 15px;
+  margin: 0 auto;
+  border-radius: 8px;
 }
 
-/* tooltip on hover when collapsed */
+/* ── Tooltip on hover when collapsed ── */
 .admin-sidebar.collapsed .sb-link {
   position: relative;
 }
-
 .admin-sidebar.collapsed .sb-link:hover::after {
   content: attr(title);
   position: absolute;
@@ -1452,19 +1490,11 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
 }
 
-/* main area adjustment */
-.admin-main.sb-collapsed {
-  margin-left: 64px;
-}
-
+/* ── Main content area shift ── */
+.admin-main.sb-collapsed { margin-left: 64px; }
 @media (min-width: 992px) {
-  .admin-sidebar.collapsed {
-    transform: translateX(0) !important;
-  }
-
-  .admin-main.sb-collapsed {
-    margin-left: 64px !important;
-  }
+  .admin-sidebar.collapsed { transform: translateX(0) !important; }
+  .admin-main.sb-collapsed { margin-left: 64px !important; }
 }
 
 /* ── Course Builder Tabs ─────────────────────────────── */
