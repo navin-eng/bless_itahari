@@ -221,6 +221,10 @@
                 if (currentTargetPreview) {
                     currentTargetPreview.src = selectedImage.url;
                     currentTargetPreview.style.display = 'block';
+                    // Also reveal the _wrap container if present (used by image_picker partial)
+                    const wrapId = currentTargetPreview.id + '_wrap';
+                    const wrap = document.getElementById(wrapId);
+                    if (wrap) wrap.style.display = 'block';
                 }
                 if (currentCallback && typeof currentCallback === 'function') {
                     currentCallback(selectedImage);

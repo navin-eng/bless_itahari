@@ -23,8 +23,10 @@
                         <option value="">-- Select Designation --</option>
                         <option value="Principal" {{ old('designation') == 'Principal' ? 'selected' : '' }}>Principal</option>
                         <option value="Chairman" {{ old('designation') == 'Chairman' ? 'selected' : '' }}>Chairman</option>
-                        <option value="Coordinator" {{ old('designation') == 'Coordinator' ? 'selected' : '' }}>Coordinator</option>
-                        <option value="Vice Principal" {{ old('designation') == 'Vice Principal' ? 'selected' : '' }}>Vice Principal</option>
+                        <option value="Coordinator" {{ old('designation') == 'Coordinator' ? 'selected' : '' }}>Coordinator
+                        </option>
+                        <option value="Vice Principal" {{ old('designation') == 'Vice Principal' ? 'selected' : '' }}>Vice
+                            Principal</option>
                         <option value="Director" {{ old('designation') == 'Director' ? 'selected' : '' }}>Director</option>
                         <option value="Other" {{ old('designation') == 'Other' ? 'selected' : '' }}>Other</option>
                     </select>
@@ -42,13 +44,14 @@
                 </div>
             </div>
             <div class="col-md-5 col-12">
-                @include('backend.pages.layout.image_picker', [
-                    'name'      => 'image',
-                    'inputId'   => 'cmsgAddImageUrl',
-                    'previewId' => 'cmsgAddImagePreview',
-                    'label'     => 'Photo',
-                    'hint'      => 'Optional portrait photo.',
-                ])
+                <div class="mb-3">
+                    <label class="form-label">Photo</label>
+                    <input type="file" name="image" class="form-control" accept="image/*" onchange="previewImage(this)">
+                </div>
+                <div id="imagePreview" style="display:none; margin-top:10px;">
+                    <img id="previewImg" src="" alt="Preview"
+                        style="width:160px; height:180px; object-fit:cover; border-radius:8px; border:2px solid #dee2e6;">
+                </div>
             </div>
         </div>
         <div class="mb-3" style="margin:16px 0;">

@@ -12,8 +12,13 @@ class MediaLibraryController extends Controller
     {
         $scanDirectories = [
             public_path('backend/images/uploads'),
-            public_path('backend/images/settings'),
             public_path('backend/images/courses'),
+            public_path('backend/images/notices'),
+            public_path('backend/images/banners'),
+            public_path('backend/images/teachers'),
+            public_path('backend/images/events'),
+            public_path('backend/images/messages'),
+            public_path('backend/images/settings'),
             public_path('backend/images'),
             public_path('uploads'),
             public_path('frontend/images'),

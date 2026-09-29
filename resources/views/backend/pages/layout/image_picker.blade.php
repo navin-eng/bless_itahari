@@ -1,71 +1,98 @@
 {{--
-  Reusable Image Picker Component
+  Reusable Image Picker Component (Media Library only)
   Props:
-    $name       - input name attribute (e.g. 'image')
-    $inputId    - unique ID for hidden URL input (e.g. 'noticeImageUrl')
-    $previewId  - unique ID for preview img tag   (e.g. 'noticeImagePreview')
-    $label      - label text (default 'Image')
-    $hint       - hint text (default '')
-    $currentImage - current image path (for edit forms, can be null)
-    $required   - whether file is required (default false)
+    $name         - form field name (text input with this name carries the path: e.g. 'image_url')
+    $inputId      - unique ID for the text input   (e.g. 'noticeImageUrl')
+    $previewId    - unique ID for preview img tag   (e.g. 'noticeImagePreview')
+    $label        - label text (default 'Image')
+    $hint         - hint text below the picker
+    $currentImage - current image path for edit forms (can be null)
+    $required     - whether a value is required (default false)
 --}}
 @php
   $label        = $label        ?? 'Image';
-  $hint         = $hint         ?? 'Choose from Media Library or upload a new file.';
+  $hint         = $hint         ?? 'Click "Choose Image" to pick from the Media Library or upload a new one.';
   $currentImage = $currentImage ?? null;
   $required     = $required     ?? false;
+  $currentVal   = old(($name ?? 'image') . '_url', $currentImage ?? '');
 @endphp
 
 <div class="admin-form-group">
   <label class="admin-label">{{ $label }}{{ $required ? ' *' : '' }}</label>
 
-  {{-- Media Library URL hidden input + picker button --}}
-  <div class="d-flex gap-2 mb-2">
+  {{-- Picker row: path preview + button --}}
+  <div class="input-group mb-2">
     <input type="text"
            name="{{ $name }}_url"
            id="{{ $inputId }}"
            class="admin-input"
-           placeholder="Select from Media Library or upload below…"
-           value="{{ old($name.'_url', $currentImage ?? '') }}"
+           placeholder="No image selected — click Choose Image"
+           value="{{ $currentVal }}"
            readonly
-           style="flex:1; cursor:pointer;"
-           onclick="document.getElementById('{{ $inputId }}PickBtn').click()">
+           style="cursor:pointer; flex:1; border-radius:8px 0 0 8px;"
+           onclick="window.openMediaLibrary({targetInput:'#{{ $inputId }}', targetPreview:'#{{ $previewId }}'})"
+    >
     <button type="button"
-            id="{{ $inputId }}PickBtn"
-            class="btn-admin btn-admin-outline"
+            class="btn btn-outline-primary"
             data-media-picker
             data-target-input="#{{ $inputId }}"
             data-target-preview="#{{ $previewId }}"
-            style="white-space:nowrap;">
-      <i class="bi bi-images me-1"></i> Media Library
+            style="border-radius:0 8px 8px 0; white-space:nowrap; font-size:13px; font-weight:600;">
+      <i class="bi bi-images me-1"></i> Choose Image
     </button>
   </div>
 
-  {{-- Current image preview (edit mode) --}}
-  @if($currentImage)
-  <div class="mb-2">
-    <small class="text-muted d-block mb-1">Current image:</small>
+  {{-- Image preview --}}
+  <div id="{{ $previewId }}_wrap" style="{{ $currentVal ? '' : 'display:none;' }} margin-top:6px;">
     <img id="{{ $previewId }}"
-         src="{{ asset(old($name.'_url', $currentImage)) }}"
-         alt="Current"
-         style="max-height:80px; border-radius:6px; border:1px solid var(--admin-border); object-fit:cover;">
+         src="{{ $currentVal ? asset($currentVal) : '' }}"
+         alt="Selected image"
+         style="max-height:100px; max-width:220px; border-radius:8px; border:1px solid #e2e8f0; object-fit:cover; display:block;">
+    <button type="button"
+            onclick="clearImagePicker('{{ $inputId }}', '{{ $previewId }}')"
+            style="margin-top:4px; background:none; border:none; color:#e53e3e; font-size:12px; cursor:pointer; padding:0;">
+      <i class="bi bi-x-circle me-1"></i> Remove
+    </button>
   </div>
-  @else
-  <img id="{{ $previewId }}"
-       src=""
-       alt="Preview"
-       style="max-height:80px; border-radius:6px; border:1px solid var(--admin-border); display:none; margin-bottom:8px; object-fit:cover;">
-  @endif
-
-  {{-- Or upload new file --}}
-  <label class="admin-label text-muted" style="font-size:11.5px; margin-top:4px;">— or upload a new file —</label>
-  <input type="file"
-         name="{{ $name }}"
-         class="admin-input"
-         accept="image/*"
-         {{ $required && !$currentImage ? 'required' : '' }}>
 
   @if($hint)
-  <span class="admin-input-hint">{{ $hint }}</span>
+  <span class="admin-input-hint" style="display:block; margin-top:4px;">{{ $hint }}</span>
   @endif
 </div>
+
+@once
+<script>
+function clearImagePicker(inputId, previewId) {
+    const inp = document.getElementById(inputId);
+    const img = document.getElementById(previewId);
+    const wrap = document.getElementById(previewId + '_wrap');
+    if (inp) inp.value = '';
+    if (img) img.src = '';
+    if (wrap) wrap.style.display = 'none';
+}
+</script>
+
+{{-- Patch openMediaLibrary so it also reveals the preview wrap on selection --}}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Intercept the global data-media-picker click to also handle wrap visibility
+    const origOpen = window.openMediaLibrary;
+    // We hook into the "Use Selected Image" button via a MutationObserver-free approach:
+    // After the modal closes and the targetInput value changes, show the preview wrap.
+    document.getElementById('wpMediaModal')?.addEventListener('hide.bs.modal', function () {
+        // For every image picker on page, check if its input now has a value and show wrap
+        document.querySelectorAll('[data-media-picker]').forEach(function (btn) {
+            const targetInputSel = btn.getAttribute('data-target-input');
+            const targetPreviewSel = btn.getAttribute('data-target-preview');
+            if (!targetInputSel || !targetPreviewSel) return;
+            const inp = document.querySelector(targetInputSel);
+            const previewEl = document.querySelector(targetPreviewSel);
+            if (inp && previewEl && inp.value) {
+                const wrap = document.getElementById(previewEl.id + '_wrap');
+                if (wrap) wrap.style.display = 'block';
+            }
+        });
+    });
+});
+</script>
+@endonce
