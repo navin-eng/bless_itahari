@@ -107,72 +107,54 @@
 
                     {{-- Attached Document / PDF Viewer --}}
                     @if(!empty($notice->file))
-                        <div class="notice-attachment-box my-4 p-4 rounded-4 shadow-sm border bg-white">
-                            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3 pb-3 border-bottom">
+                        <div class="notice-attachment-box my-4 rounded-4 shadow-sm border bg-white overflow-hidden" id="noticeAttachmentBox">
+                            <div class="p-3 p-md-4 d-flex flex-wrap align-items-center justify-content-between gap-3">
                                 <div class="d-flex align-items-center gap-3">
-                                    <div class="file-icon-wrap rounded-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background: rgba(26, 77, 140, 0.1);">
+                                    <div class="file-icon-wrap rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 52px; height: 52px; background: {{ $notice->isPdf() ? '#fee2e2' : 'rgba(26, 77, 140, 0.1)' }}; color: {{ $notice->isPdf() ? '#dc2626' : '#1a4d8c' }};">
                                         @if($notice->isPdf())
-                                            <i class="fa-solid fa-file-pdf fs-3 text-danger"></i>
+                                            <i class="fa-solid fa-file-pdf fs-2"></i>
                                         @else
-                                            <i class="fa-solid fa-file-lines fs-3 text-primary"></i>
+                                            <i class="fa-solid fa-file-lines fs-2"></i>
                                         @endif
                                     </div>
                                     <div>
-                                        <h5 class="fw-bold mb-1 text-dark">{{ $notice->file_name ?? basename($notice->file) }}</h5>
-                                        <div class="text-muted small">
-                                            <span>{{ strtoupper($notice->getFileExtension()) }} Document</span>
+                                        <h5 class="fw-bold mb-1 text-dark text-break" style="font-size: 1.05rem;">
+                                            {{ $notice->file_name ?? basename($notice->file) }}
+                                        </h5>
+                                        <div class="text-muted small d-flex flex-wrap align-items-center gap-2">
+                                            <span class="badge {{ $notice->isPdf() ? 'bg-danger-subtle text-danger border border-danger-subtle' : 'bg-primary-subtle text-primary border border-primary-subtle' }} fw-semibold text-uppercase" style="font-size: 11px;">
+                                                {{ strtoupper($notice->getFileExtension()) }} Document
+                                            </span>
                                             @if($notice->file_size)
-                                                <span> • {{ $notice->file_size }}</span>
+                                                <span>&bull; {{ $notice->file_size }}</span>
+                                            @endif
+                                            @if($notice->isPdf())
+                                                <span class="d-none d-sm-inline text-muted">&bull; Fast on-demand viewer</span>
                                             @endif
                                         </div>
                                     </div>
                                 </div>
-                                <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
                                     @if($notice->isPdf())
-                                        <button type="button" class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm" onclick="loadPdfViewer(true)" id="topLoadPdfBtn">
-                                            <i class="fa-solid fa-eye me-1"></i> View PDF
+                                        <button type="button" class="btn btn-primary rounded-pill px-3 py-2 fw-semibold shadow-sm d-inline-flex align-items-center gap-2" onclick="togglePdfViewer(true)" id="btnTogglePdf">
+                                            <i class="fa-solid fa-eye" id="btnTogglePdfIcon"></i>
+                                            <span id="btnTogglePdfText">View PDF</span>
                                         </button>
                                     @endif
-                                    <a href="{{ asset($notice->file) }}" target="_blank" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
-                                        <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Open in New Tab
+                                    <a href="{{ asset($notice->file) }}" target="_blank" class="btn btn-outline-secondary rounded-pill px-3 py-2 fw-medium d-inline-flex align-items-center gap-2">
+                                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                        <span class="d-none d-sm-inline">Open in New Tab</span>
                                     </a>
-                                    <a href="{{ asset($notice->file) }}" download="{{ $notice->file_name ?? basename($notice->file) }}" class="btn btn-sm btn-outline-dark rounded-pill px-3">
-                                        <i class="fa-solid fa-download me-1"></i> Download
+                                    <a href="{{ asset($notice->file) }}" download="{{ $notice->file_name ?? basename($notice->file) }}" class="btn btn-outline-dark rounded-pill px-3 py-2 fw-medium d-inline-flex align-items-center gap-2">
+                                        <i class="fa-solid fa-download"></i>
+                                        <span>Download</span>
                                     </a>
                                 </div>
                             </div>
 
                             @if($notice->isPdf())
-                                {{-- Lazy On-Demand Preview Card (0 KB PDF transferred on initial page load) --}}
-                                <div class="pdf-lazy-card p-4 p-md-5 rounded-3 text-center border shadow-sm my-2" id="pdfLazyCard" style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);">
-                                    <div class="pdf-preview-icon-wrap mb-3">
-                                        <div class="mx-auto rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 72px; height: 72px; background: #fee2e2; color: #dc2626;">
-                                            <i class="fa-solid fa-file-pdf fs-2"></i>
-                                        </div>
-                                    </div>
-                                    <h5 class="fw-bold text-dark mb-1">{{ $notice->file_name ?? basename($notice->file) }}</h5>
-                                    <p class="text-muted small mb-3">
-                                        <span>PDF Document</span>
-                                        @if($notice->file_size)
-                                            <span> • <strong>{{ $notice->file_size }}</strong></span>
-                                        @endif
-                                        <span> • Optimized for high speed (loads instantly on click)</span>
-                                    </p>
-                                    <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
-                                        <button type="button" class="btn btn-primary px-4 py-2 rounded-pill fw-semibold shadow-sm" id="btnLoadPdfMain" onclick="loadPdfViewer(true)">
-                                            <i class="fa-solid fa-eye me-2"></i> View PDF Document
-                                        </button>
-                                        <a href="{{ asset($notice->file) }}" target="_blank" class="btn btn-outline-secondary px-3 py-2 rounded-pill">
-                                            <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Open in New Tab
-                                        </a>
-                                        <a href="{{ asset($notice->file) }}" download="{{ $notice->file_name ?? basename($notice->file) }}" class="btn btn-outline-dark px-3 py-2 rounded-pill">
-                                            <i class="fa-solid fa-download me-1"></i> Download
-                                        </a>
-                                    </div>
-                                </div>
-
-                                {{-- Embedded PDF Viewer (Initially hidden with NO src loaded) --}}
-                                <div class="pdf-viewer-container position-relative rounded-3 overflow-hidden border shadow-sm d-none" id="pdfViewerContainer" style="height: 700px; background: #525659;">
+                                {{-- Embedded PDF Viewer (Initially hidden with NO src loaded until user clicks) --}}
+                                <div class="pdf-viewer-container position-relative border-top d-none" id="pdfViewerContainer" style="height: 720px; background: #525659;">
                                     {{-- Active Viewer Toolbar --}}
                                     <div class="pdf-active-toolbar d-flex align-items-center justify-content-between px-3 py-2 bg-dark text-white border-bottom border-secondary">
                                         <div class="small text-truncate me-2 text-white-50">
@@ -180,10 +162,10 @@
                                             <span class="text-white fw-semibold">{{ $notice->file_name ?? basename($notice->file) }}</span>
                                         </div>
                                         <div class="d-flex align-items-center gap-2">
-                                            <button type="button" class="btn btn-sm btn-outline-light py-1 px-2 text-nowrap" onclick="togglePdfFullscreen()" id="pdfFullscreenBtn" style="font-size: 12px;">
+                                            <button type="button" class="btn btn-sm btn-outline-light py-1 px-3 text-nowrap rounded-pill" onclick="togglePdfFullscreen()" id="pdfFullscreenBtn" style="font-size: 12px;">
                                                 <i class="fa-solid fa-expand me-1"></i> Fullscreen
                                             </button>
-                                            <button type="button" class="btn btn-sm btn-outline-warning py-1 px-2 text-nowrap" onclick="unloadPdfViewer()" style="font-size: 12px;" title="Close viewer and free browser memory">
+                                            <button type="button" class="btn btn-sm btn-outline-danger py-1 px-3 text-nowrap rounded-pill text-white" onclick="unloadPdfViewer()" style="font-size: 12px;" title="Close viewer and free browser memory">
                                                 <i class="fa-solid fa-xmark me-1"></i> Close Viewer
                                             </button>
                                         </div>
@@ -199,16 +181,11 @@
                                     </div>
 
                                     {{-- The iframe has NO src until user explicitly triggers loadPdfViewer --}}
-                                    <iframe id="pdfIframe" data-src="{{ asset($notice->file) }}#toolbar=1&navpanes=1" width="100%" height="100%" style="border: none; min-height: 640px;" title="{{ $notice->title }}">
+                                    <iframe id="pdfIframe" data-src="{{ asset($notice->file) }}#toolbar=1&navpanes=1" width="100%" height="100%" style="border: none; min-height: 660px;" title="{{ $notice->title }}">
                                         <p class="p-4 text-white text-center">Your browser does not support embedding PDF files. 
                                             <a href="{{ asset($notice->file) }}" target="_blank" class="text-warning text-decoration-underline">Click here to view or download the PDF</a>.
                                         </p>
                                     </iframe>
-                                </div>
-                            @else
-                                <div class="p-3 bg-light rounded-3 text-muted small d-flex align-items-center justify-content-between">
-                                    <span><i class="fa-solid fa-circle-info me-2 text-primary"></i>Document ready for download.</span>
-                                    <a href="{{ asset($notice->file) }}" download class="fw-bold text-primary">Download File &rarr;</a>
                                 </div>
                             @endif
                         </div>
@@ -486,20 +463,36 @@
 
 @push('scripts')
 <script>
+    function togglePdfViewer(scrollIntoView = false) {
+        const container = document.getElementById('pdfViewerContainer');
+        if (!container) return;
+
+        if (container.classList.contains('d-none')) {
+            loadPdfViewer(scrollIntoView);
+        } else {
+            unloadPdfViewer();
+        }
+    }
+
     function loadPdfViewer(scrollIntoView = false) {
-        const lazyCard = document.getElementById('pdfLazyCard');
         const container = document.getElementById('pdfViewerContainer');
         const iframe = document.getElementById('pdfIframe');
         const spinner = document.getElementById('pdfLoadingSpinner');
-        const topBtn = document.getElementById('topLoadPdfBtn');
+        const toggleBtnText = document.getElementById('btnTogglePdfText');
+        const toggleBtnIcon = document.getElementById('btnTogglePdfIcon');
+        const toggleBtn = document.getElementById('btnTogglePdf');
 
         if (!container || !iframe) return;
 
-        // Reveal container and hide preview placeholder
-        if (lazyCard) lazyCard.classList.add('d-none');
+        // Reveal container
         container.classList.remove('d-none');
-        if (topBtn) {
-            topBtn.innerHTML = '<i class="fa-solid fa-arrows-rotate me-1"></i> पुन: लोड गर्नुहोस्';
+        if (toggleBtnText) toggleBtnText.textContent = 'Close Viewer';
+        if (toggleBtnIcon) {
+            toggleBtnIcon.className = 'fa-solid fa-eye-slash';
+        }
+        if (toggleBtn) {
+            toggleBtn.classList.remove('btn-primary');
+            toggleBtn.classList.add('btn-outline-danger');
         }
 
         // Dynamically load PDF src only upon click
@@ -529,15 +522,20 @@
     }
 
     function unloadPdfViewer() {
-        const lazyCard = document.getElementById('pdfLazyCard');
         const container = document.getElementById('pdfViewerContainer');
         const iframe = document.getElementById('pdfIframe');
-        const topBtn = document.getElementById('topLoadPdfBtn');
+        const toggleBtnText = document.getElementById('btnTogglePdfText');
+        const toggleBtnIcon = document.getElementById('btnTogglePdfIcon');
+        const toggleBtn = document.getElementById('btnTogglePdf');
 
         if (container) container.classList.add('d-none');
-        if (lazyCard) lazyCard.classList.remove('d-none');
-        if (topBtn) {
-            topBtn.innerHTML = '<i class="fa-solid fa-eye me-1"></i> कागजात हेर्नुहोस् (View PDF)';
+        if (toggleBtnText) toggleBtnText.textContent = 'View PDF';
+        if (toggleBtnIcon) {
+            toggleBtnIcon.className = 'fa-solid fa-eye';
+        }
+        if (toggleBtn) {
+            toggleBtn.classList.remove('btn-outline-danger');
+            toggleBtn.classList.add('btn-primary');
         }
 
         // Free browser memory immediately
