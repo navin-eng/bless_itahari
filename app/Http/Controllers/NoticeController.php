@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Notice;
+use App\Models\NoticeCategory;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -34,19 +35,22 @@ class NoticeController extends Controller
 
     public function create()
     {
-        return view('backend.pages.notice.add');
+        $categories = NoticeCategory::orderBy('name')->get();
+        return view('backend.pages.notice.add', compact('categories'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'title'       => 'required|string|max:255|min:2',
-            'description' => 'required|string',
-            'image'       => 'nullable|file|mimes:jpeg,png,jpg,webp,gif,svg|max:5120',
-            'image_url'   => 'nullable|string',
-            'file'        => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,zip|max:25600',
-            'expires_at'  => 'nullable|date',
-            'show_in'     => 'nullable|in:m,p,b',
+            'title'        => 'required|string|max:255|min:2',
+            'description'  => 'required|string',
+            'category'     => 'nullable|string|max:100',
+            'new_category' => 'nullable|string|max:100',
+            'image'        => 'nullable|file|mimes:jpeg,png,jpg,webp,gif,svg|max:5120',
+            'image_url'    => 'nullable|string',
+            'file'         => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,zip|max:25600',
+            'expires_at'   => 'nullable|date',
+            'show_in'      => 'nullable|in:m,p,b',
         ]);
 
         $notice = new Notice();
@@ -54,6 +58,18 @@ class NoticeController extends Controller
         $notice->slug = Str::slug($request->title);
         $notice->description = $request->description;
         $notice->show_in = $request->input('show_in', 'm');
+
+        // Handle Category / Department
+        $category = $request->input('category');
+        if ($request->filled('new_category')) {
+            $newCatName = trim($request->new_category);
+            $catRecord = NoticeCategory::firstOrCreate(
+                ['name' => $newCatName],
+                ['slug' => Str::slug($newCatName)]
+            );
+            $category = $catRecord->name;
+        }
+        $notice->category = $category;
 
         // Handle Expiry Date
         if ($request->filled('expires_at')) {
@@ -117,19 +133,22 @@ class NoticeController extends Controller
             Alert::error('Oops', 'Notice not found');
             return redirect()->route('notice.table');
         }
-        return view('backend.pages.notice.edit', compact('notice'));
+        $categories = NoticeCategory::orderBy('name')->get();
+        return view('backend.pages.notice.edit', compact('notice', 'categories'));
     }
 
     public function update(Request $request, Notice $noticeModel, $id)
     {
         $request->validate([
-            'title'       => 'required|string|max:255|min:2',
-            'description' => 'required|string',
-            'image'       => 'nullable|file|mimes:jpeg,png,jpg,webp,gif,svg|max:5120',
-            'image_url'   => 'nullable|string',
-            'file'        => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,zip|max:25600',
-            'expires_at'  => 'nullable|date',
-            'show_in'     => 'nullable|in:m,p,b',
+            'title'        => 'required|string|max:255|min:2',
+            'description'  => 'required|string',
+            'category'     => 'nullable|string|max:100',
+            'new_category' => 'nullable|string|max:100',
+            'image'        => 'nullable|file|mimes:jpeg,png,jpg,webp,gif,svg|max:5120',
+            'image_url'    => 'nullable|string',
+            'file'         => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,zip|max:25600',
+            'expires_at'   => 'nullable|date',
+            'show_in'      => 'nullable|in:m,p,b',
         ]);
 
         $notice = Notice::find($id);
@@ -142,6 +161,18 @@ class NoticeController extends Controller
         $notice->slug = Str::slug($request->title);
         $notice->description = $request->description;
         $notice->show_in = $request->input('show_in', $notice->show_in ?? 'm');
+
+        // Handle Category / Department
+        $category = $request->input('category');
+        if ($request->filled('new_category')) {
+            $newCatName = trim($request->new_category);
+            $catRecord = NoticeCategory::firstOrCreate(
+                ['name' => $newCatName],
+                ['slug' => Str::slug($newCatName)]
+            );
+            $category = $catRecord->name;
+        }
+        $notice->category = $category;
 
         // Handle Expiry Date
         if ($request->filled('expires_at')) {

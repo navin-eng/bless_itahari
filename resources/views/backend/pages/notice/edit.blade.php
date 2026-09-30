@@ -14,7 +14,7 @@
     </div>
 </div>
 
-@if ($errors->any())
+@if (isset($errors) && $errors->any())
     <div class="alert alert-danger alert-dismissible fade show shadow-sm mb-4" role="alert">
         <div class="fw-bold mb-1"><i class="bi bi-exclamation-triangle-fill me-2"></i>Please fix the following errors:</div>
         <ul class="mb-0 ps-3">
@@ -44,6 +44,38 @@
                     <div class="mb-4">
                         <label class="form-label fw-bold text-dark">Notice Title <span class="text-danger">*</span></label>
                         <input type="text" name="title" value="{{ old('title', $notice->title) }}" class="form-control form-control-lg" placeholder="Notice Title" required>
+                    </div>
+
+                    {{-- Category / Department --}}
+                    <div class="mb-4">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <label class="form-label fw-bold text-dark mb-0">Category / Department</label>
+                            <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none text-primary" id="toggleNewCatBtn" onclick="toggleCustomCategory()">
+                                <i class="bi bi-plus-circle me-1"></i> + Add New Category
+                            </button>
+                        </div>
+                        <select name="category" id="noticeCategorySelect" class="form-select">
+                            <option value="">-- Select Category / Department --</option>
+                            @if(isset($categories))
+                                @foreach($categories as $cat)
+                                    <option value="{{ $cat->name }}" {{ old('category', $notice->category) == $cat->name ? 'selected' : '' }}>
+                                        {{ $cat->name }}
+                                    </option>
+                                @endforeach
+                            @endif
+                            @if(!empty($notice->category) && (!isset($categories) || !$categories->contains('name', $notice->category)))
+                                <option value="{{ $notice->category }}" selected>{{ $notice->category }}</option>
+                            @endif
+                        </select>
+                        
+                        <div id="newCategoryWrap" class="mt-2 d-none">
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-primary"><i class="bi bi-tag-fill"></i></span>
+                                <input type="text" name="new_category" id="newCategoryInput" class="form-control" placeholder="Type new department or category name...">
+                                <button type="button" class="btn btn-outline-secondary" onclick="toggleCustomCategory(false)">Cancel</button>
+                            </div>
+                            <small class="text-muted">This new category will automatically be saved and available for future notices.</small>
+                        </div>
                     </div>
 
                     {{-- Description with Summernote --}}
@@ -277,6 +309,24 @@
             });
         }
     });
+
+    function toggleCustomCategory(show = true) {
+        const wrap = document.getElementById('newCategoryWrap');
+        const input = document.getElementById('newCategoryInput');
+        const toggleBtn = document.getElementById('toggleNewCatBtn');
+
+        if (!wrap) return;
+
+        if (show) {
+            wrap.classList.remove('d-none');
+            if (input) input.focus();
+            if (toggleBtn) toggleBtn.classList.add('d-none');
+        } else {
+            wrap.classList.add('d-none');
+            if (input) input.value = '';
+            if (toggleBtn) toggleBtn.classList.remove('d-none');
+        }
+    }
 
     function clearNoticeFile() {
         const fileInput = document.getElementById('noticeFileInput');

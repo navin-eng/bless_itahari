@@ -40,10 +40,10 @@ class Frontend extends Controller
     public function manifest()
     {
         $siteSettings = SiteSetting::current();
-        
+
         $logoUrl = $siteSettings->site_logo ? asset($siteSettings->site_logo) : asset('backend/images/logo.png');
         $primaryColor = $siteSettings->primary_color ?? '#1a4d8c';
-        
+
         $manifest = [
             "name" => $siteSettings->site_name ?? "Shiksha Sandesh English School",
             "short_name" => $siteSettings->site_short_name ?? "SSES App",
@@ -62,7 +62,7 @@ class Frontend extends Controller
                 ]
             ]
         ];
-        
+
         return response()->json($manifest);
     }
 
@@ -93,7 +93,7 @@ class Frontend extends Controller
         $faqs = collect();
         try {
             if (\Illuminate\Support\Facades\Schema::hasTable('about_us_faqs')) {
-                $faqs = \App\Models\AboutUsFaq::where('status', 1)->orderBy('sort_order')->get();
+                $faqs = AboutUsFaq::where('status', 1)->orderBy('sort_order')->get();
             }
         } catch (\Throwable $e) {
             $faqs = collect();
@@ -108,7 +108,7 @@ class Frontend extends Controller
                         ? json_decode($siteSettings->about_selected_leadership_ids, true)
                         : $siteSettings->about_selected_leadership_ids;
                     if (!empty($selectedIds)) {
-                        $messages = \App\Models\CollegeMessage::whereIn('id', (array)$selectedIds)
+                        $messages = CollegeMessage::whereIn('id', (array) $selectedIds)
                             ->where('status', 1)
                             ->orderBy('order')
                             ->get();
@@ -116,7 +116,7 @@ class Frontend extends Controller
                 } elseif ($leadershipSource === 'custom') {
                     $messages = collect();
                 } else {
-                    $messages = \App\Models\CollegeMessage::where('status', 1)->orderBy('order')->get();
+                    $messages = CollegeMessage::where('status', 1)->orderBy('order')->get();
                 }
             }
         } catch (\Throwable $e) {
@@ -126,7 +126,7 @@ class Frontend extends Controller
         $counter = null;
         try {
             if (\Illuminate\Support\Facades\Schema::hasTable('counters')) {
-                $counter = \App\Models\Counter::first();
+                $counter = Counter::first();
             }
         } catch (\Throwable $e) {
             $counter = null;
@@ -426,7 +426,8 @@ class Frontend extends Controller
                     ];
                 }
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) {
+        }
 
         // Events
         try {
@@ -441,7 +442,8 @@ class Frontend extends Controller
                     ];
                 }
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) {
+        }
 
         // Notices
         try {
@@ -454,7 +456,8 @@ class Frontend extends Controller
                     'changefreq' => 'monthly',
                 ];
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) {
+        }
 
         // Custom Pages
         try {
@@ -469,7 +472,8 @@ class Frontend extends Controller
                     ];
                 }
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) {
+        }
 
         $xml = '<?xml version="1.0" encoding="UTF-8"?>';
         $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';

@@ -130,14 +130,14 @@
                                 <div class="d-flex align-items-center gap-2 flex-wrap">
                                     @if($notice->isPdf())
                                         <button type="button" class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm" onclick="loadPdfViewer(true)" id="topLoadPdfBtn">
-                                            <i class="fa-solid fa-eye me-1"></i> कागजात हेर्नुहोस् (View PDF)
+                                            <i class="fa-solid fa-eye me-1"></i> View PDF
                                         </button>
                                     @endif
                                     <a href="{{ asset($notice->file) }}" target="_blank" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
-                                        <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> नयाँ ट्याबमा खोल्नुहोस्
+                                        <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Open in New Tab
                                     </a>
                                     <a href="{{ asset($notice->file) }}" download="{{ $notice->file_name ?? basename($notice->file) }}" class="btn btn-sm btn-outline-dark rounded-pill px-3">
-                                        <i class="fa-solid fa-download me-1"></i> डाउनलोड
+                                        <i class="fa-solid fa-download me-1"></i> Download
                                     </a>
                                 </div>
                             </div>
@@ -152,21 +152,21 @@
                                     </div>
                                     <h5 class="fw-bold text-dark mb-1">{{ $notice->file_name ?? basename($notice->file) }}</h5>
                                     <p class="text-muted small mb-3">
-                                        <span>PDF कागजात (PDF Document)</span>
+                                        <span>PDF Document</span>
                                         @if($notice->file_size)
                                             <span> • <strong>{{ $notice->file_size }}</strong></span>
                                         @endif
-                                        <span> • वेबसाइटको गति छिटो राख्न PDF अन-डिमान्ड राखिएको छ</span>
+                                        <span> • Optimized for high speed (loads instantly on click)</span>
                                     </p>
                                     <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
                                         <button type="button" class="btn btn-primary px-4 py-2 rounded-pill fw-semibold shadow-sm" id="btnLoadPdfMain" onclick="loadPdfViewer(true)">
-                                            <i class="fa-solid fa-eye me-2"></i> कागजात / PDF हेर्नुहोस् (Click to View PDF)
+                                            <i class="fa-solid fa-eye me-2"></i> View PDF Document
                                         </button>
                                         <a href="{{ asset($notice->file) }}" target="_blank" class="btn btn-outline-secondary px-3 py-2 rounded-pill">
-                                            <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> नयाँ ट्याब
+                                            <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Open in New Tab
                                         </a>
                                         <a href="{{ asset($notice->file) }}" download="{{ $notice->file_name ?? basename($notice->file) }}" class="btn btn-outline-dark px-3 py-2 rounded-pill">
-                                            <i class="fa-solid fa-download me-1"></i> डाउनलोड
+                                            <i class="fa-solid fa-download me-1"></i> Download
                                         </a>
                                     </div>
                                 </div>
@@ -183,8 +183,8 @@
                                             <button type="button" class="btn btn-sm btn-outline-light py-1 px-2 text-nowrap" onclick="togglePdfFullscreen()" id="pdfFullscreenBtn" style="font-size: 12px;">
                                                 <i class="fa-solid fa-expand me-1"></i> Fullscreen
                                             </button>
-                                            <button type="button" class="btn btn-sm btn-outline-warning py-1 px-2 text-nowrap" onclick="unloadPdfViewer()" style="font-size: 12px;" title="कागजात बन्द गर्नुहोस् / मेमोरी खाली गर्नुहोस्">
-                                                <i class="fa-solid fa-xmark me-1"></i> बन्द गर्नुहोस् (Close)
+                                            <button type="button" class="btn btn-sm btn-outline-warning py-1 px-2 text-nowrap" onclick="unloadPdfViewer()" style="font-size: 12px;" title="Close viewer and free browser memory">
+                                                <i class="fa-solid fa-xmark me-1"></i> Close Viewer
                                             </button>
                                         </div>
                                     </div>
@@ -194,7 +194,7 @@
                                         <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
                                             <span class="visually-hidden">Loading...</span>
                                         </div>
-                                        <p class="mb-1 fw-bold fs-6">PDF लोड हुँदैछ, कृपया केही क्षण प्रतीक्षा गर्नुहोस्...</p>
+                                        <p class="mb-1 fw-bold fs-6">Loading PDF, please wait a moment...</p>
                                         <small class="text-white-50">Loading PDF document into embedded viewer...</small>
                                     </div>
 

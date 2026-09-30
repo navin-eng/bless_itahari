@@ -47,6 +47,7 @@
           <tr>
             <th class="ps-4">#</th>
             <th>Title</th>
+            <th>Category</th>
             <th>Attachment</th>
             <th>Placement</th>
             <th>Published</th>
@@ -74,6 +75,15 @@
                   <p class="text-muted small mb-0">{{ Str::limit(strip_tags($data->description), 50) }}</p>
                 </div>
               </div>
+            </td>
+            <td>
+              @if(!empty($data->category))
+                <span class="badge bg-secondary-subtle text-dark border px-2 py-1">
+                  <i class="bi bi-tag-fill text-primary me-1"></i>{{ $data->category }}
+                </span>
+              @else
+                <span class="text-muted small">&mdash;</span>
+              @endif
             </td>
             <td>
               @if($data->hasFile())

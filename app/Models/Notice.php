@@ -18,6 +18,7 @@ class Notice extends Model
         'file',
         'file_name',
         'file_size',
+        'category',
         'description',
         'show_in',
         'expires_at',
