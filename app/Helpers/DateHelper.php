@@ -70,3 +70,55 @@ if (!function_exists('get_today_nepali_date')) {
         }
     }
 }
+
+if (!function_exists('to_nepali_bs_date')) {
+    /**
+     * Convert any date into Nepali BS date (e.g. "२०८३-०६-१४" or "2083-06-14")
+     */
+    function to_nepali_bs_date($date, $nepaliDigits = true)
+    {
+        if (!$date) return '';
+        try {
+            $parsedDate = Carbon::parse($date);
+            $bs = \App\Helpers\NepaliDate::create($parsedDate)->toBS();
+            if ($nepaliDigits) {
+                $digits = ['0'=>'०','1'=>'१','2'=>'२','3'=>'३','4'=>'४','5'=>'५','6'=>'६','7'=>'७','8'=>'८','9'=>'९'];
+                return strtr($bs, $digits);
+            }
+            return $bs;
+        } catch (\Throwable $e) {
+            return (string)$date;
+        }
+    }
+}
+
+if (!function_exists('to_nepali_relative_time')) {
+    /**
+     * Format date to Nepali relative time (e.g. "१ दिन अगाडी", "५ दिन अगाडी", "१ महिना अगाडी", "भर्खरै")
+     */
+    function to_nepali_relative_time($date)
+    {
+        if (!$date) return '';
+        try {
+            $c = Carbon::parse($date);
+            $diffHours = $c->diffInHours(now());
+            if ($diffHours < 24) {
+                return 'भर्खरै';
+            }
+            $diffDays = $c->diffInDays(now());
+            $digits = ['0'=>'०','1'=>'१','2'=>'२','3'=>'३','4'=>'४','5'=>'५','6'=>'६','7'=>'७','8'=>'८','9'=>'९'];
+            if ($diffDays < 30) {
+                return strtr((string)$diffDays, $digits) . ' दिन अगाडी';
+            }
+            $diffMonths = $c->diffInMonths(now());
+            if ($diffMonths < 12) {
+                return strtr((string)max(1, $diffMonths), $digits) . ' महिना अगाडी';
+            }
+            $diffYears = $c->diffInYears(now());
+            return strtr((string)max(1, $diffYears), $digits) . ' वर्ष अगाडी';
+        } catch (\Throwable $e) {
+            return Carbon::parse($date)->diffForHumans();
+        }
+    }
+}
+

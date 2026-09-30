@@ -60,6 +60,7 @@ Route::get('/privacy/policy', function () {
 
 Route::get('/page/{slug}', [Frontend::class, 'pageDetail']);
 Route::get('/notices', [Frontend::class, 'noticeIndex'])->name('notices.index');
+Route::get('/notice', [Frontend::class, 'noticeIndex'])->name('notice.index');
 Route::get('/calendar', [Frontend::class, 'calendar'])->name('calendar');
 Route::get('/events', [Frontend::class, 'eventsIndex'])->name('events.index');
 
