@@ -76,6 +76,14 @@
                                             <label class="form-label">Tagline / Logo Subtitle</label>
                                             <input type="text" name="site_tagline" class="form-control" value="{{ old('site_tagline', $settings->site_tagline) }}" required>
                                         </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">School Established Year / Date</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                                                <input type="text" name="established_year" class="form-control" placeholder="e.g. 2050 B.S. (1993 A.D.) or 1993" value="{{ old('established_year', $settings->established_year ?? $settings->about_established_year) }}">
+                                            </div>
+                                            <small class="text-muted">Specifies the school's establishment year/date shown on homepage affiliation bar, badges, and about sections.</small>
+                                        </div>
 
                                         <hr class="my-4 text-muted opacity-25">
 

@@ -4,8 +4,12 @@
         <div class="row align-items-center g-5">
             <div class="col-lg-6 order-2 order-lg-1">
                 <div class="pe-lg-4 position-relative z-index-1">
+                    @php
+                        $modEst = $siteSettings->established_year ?? $siteSettings->about_established_year ?? '2050 B.S. (1993 A.D.)';
+                        $modEstDisplay = \Illuminate\Support\Str::startsWith(trim($modEst), ['Since', 'since', 'Est.', 'Est', 'est.', 'est', 'Established', 'established']) ? $modEst : 'Since ' . $modEst;
+                    @endphp
                     <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 mb-3 rounded-pill text-uppercase tracking-wide">
-                        <i class="bi bi-star-fill text-warning me-1"></i> Since {{ $siteSettings->about_established_year ?? '1990' }}
+                        <i class="bi bi-star-fill text-warning me-1"></i> {{ $modEstDisplay }}
                     </span>
                     <h1 class="display-4 fw-bold mb-4" style="color: #1e293b;">
                         Empowering Minds, <span class="text-primary position-relative">Shaping Futures

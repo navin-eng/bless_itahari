@@ -428,7 +428,11 @@
         <div class="container position-relative z-1" data-aos="fade-up">
             <div class="about-hero-badge">
                 <i class="bi bi-patch-check-fill text-warning"></i>
-                <span>{{ $siteSettings->about_badge_text ?: ('Est. ' . ($siteSettings->about_established_year ?: '2061') . ' • Quality Education You Can Trust') }}</span>
+                @php
+                    $aboutEst = $siteSettings->established_year ?: ($siteSettings->about_established_year ?: '2050 B.S. (1993 A.D.)');
+                    $badgeDefault = (\Illuminate\Support\Str::startsWith(trim($aboutEst), ['Est.', 'Est', 'est.', 'est', 'Established', 'established']) ? $aboutEst : 'Est. ' . $aboutEst) . ' • Quality Education You Can Trust';
+                @endphp
+                <span>{{ $siteSettings->about_badge_text ?: $badgeDefault }}</span>
             </div>
             
             <h1 class="about-hero-title">

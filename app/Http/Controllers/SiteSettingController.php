@@ -35,6 +35,7 @@ class SiteSettingController extends Controller
             'site_name' => 'required|string|max:255',
             'site_short_name' => 'required|string|max:100',
             'site_tagline' => 'required|string|max:255',
+            'established_year' => 'nullable|string|max:100',
             'site_logo' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,webp|max:5120',
             'site_favicon' => 'nullable|file|mimes:ico,png,jpg,jpeg,svg,webp,gif|max:5120',
             'primary_color' => 'required|string|max:20',
@@ -78,6 +79,10 @@ class SiteSettingController extends Controller
 
         $data['enable_analytics'] = $request->boolean('enable_analytics');
         $data['navbar_sticky'] = $request->boolean('navbar_sticky');
+        if ($request->has('established_year')) {
+            $data['established_year'] = $request->input('established_year');
+            $data['about_established_year'] = $request->input('established_year');
+        }
 
         $settings = SiteSetting::first();
 
@@ -236,6 +241,7 @@ class SiteSettingController extends Controller
         }
 
         Cache::forget('site_settings.current');
+        Cache::forget('site_settings_current');
 
         $changedKeys = collect($data)
             ->filter(function ($value, $key) use ($original) {

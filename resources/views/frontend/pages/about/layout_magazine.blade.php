@@ -3,7 +3,11 @@
     <div class="container pt-5 pb-4 border-bottom border-dark border-3">
         <div class="row align-items-end">
             <div class="col-lg-8">
-                <span class="text-uppercase tracking-wider fw-bold text-muted small d-block mb-3">Est. {{ $siteSettings->about_established_year ?? '1990' }} — {{ $siteSettings->about_affiliation ?? 'Government Board' }}</span>
+                @php
+                    $magEst = $siteSettings->established_year ?? $siteSettings->about_established_year ?? '2050 B.S. (1993 A.D.)';
+                    $magEstDisplay = \Illuminate\Support\Str::startsWith(trim($magEst), ['Est.', 'Est', 'est.', 'est', 'Established', 'established']) ? $magEst : 'Est. ' . $magEst;
+                @endphp
+                <span class="text-uppercase tracking-wider fw-bold text-muted small d-block mb-3">{{ $magEstDisplay }} — {{ $siteSettings->about_affiliation ?? 'Government Board' }}</span>
                 <h1 class="display-2 fw-bolder mb-0" style="letter-spacing: -2px; color: #111;">ABOUT US.</h1>
             </div>
             <div class="col-lg-4 text-lg-end pb-3">

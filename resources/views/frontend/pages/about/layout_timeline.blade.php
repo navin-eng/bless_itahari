@@ -26,7 +26,11 @@
                         <i class="bi bi-flag-fill"></i>
                     </div>
                     <div class="bg-white p-4 rounded-4 shadow-sm border-start border-primary border-4">
-                        <h4 class="fw-bold text-primary mb-0">Established {{ $siteSettings->about_established_year ?? '1990' }}</h4>
+                        @php
+                            $timeEst = $siteSettings->established_year ?? $siteSettings->about_established_year ?? '2050 B.S. (1993 A.D.)';
+                            $timeEstDisplay = \Illuminate\Support\Str::startsWith(trim($timeEst), ['Established', 'established', 'Est.', 'Est', 'est.', 'est']) ? $timeEst : 'Established ' . $timeEst;
+                        @endphp
+                        <h4 class="fw-bold text-primary mb-0">{{ $timeEstDisplay }}</h4>
                     </div>
                 </div>
             </div>

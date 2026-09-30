@@ -29,6 +29,7 @@ class SiteSetting extends Model
         'site_name',
         'site_short_name',
         'site_tagline',
+        'established_year',
         'site_logo',
         'site_favicon',
         'primary_color',
@@ -122,6 +123,8 @@ class SiteSetting extends Model
                     'site_name' => 'Shiksha Sandesh English School',
                     'site_short_name' => 'SSES',
                     'site_tagline' => 'Excellence in Education Since 1993',
+                    'established_year' => '2050 B.S. (1993 A.D.)',
+                    'about_established_year' => '2050 B.S. (1993 A.D.)',
                     'site_logo' => null,
                     'site_favicon' => null,
                     'primary_color' => '#1a4d8c',
@@ -160,6 +163,8 @@ class SiteSetting extends Model
                 'site_name' => 'Shiksha Sandesh English School',
                 'site_short_name' => 'SSES',
                 'site_tagline' => 'Excellence in Education Since 1993',
+                'established_year' => '2050 B.S. (1993 A.D.)',
+                'about_established_year' => '2050 B.S. (1993 A.D.)',
                 'primary_color' => '#1a4d8c',
                 'primary_dark' => '#0e2d54',
                 'primary_light' => '#2e74c9',
@@ -179,5 +184,15 @@ class SiteSetting extends Model
                 'admissions_open' => false,
             ]);
         }
+    }
+
+    public function getEstablishedYearAttribute($value)
+    {
+        return $value ?: ($this->attributes['about_established_year'] ?? null);
+    }
+
+    public function getAboutEstablishedYearAttribute($value)
+    {
+        return $value ?: ($this->attributes['established_year'] ?? null);
     }
 }

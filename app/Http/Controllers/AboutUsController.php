@@ -6,6 +6,7 @@ use App\Models\AboutUs;
 use App\Models\AboutUsFaq;
 use App\Models\SiteSetting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -37,22 +38,19 @@ class AboutUsController extends Controller
             'desc' => 'required',
         ]);
         $condition = DB::table('about_us')->count();
-        if($condition == 0)
-        {
+        if ($condition == 0) {
             $aboutus = new AboutUs();
             $aboutus->desc = $request->desc;
             $aboutus->save();
             Alert::success('Saved', 'aboutus saved successfully');
             return back();
-        }
-        else
-        {
-            Alert::error('error','Not Allowed');
+        } else {
+            Alert::error('error', 'Not Allowed');
         }
 
     }
 
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
         $request->validate([
             'desc' => 'required',
@@ -77,17 +75,33 @@ class AboutUsController extends Controller
         }
 
         $fields = [
-            'about_layout', 'about_principal_name', 'about_principal_designation',
-            'about_principal_message', 'about_leadership_source', 'about_mission', 'about_vision',
-            'about_established_year', 'about_affiliation', 'about_intro',
-            'about_hero_title', 'about_hero_subtitle', 'about_badge_text',
-            'about_story_title', 'about_story_body',
-            'about_stat_1_number', 'about_stat_1_label',
-            'about_stat_2_number', 'about_stat_2_label',
-            'about_stat_3_number', 'about_stat_3_label',
-            'about_stat_4_number', 'about_stat_4_label',
-            'about_cta_title', 'about_cta_subtitle',
-            'about_cta_button_text', 'about_cta_button_url',
+            'about_layout',
+            'about_principal_name',
+            'about_principal_designation',
+            'about_principal_message',
+            'about_leadership_source',
+            'about_mission',
+            'about_vision',
+            'about_established_year',
+            'about_affiliation',
+            'about_intro',
+            'about_hero_title',
+            'about_hero_subtitle',
+            'about_badge_text',
+            'about_story_title',
+            'about_story_body',
+            'about_stat_1_number',
+            'about_stat_1_label',
+            'about_stat_2_number',
+            'about_stat_2_label',
+            'about_stat_3_number',
+            'about_stat_3_label',
+            'about_stat_4_number',
+            'about_stat_4_label',
+            'about_cta_title',
+            'about_cta_subtitle',
+            'about_cta_button_text',
+            'about_cta_button_url',
         ];
 
         foreach ($fields as $field) {
@@ -96,9 +110,13 @@ class AboutUsController extends Controller
             }
         }
 
+        if ($request->has('about_established_year')) {
+            $settings->established_year = $request->about_established_year;
+        }
+
         // Handle selected leadership messages (JSON)
         if ($request->has('about_selected_leadership_ids')) {
-            $selIds = array_map('intval', (array)$request->about_selected_leadership_ids);
+            $selIds = array_map('intval', (array) $request->about_selected_leadership_ids);
             $settings->about_selected_leadership_ids = !empty($selIds) ? json_encode(array_values($selIds)) : null;
         } else {
             $settings->about_selected_leadership_ids = null;
@@ -171,15 +189,16 @@ class AboutUsController extends Controller
         }
 
         $settings->save();
-        
+
         // Force flush the site settings cache
         \Illuminate\Support\Facades\Cache::forget('site_settings.current');
+        \Illuminate\Support\Facades\Cache::forget('site_settings_current');
         \Illuminate\Support\Facades\Artisan::call('cache:clear');
         \Illuminate\Support\Facades\Artisan::call('view:clear');
         if ($request->has('desc')) {
-            $aboutus = \App\Models\AboutUs::first();
+            $aboutus = AboutUs::first();
             if (!$aboutus) {
-                $aboutus = new \App\Models\AboutUs();
+                $aboutus = new AboutUs();
             }
             $aboutus->desc = $request->desc ?? '';
             $aboutus->save();

@@ -1,7 +1,11 @@
 {{-- CLASSIC LAYOUT (Clean, Elegant, Traditional) --}}
 <section class="about-hero-classic position-relative" style="padding: 100px 0; background: linear-gradient(rgba(0,30,80,0.85), rgba(0,30,80,0.85)), url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1920&q=80') center/cover fixed;">
     <div class="container position-relative z-index-1 text-center text-white">
-        <span class="badge bg-primary px-3 py-2 mb-3 rounded-pill text-uppercase tracking-wide">Established {{ $siteSettings->about_established_year ?? '1990' }}</span>
+        @php
+            $clEst = $siteSettings->established_year ?? $siteSettings->about_established_year ?? '2050 B.S. (1993 A.D.)';
+            $clEstDisplay = \Illuminate\Support\Str::startsWith(trim($clEst), ['Established', 'established', 'Est.', 'Est', 'est.', 'est']) ? $clEst : 'Established ' . $clEst;
+        @endphp
+        <span class="badge bg-primary px-3 py-2 mb-3 rounded-pill text-uppercase tracking-wide">{{ $clEstDisplay }}</span>
         <h1 class="display-3 fw-bold mb-4">About Our Institution</h1>
         <p class="lead fw-light mx-auto" style="max-width: 700px; font-size: 1.25rem;">
             {{ $siteSettings->about_intro ?? 'We are dedicated to providing excellent education and nurturing the leaders of tomorrow.' }}
