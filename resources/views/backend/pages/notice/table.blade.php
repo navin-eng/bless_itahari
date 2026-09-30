@@ -23,13 +23,16 @@
       <a href="{{ route('notice.table', ['tab' => 'active']) }}" class="nav-link {{ ($tab ?? 'all') === 'active' ? 'active' : '' }} py-1.5 px-3 rounded-pill fw-semibold">
         <i class="bi bi-check-circle me-1"></i> Active <span class="badge {{ ($tab ?? 'all') === 'active' ? 'bg-white text-primary' : 'bg-success' }} ms-1">{{ $activeCount ?? 0 }}</span>
       </a>
+      <a href="{{ route('notice.table', ['tab' => 'inactive']) }}" class="nav-link {{ ($tab ?? 'all') === 'inactive' ? 'active' : '' }} py-1.5 px-3 rounded-pill fw-semibold">
+        <i class="bi bi-pause-circle me-1"></i> Inactive <span class="badge {{ ($tab ?? 'all') === 'inactive' ? 'bg-white text-primary' : 'bg-secondary' }} ms-1">{{ $inactiveCount ?? 0 }}</span>
+      </a>
       <a href="{{ route('notice.table', ['tab' => 'expired']) }}" class="nav-link {{ ($tab ?? 'all') === 'expired' ? 'active' : '' }} py-1.5 px-3 rounded-pill fw-semibold">
         <i class="bi bi-clock-history me-1"></i> Expired <span class="badge {{ ($tab ?? 'all') === 'expired' ? 'bg-white text-primary' : 'bg-danger' }} ms-1">{{ $expiredCount ?? 0 }}</span>
       </a>
     </div>
 
     <div class="text-muted small px-3">
-      <i class="bi bi-info-circle me-1"></i> Expired notices automatically stop showing on public tickers & popups.
+      <i class="bi bi-info-circle me-1"></i> Toggle switch lets you instantly activate or deactivate notices from public view.
     </div>
   </div>
 </div>
@@ -39,16 +42,20 @@
     <span class="card-title fw-bold text-dark mb-0 fs-5">
       <i class="bi bi-bell-fill text-primary me-2"></i> Notice Records
     </span>
+    <a href="{{ route('notice.add') }}" class="btn btn-primary btn-sm rounded-pill px-3">
+      <i class="bi bi-plus-lg me-1"></i> Add New Notice
+    </a>
   </div>
   <div class="admin-card-body p-0">
     <div class="table-responsive">
       <table class="table table-hover align-middle mb-0">
         <thead class="table-light">
           <tr>
-            <th class="ps-4">#</th>
+            <th class="ps-4" style="width: 50px;">#</th>
             <th>Title</th>
             <th>Category</th>
             <th>Attachment</th>
+            <th>Status</th>
             <th>Placement</th>
             <th>Published</th>
             <th>Expiry Date</th>
@@ -57,7 +64,7 @@
         </thead>
         <tbody>
           @forelse($notice as $data)
-          <tr>
+          <tr id="noticeRow{{ $data->id }}" style="{{ !$data->is_active ? 'opacity: 0.72;' : '' }}">
             <td class="ps-4"><span class="badge bg-light text-secondary border">{{ $loop->iteration }}</span></td>
             <td>
               <div class="d-flex align-items-center gap-3">
@@ -102,7 +109,24 @@
               @endif
             </td>
             <td>
-              <a href="{{ route('notice.status', $data->id) }}" class="badge text-decoration-none {{ $data->show_in === 'm' ? 'bg-success' : ($data->show_in === 'p' ? 'bg-warning text-dark' : 'bg-secondary') }}" title="Click to cycle placement mode">
+              <div class="form-check form-switch d-inline-flex align-items-center gap-2 m-0 p-0" style="min-height: auto;">
+                <input class="form-check-input notice-status-toggle ms-0" type="checkbox" role="switch"
+                       id="toggleNotice{{ $data->id }}"
+                       data-id="{{ $data->id }}"
+                       data-url="{{ route('notice.status', $data->id) }}"
+                       {{ $data->is_active ? 'checked' : '' }}
+                       style="cursor: pointer; width: 2.3em; height: 1.2em;"
+                       title="Click to toggle Active/Inactive">
+                <label class="form-check-label small fw-bold {{ $data->is_active ? 'text-success' : 'text-muted' }}" 
+                       for="toggleNotice{{ $data->id }}" 
+                       id="statusLabel{{ $data->id }}" 
+                       style="cursor: pointer; user-select: none;">
+                  {{ $data->is_active ? 'Active' : 'Inactive' }}
+                </label>
+              </div>
+            </td>
+            <td>
+              <a href="{{ route('notice.placement', $data->id) }}" class="badge text-decoration-none {{ $data->show_in === 'm' ? 'bg-success' : ($data->show_in === 'p' ? 'bg-warning text-dark' : 'bg-secondary') }}" title="Click to cycle placement mode (Marquee / Popup / Board Only)">
                 @if($data->show_in === 'm')
                   <i class="fa-solid fa-scroll me-1"></i> Marquee
                 @elseif($data->show_in === 'p')
@@ -151,7 +175,7 @@
           </tr>
           @empty
           <tr>
-            <td colspan="7" class="text-center py-5 text-muted">
+            <td colspan="9" class="text-center py-5 text-muted">
               <i class="bi bi-bell-slash fs-1 d-block mb-2 text-secondary opacity-50"></i>
               No notices found in this view.
               <div class="mt-2">
@@ -166,3 +190,63 @@
   </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const toggles = document.querySelectorAll('.notice-status-toggle');
+    toggles.forEach(toggle => {
+        toggle.addEventListener('change', function () {
+            const noticeId = this.dataset.id;
+            const url = this.dataset.url;
+            const label = document.getElementById('statusLabel' + noticeId);
+            const row = document.getElementById('noticeRow' + noticeId);
+            const isChecked = this.checked;
+
+            // Visual update
+            if (label) {
+                label.textContent = isChecked ? 'Active' : 'Inactive';
+                label.className = 'form-check-label small fw-bold ' + (isChecked ? 'text-success' : 'text-muted');
+            }
+            if (row) {
+                row.style.opacity = isChecked ? '1' : '0.72';
+            }
+
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    if (label) {
+                        label.textContent = data.status_label;
+                        label.className = 'form-check-label small fw-bold ' + (data.is_active ? 'text-success' : 'text-muted');
+                    }
+                    if (row) {
+                        row.style.opacity = data.is_active ? '1' : '0.72';
+                    }
+                } else {
+                    // Revert if error
+                    toggle.checked = !isChecked;
+                    if (label) {
+                        label.textContent = !isChecked ? 'Active' : 'Inactive';
+                        label.className = 'form-check-label small fw-bold ' + (!isChecked ? 'text-success' : 'text-muted');
+                    }
+                    if (row) {
+                        row.style.opacity = !isChecked ? '1' : '0.72';
+                    }
+                }
+            })
+            .catch(err => {
+                // If fetch fails, fallback to navigation
+                window.location.href = url;
+            });
+        });
+    });
+});
+</script>
+@endpush

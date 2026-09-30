@@ -20,6 +20,8 @@ class NoticeController extends Controller
 
         if ($tab === 'active') {
             $query->active();
+        } elseif ($tab === 'inactive') {
+            $query->where('is_active', false);
         } elseif ($tab === 'expired') {
             $query->expired();
         }
@@ -28,9 +30,10 @@ class NoticeController extends Controller
 
         $allCount = Notice::count();
         $activeCount = Notice::active()->count();
+        $inactiveCount = Notice::where('is_active', false)->count();
         $expiredCount = Notice::expired()->count();
 
-        return view('backend.pages.notice.table', compact('notice', 'tab', 'allCount', 'activeCount', 'expiredCount'));
+        return view('backend.pages.notice.table', compact('notice', 'tab', 'allCount', 'activeCount', 'inactiveCount', 'expiredCount'));
     }
 
     public function create()
@@ -51,6 +54,7 @@ class NoticeController extends Controller
             'file'         => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,zip|max:25600',
             'expires_at'   => 'nullable|date',
             'show_in'      => 'nullable|in:m,p,b',
+            'is_active'    => 'nullable',
         ]);
 
         $notice = new Notice();
@@ -58,6 +62,7 @@ class NoticeController extends Controller
         $notice->slug = Str::slug($request->title);
         $notice->description = $request->description;
         $notice->show_in = $request->input('show_in', 'm');
+        $notice->is_active = $request->has('is_active') ? $request->boolean('is_active') : true;
 
         // Handle Category / Department
         $category = $request->input('category');
@@ -149,6 +154,7 @@ class NoticeController extends Controller
             'file'         => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,zip|max:25600',
             'expires_at'   => 'nullable|date',
             'show_in'      => 'nullable|in:m,p,b',
+            'is_active'    => 'nullable',
         ]);
 
         $notice = Notice::find($id);
@@ -161,6 +167,7 @@ class NoticeController extends Controller
         $notice->slug = Str::slug($request->title);
         $notice->description = $request->description;
         $notice->show_in = $request->input('show_in', $notice->show_in ?? 'm');
+        $notice->is_active = $request->boolean('is_active');
 
         // Handle Category / Department
         $category = $request->input('category');
@@ -248,7 +255,35 @@ class NoticeController extends Controller
         }
     }
 
-    public function status($id)
+    public function status(Request $request, $id)
+    {
+        $notice = Notice::find($id);
+        if (is_null($notice)) {
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Notice not found'], 404);
+            }
+            Alert::error('Oops', 'Notice not found');
+            return back();
+        }
+
+        $notice->is_active = !$notice->is_active;
+        $notice->save();
+        $this->flushCaches();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'is_active' => (bool)$notice->is_active,
+                'status_label' => $notice->is_active ? 'Active' : 'Inactive',
+                'message' => $notice->is_active ? 'Notice activated successfully' : 'Notice set to Inactive'
+            ]);
+        }
+
+        Alert::success('Updated', $notice->is_active ? 'Notice Activated' : 'Notice set to Inactive');
+        return back();
+    }
+
+    public function placement($id)
     {
         $notice = Notice::find($id);
         if (is_null($notice)) {

@@ -187,12 +187,18 @@ class Frontend extends Controller
     public function noticeDetail($id)
     {
         $notice = Notice::where('id', '=', $id)->first();
+        if (!$notice) {
+            abort(404, 'Notice not found');
+        }
+        if (!$notice->is_active && !auth()->check()) {
+            abort(404, 'This notice is currently inactive.');
+        }
         return view('frontend.pages.noticeDetail', compact('notice'));
     }
 
     public function noticeIndex()
     {
-        $notices = Notice::latest()->get();
+        $notices = Notice::where('is_active', true)->latest()->get();
 
         return view('frontend.pages.notices', compact('notices'));
     }

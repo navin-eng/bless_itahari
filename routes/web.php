@@ -200,6 +200,7 @@ Route::middleware('webGuard')->group(function () {
     Route::post('/admin/dashboard/notice/store', [NoticeController::class, 'store'])->name('notice.store');
     Route::get('/admin/dashboard/notice/delete/{id}', [NoticeController::class, 'destroy'])->name('notice.destroy');
     Route::get('/admin/dashboard/notice/status/{id}', [NoticeController::class, 'status'])->name('notice.status');
+    Route::get('/admin/dashboard/notice/placement/{id}', [NoticeController::class, 'placement'])->name('notice.placement');
     Route::get('/admin/dashboard/notice/edit/{id}', [NoticeController::class, 'edit'])->name('notice.edit');
     Route::post('/admin/dashboard/notice/edit/update/{id}', [NoticeController::class, 'update'])->name('notice.update');
 

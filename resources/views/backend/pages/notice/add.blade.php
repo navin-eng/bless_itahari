@@ -195,6 +195,27 @@
                 </div>
             </div>
 
+            {{-- Status: Active / Inactive Toggle Card --}}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between">
+                    <h5 class="card-title mb-0 fw-bold text-dark"><i class="bi bi-toggle-on text-primary me-2"></i>Notice Status</h5>
+                    <span class="badge {{ old('is_active', 1) ? 'bg-success-subtle text-success border border-success-subtle' : 'bg-secondary-subtle text-secondary border' }}" id="statusBadgeDisplay">
+                        {{ old('is_active', 1) ? 'Active' : 'Inactive' }}
+                    </span>
+                </div>
+                <div class="card-body p-4">
+                    <div class="form-check form-switch fs-5 d-flex align-items-center gap-3">
+                        <input class="form-check-input ms-0" type="checkbox" name="is_active" id="noticeIsActiveSwitch" value="1" {{ old('is_active', 1) ? 'checked' : '' }} style="cursor: pointer; width: 2.2em; height: 1.15em;" onchange="updateNoticeStatusBadge(this)">
+                        <label class="form-check-label fs-6 fw-bold text-dark mb-0" for="noticeIsActiveSwitch" id="noticeIsActiveLabel">
+                            {{ old('is_active', 1) ? 'Active (Publicly Visible)' : 'Inactive (Hidden from Public)' }}
+                        </label>
+                    </div>
+                    <small class="text-muted d-block mt-2">
+                        Turn off to save this notice as inactive/draft without displaying it on the website.
+                    </small>
+                </div>
+            </div>
+
             {{-- Actions Card --}}
             <div class="card border-0 shadow-sm">
                 <div class="card-body p-4">
@@ -290,6 +311,21 @@
     function clearNoticeExpiry() {
         const dateInput = document.getElementById('expiresAtInput');
         if (dateInput) dateInput.value = '';
+    }
+
+    function updateNoticeStatusBadge(el) {
+        const badge = document.getElementById('statusBadgeDisplay');
+        const label = document.getElementById('noticeIsActiveLabel');
+        if (!badge || !label) return;
+        if (el.checked) {
+            badge.className = 'badge bg-success-subtle text-success border border-success-subtle';
+            badge.textContent = 'Active';
+            label.textContent = 'Active (Publicly Visible)';
+        } else {
+            badge.className = 'badge bg-secondary-subtle text-secondary border';
+            badge.textContent = 'Inactive';
+            label.textContent = 'Inactive (Hidden from Public)';
+        }
     }
 </script>
 @endpush
