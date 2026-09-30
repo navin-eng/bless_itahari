@@ -9,7 +9,7 @@
         try {
             $stickyNotices = ($siteSettings->show_sticky_notice ?? true)
                 ? \Illuminate\Support\Facades\Cache::remember('sticky_notices_list', 1800, function() use ($siteSettings) {
-                    return \App\Models\Notice::latest()->take($siteSettings->sticky_notice_limit ?? 5)->get();
+                    return \App\Models\Notice::active()->latest()->take($siteSettings->sticky_notice_limit ?? 5)->get();
                 })
                 : collect();
         } catch (\Throwable $e) {

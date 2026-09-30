@@ -41,11 +41,31 @@
                     <i class="fa-solid fa-bell me-2"></i> Official Notice
                 </div>
                 <h1 class="notice-hero-title">{{ $notice->title }}</h1>
-                <div class="d-flex flex-wrap gap-4 mt-4 text-white" style="opacity: 0.9;">
+                <div class="d-flex flex-wrap gap-4 mt-4 text-white align-items-center" style="opacity: 0.95;">
                     <div class="d-flex align-items-center gap-2">
                         <i class="fa-regular fa-clock fa-lg text-warning"></i>
-                        <span class="fs-5">Published: {{ format_system_date($notice->created_at) }}</span>
+                        <span class="fs-6">Published: {{ format_system_date($notice->created_at) }}</span>
                     </div>
+                    @if($notice->expires_at)
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fa-solid fa-hourglass-half fa-lg {{ $notice->isExpired() ? 'text-danger' : 'text-info' }}"></i>
+                            <span class="fs-6">Expires: {{ format_system_date($notice->expires_at) }}</span>
+                        </div>
+                    @endif
+                    @if($notice->isExpired())
+                        <span class="badge bg-danger text-white px-3 py-2 rounded-pill fs-7 fw-bold">
+                            <i class="fa-solid fa-triangle-exclamation me-1"></i> Expired
+                        </span>
+                    @else
+                        <span class="badge bg-success text-white px-3 py-2 rounded-pill fs-7 fw-bold">
+                            <i class="fa-solid fa-circle-check me-1"></i> Active
+                        </span>
+                    @endif
+                    @if(!empty($notice->file))
+                        <span class="badge bg-light text-dark px-3 py-2 rounded-pill fs-7 fw-bold">
+                            <i class="fa-solid fa-paperclip me-1 text-primary"></i> Attachment Included
+                        </span>
+                    @endif
                 </div>
             </div>
         </div>
@@ -58,6 +78,16 @@
             {{-- Main Content --}}
             <div class="col-lg-8" data-aos="fade-up">
                 <div class="notice-content-card">
+                    @if($notice->isExpired())
+                        <div class="alert alert-warning border-0 shadow-sm d-flex align-items-start gap-3 mb-4 rounded-3 p-3" style="background: #fffbeb; border-left: 4px solid #f59e0b !important;">
+                            <i class="fa-solid fa-triangle-exclamation fs-4 text-warning mt-1"></i>
+                            <div>
+                                <h6 class="fw-bold mb-1 text-dark">This Announcement Has Expired</h6>
+                                <p class="small text-muted mb-0">This notice expired on <strong>{{ format_system_date($notice->expires_at) }}</strong>. It is preserved here for historical reference.</p>
+                            </div>
+                        </div>
+                    @endif
+
                     @if(!empty($notice->image))
                         <div class="notice-featured-image-wrapper mb-4 text-center">
                             <a href="{{ asset($notice->image) }}" target="_blank" title="Click to view full image">
@@ -71,13 +101,71 @@
                         </div>
                     @endif
 
-                    <div class="notice-body-text">
+                    <div class="notice-body-text mb-4">
                         {!! $notice->description !!}
                     </div>
 
+                    {{-- Attached Document / PDF Viewer --}}
+                    @if(!empty($notice->file))
+                        <div class="notice-attachment-box my-4 p-4 rounded-4 shadow-sm border bg-white">
+                            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3 pb-3 border-bottom">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="file-icon-wrap rounded-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background: rgba(26, 77, 140, 0.1);">
+                                        @if($notice->isPdf())
+                                            <i class="fa-solid fa-file-pdf fs-3 text-danger"></i>
+                                        @else
+                                            <i class="fa-solid fa-file-lines fs-3 text-primary"></i>
+                                        @endif
+                                    </div>
+                                    <div>
+                                        <h5 class="fw-bold mb-1 text-dark">{{ $notice->file_name ?? basename($notice->file) }}</h5>
+                                        <div class="text-muted small">
+                                            <span>{{ strtoupper($notice->getFileExtension()) }} Document</span>
+                                            @if($notice->file_size)
+                                                <span> • {{ $notice->file_size }}</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-2 flex-wrap">
+                                    @if($notice->isPdf())
+                                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="togglePdfFullscreen()" id="pdfFullscreenBtn">
+                                            <i class="fa-solid fa-expand me-1"></i> Fullscreen
+                                        </button>
+                                    @endif
+                                    <a href="{{ asset($notice->file) }}" target="_blank" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                                        <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Open in New Tab
+                                    </a>
+                                    <a href="{{ asset($notice->file) }}" download="{{ $notice->file_name ?? basename($notice->file) }}" class="btn btn-sm btn-primary rounded-pill px-3">
+                                        <i class="fa-solid fa-download me-1"></i> Download
+                                    </a>
+                                </div>
+                            </div>
+
+                            @if($notice->isPdf())
+                                {{-- Embedded PDF Viewer --}}
+                                <div class="pdf-viewer-container position-relative rounded-3 overflow-hidden border shadow-sm" id="pdfViewerContainer" style="height: 680px; background: #525659;">
+                                    <iframe src="{{ asset($notice->file) }}#toolbar=1&navpanes=1" width="100%" height="100%" style="border: none;" title="{{ $notice->title }}">
+                                        <p class="p-4 text-white text-center">Your browser does not support embedding PDF files. 
+                                            <a href="{{ asset($notice->file) }}" target="_blank" class="text-warning text-decoration-underline">Click here to view or download the PDF</a>.
+                                        </p>
+                                    </iframe>
+                                </div>
+                            @else
+                                <div class="p-3 bg-light rounded-3 text-muted small d-flex align-items-center justify-content-between">
+                                    <span><i class="fa-solid fa-circle-info me-2 text-primary"></i>Document ready for download.</span>
+                                    <a href="{{ asset($notice->file) }}" download class="fw-bold text-primary">Download File &rarr;</a>
+                                </div>
+                            @endif
+                        </div>
+                    @endif
+
                     <div class="mt-5 pt-4 d-flex gap-3 flex-wrap" style="border-top: 1px solid #e5e7eb;">
+                        <a href="{{ route('notices.index') }}" class="btn btn-outline-secondary rounded-pill px-4 fw-bold d-inline-flex align-items-center gap-2">
+                            <i class="fa-solid fa-arrow-left"></i> All Notices
+                        </a>
                         <a href="{{ route('home') }}" class="btn btn-outline-secondary rounded-pill px-4 fw-bold d-inline-flex align-items-center gap-2">
-                            <i class="fa-solid fa-arrow-left"></i> Back to Home
+                            <i class="fa-solid fa-house"></i> Home
                         </a>
                         <a href="{{ route('contact') }}" class="btn-read-more">
                             Have Questions? <i class="fa-solid fa-arrow-right ms-2 transition-icon"></i>
@@ -340,4 +428,45 @@
         font-weight: 600;
     }
 </style>
+@endpush
+
+@push('scripts')
+<script>
+    function togglePdfFullscreen() {
+        const container = document.getElementById('pdfViewerContainer');
+        if (!container) return;
+        
+        if (!document.fullscreenElement) {
+            if (container.requestFullscreen) {
+                container.requestFullscreen();
+            } else if (container.webkitRequestFullscreen) {
+                container.webkitRequestFullscreen();
+            } else if (container.msRequestFullscreen) {
+                container.msRequestFullscreen();
+            }
+            const btn = document.getElementById('pdfFullscreenBtn');
+            if (btn) btn.innerHTML = '<i class="fa-solid fa-compress me-1"></i> Exit Fullscreen';
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+            const btn = document.getElementById('pdfFullscreenBtn');
+            if (btn) btn.innerHTML = '<i class="fa-solid fa-expand me-1"></i> Fullscreen';
+        }
+    }
+
+    document.addEventListener('fullscreenchange', function() {
+        const btn = document.getElementById('pdfFullscreenBtn');
+        if (!btn) return;
+        if (!document.fullscreenElement) {
+            btn.innerHTML = '<i class="fa-solid fa-expand me-1"></i> Fullscreen';
+        } else {
+            btn.innerHTML = '<i class="fa-solid fa-compress me-1"></i> Exit Fullscreen';
+        }
+    });
+</script>
 @endpush

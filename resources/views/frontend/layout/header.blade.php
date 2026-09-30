@@ -28,7 +28,7 @@
     // Fetch marquee notice directly in header so it's available on all pages
     try {
         $headerMarqueeNotice = \Illuminate\Support\Facades\Cache::remember('header_marquee_notice', 900, function() {
-            return \App\Models\Notice::where('show_in', 'm')->latest()->first();
+            return \App\Models\Notice::active()->where('show_in', 'm')->latest()->first();
         });
     } catch (\Throwable $e) {
         $headerMarqueeNotice = null;

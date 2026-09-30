@@ -49,7 +49,7 @@ class AppServiceProvider extends ServiceProvider
 
         View::composer('frontend.pages.home.popup_notice', function ($view) {
             $view->with('popupNotice', Cache::remember('home.popup_notice', 600, function () {
-                return \App\Models\Notice::where('show_in', 'p')->latest()->first();
+                return \App\Models\Notice::active()->where('show_in', 'p')->latest()->first();
             }));
         });
 
@@ -61,7 +61,7 @@ class AppServiceProvider extends ServiceProvider
 
         View::composer('frontend.pages.home.notice_ticker', function ($view) {
             $view->with('marqueeNotice', Cache::remember('home.marquee_notice', 600, function () {
-                return \App\Models\Notice::where('show_in', 'm')->latest()->first();
+                return \App\Models\Notice::active()->where('show_in', 'm')->latest()->first();
             }));
         });
 
