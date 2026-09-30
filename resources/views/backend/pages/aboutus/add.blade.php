@@ -308,57 +308,55 @@
                         </div>
                     </div>
 
-                    {{-- ─── TAB 5: STATISTICAL MILESTONES ─────────────────── --}}
+                    {{-- ─── TAB 5: STATISTICAL MILESTONES (UNIFIED) ─────────────────── --}}
+                    @php
+                        $globalCounter = \App\Models\Counter::first();
+                    @endphp
                     <div class="tab-pane fade" id="pane-stats" role="tabpanel">
-                        <div class="p-3 bg-light rounded-3 mb-4 border-start border-warning border-4">
-                            <h6 class="fw-bold mb-1 text-warning"><i class="bi bi-123 me-1"></i> Key Statistics & Counters</h6>
-                            <small class="text-muted">These prominent counter badges showcase your institution's heritage, size, and pass rates.</small>
+                        <div class="p-3 bg-light rounded-3 mb-4 border-start border-warning border-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
+                            <div>
+                                <h6 class="fw-bold mb-1 text-dark"><i class="bi bi-bar-chart-fill text-warning me-1"></i> Unified Stats Counter Management</h6>
+                                <small class="text-muted">Statistics counters are unified across the entire website (Homepage & About Us page) to eliminate duplicate entries and conflicts.</small>
+                            </div>
+                            <div>
+                                <a href="{{ route('counter.table') }}" target="_blank" class="btn btn-warning btn-sm fw-semibold shadow-sm">
+                                    <i class="bi bi-pencil-square me-1"></i> Edit in Stats Counter Module &rarr;
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info border-0 rounded-3 mb-4 d-flex align-items-center gap-3">
+                            <i class="bi bi-check-circle-fill fs-4 text-primary flex-shrink-0"></i>
+                            <div>
+                                <strong>Single Source of Truth Active:</strong>
+                                Both the Homepage and the About Us page now pull live statistics directly from the unified <strong>Stats Counter</strong> module. Any changes made in the Stats Counter management are instantly reflected across all pages.
+                            </div>
                         </div>
 
                         <div class="row g-4">
-                            {{-- Stat 1 --}}
-                            <div class="col-md-6 col-lg-3">
-                                <div class="card border rounded-3 p-3 bg-white shadow-sm h-100">
-                                    <span class="badge bg-warning bg-opacity-15 text-warning fw-bold mb-2 align-self-start">Counter 1</span>
-                                    <label class="form-label fw-semibold small">Number / Stat</label>
-                                    <input type="text" name="about_stat_1_number" class="form-control mb-2" value="{{ old('about_stat_1_number', $siteSettings->about_stat_1_number ?: '30+') }}" placeholder="e.g. 30+">
-                                    <label class="form-label fw-semibold small">Label</label>
-                                    <input type="text" name="about_stat_1_label" class="form-control" value="{{ old('about_stat_1_label', $siteSettings->about_stat_1_label ?: 'Years of Heritage') }}" placeholder="e.g. Years of Heritage">
+                            @for($i = 1; $i <= 4; $i++)
+                                @php
+                                    $cTitle = $globalCounter ? $globalCounter->{'title'.$i} : 'Counter '.$i;
+                                    $cVal = $globalCounter ? ($globalCounter->{'counter'.$i} . ($globalCounter->{'suffix'.$i} ?? '+')) : '—';
+                                    $cIcon = $globalCounter ? $globalCounter->{'icon'.$i} : 'fa-solid fa-chart-line';
+                                @endphp
+                                <div class="col-md-6 col-lg-3">
+                                    <div class="card border rounded-3 p-3 bg-white shadow-sm h-100">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="badge bg-warning bg-opacity-15 text-warning fw-bold">Counter {{ $i }}</span>
+                                            <i class="{{ $cIcon }} text-muted"></i>
+                                        </div>
+                                        <div class="fw-bold fs-4 text-dark mb-1">{{ $cVal }}</div>
+                                        <div class="text-muted small fw-semibold">{{ $cTitle }}</div>
+                                    </div>
                                 </div>
-                            </div>
+                            @endfor
+                        </div>
 
-                            {{-- Stat 2 --}}
-                            <div class="col-md-6 col-lg-3">
-                                <div class="card border rounded-3 p-3 bg-white shadow-sm h-100">
-                                    <span class="badge bg-primary bg-opacity-15 text-primary fw-bold mb-2 align-self-start">Counter 2</span>
-                                    <label class="form-label fw-semibold small">Number / Stat</label>
-                                    <input type="text" name="about_stat_2_number" class="form-control mb-2" value="{{ old('about_stat_2_number', $siteSettings->about_stat_2_number ?: '1,200+') }}" placeholder="e.g. 1,200+">
-                                    <label class="form-label fw-semibold small">Label</label>
-                                    <input type="text" name="about_stat_2_label" class="form-control" value="{{ old('about_stat_2_label', $siteSettings->about_stat_2_label ?: 'Enrolled Students') }}" placeholder="e.g. Enrolled Students">
-                                </div>
-                            </div>
-
-                            {{-- Stat 3 --}}
-                            <div class="col-md-6 col-lg-3">
-                                <div class="card border rounded-3 p-3 bg-white shadow-sm h-100">
-                                    <span class="badge bg-success bg-opacity-15 text-success fw-bold mb-2 align-self-start">Counter 3</span>
-                                    <label class="form-label fw-semibold small">Number / Stat</label>
-                                    <input type="text" name="about_stat_3_number" class="form-control mb-2" value="{{ old('about_stat_3_number', $siteSettings->about_stat_3_number ?: '100%') }}" placeholder="e.g. 100%">
-                                    <label class="form-label fw-semibold small">Label</label>
-                                    <input type="text" name="about_stat_3_label" class="form-control" value="{{ old('about_stat_3_label', $siteSettings->about_stat_3_label ?: 'SEE & NEB Success') }}" placeholder="e.g. SEE & NEB Success">
-                                </div>
-                            </div>
-
-                            {{-- Stat 4 --}}
-                            <div class="col-md-6 col-lg-3">
-                                <div class="card border rounded-3 p-3 bg-white shadow-sm h-100">
-                                    <span class="badge bg-info bg-opacity-15 text-info fw-bold mb-2 align-self-start">Counter 4</span>
-                                    <label class="form-label fw-semibold small">Number / Stat</label>
-                                    <input type="text" name="about_stat_4_number" class="form-control mb-2" value="{{ old('about_stat_4_number', $siteSettings->about_stat_4_number ?: '45+') }}" placeholder="e.g. 45+">
-                                    <label class="form-label fw-semibold small">Label</label>
-                                    <input type="text" name="about_stat_4_label" class="form-control" value="{{ old('about_stat_4_label', $siteSettings->about_stat_4_label ?: 'Qualified Teachers') }}" placeholder="e.g. Qualified Teachers">
-                                </div>
-                            </div>
+                        <div class="text-center mt-4">
+                            <a href="{{ route('counter.table') }}" target="_blank" class="btn btn-outline-primary px-4 py-2 rounded-pill fw-semibold">
+                                <i class="bi bi-sliders me-1"></i> Configure Labels, Values, Suffixes & Icons in Stats Counter
+                            </a>
                         </div>
                     </div>
 

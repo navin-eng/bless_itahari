@@ -30,8 +30,8 @@
 
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
         <div>
-            <h3 class="mb-1">Counter Management</h3>
-            <p class="text-muted mb-0">Customize the label, value, icon, and suffix for each homepage counter card.</p>
+            <h3 class="mb-1"><i class="bi bi-bar-chart-fill text-primary me-2"></i>Unified Stats Counter Management</h3>
+            <p class="text-muted mb-0">Single source of truth for all statistics counters across the website (both Homepage and About Us page).</p>
         </div>
     </div>
 

@@ -616,44 +616,43 @@
         </div>
     </section>
 
-    {{-- ===== 4. STATISTICAL MILESTONES ===== --}}
+    {{-- ===== 4. STATISTICAL MILESTONES (Unified with Main Stats Counter) ===== --}}
     @php
-        $s1Num = $siteSettings->about_stat_1_number ?: '30+';
-        $s1Lbl = $siteSettings->about_stat_1_label ?: 'Years of Heritage';
-        $s2Num = $siteSettings->about_stat_2_number ?: '1,200+';
-        $s2Lbl = $siteSettings->about_stat_2_label ?: 'Enrolled Students';
-        $s3Num = $siteSettings->about_stat_3_number ?: '100%';
-        $s3Lbl = $siteSettings->about_stat_3_label ?: 'SEE & NEB Success';
-        $s4Num = $siteSettings->about_stat_4_number ?: '45+';
-        $s4Lbl = $siteSettings->about_stat_4_label ?: 'Qualified Teachers';
+        $statsItems = [];
+        if (!empty($counter)) {
+            $statsItems = [
+                ['title' => $counter->title1, 'value' => $counter->counter1, 'suffix' => $counter->suffix1, 'icon' => $counter->icon1],
+                ['title' => $counter->title2, 'value' => $counter->counter2, 'suffix' => $counter->suffix2, 'icon' => $counter->icon2],
+                ['title' => $counter->title3, 'value' => $counter->counter3, 'suffix' => $counter->suffix3, 'icon' => $counter->icon3],
+                ['title' => $counter->title4, 'value' => $counter->counter4, 'suffix' => $counter->suffix4, 'icon' => $counter->icon4],
+            ];
+        } else {
+            $statsItems = [
+                ['title' => 'Years of Heritage', 'value' => 30, 'suffix' => '+', 'icon' => 'fa-solid fa-award'],
+                ['title' => 'Enrolled Students', 'value' => 1200, 'suffix' => '+', 'icon' => 'fa-solid fa-users'],
+                ['title' => 'SEE & NEB Success', 'value' => 100, 'suffix' => '%', 'icon' => 'fa-solid fa-graduation-cap'],
+                ['title' => 'Qualified Teachers', 'value' => 45, 'suffix' => '+', 'icon' => 'fa-solid fa-chalkboard-user'],
+            ];
+        }
     @endphp
-    <section class="about-section py-5" style="background: linear-gradient(135deg, #091a32 0%, #173256 100%); color: #fff;">
+    <section class="about-section py-5 sectionWorkdata" style="background: linear-gradient(135deg, #091a32 0%, #173256 100%); color: #fff;">
         <div class="container py-3">
             <div class="row g-4">
-                <div class="col-lg-3 col-6" data-aos="zoom-in" data-aos-delay="50">
-                    <div class="stat-counter-box bg-white">
-                        <div class="stat-number">{{ $s1Num }}</div>
-                        <p class="stat-label">{{ $s1Lbl }}</p>
+                @foreach($statsItems as $idx => $st)
+                    <div class="col-lg-3 col-6" data-aos="zoom-in" data-aos-delay="{{ ($idx + 1) * 50 }}">
+                        <div class="stat-counter-box bg-white">
+                            @if(!empty($st['icon']))
+                                <div class="mb-2 text-primary fs-3">
+                                    <i class="{{ $st['icon'] }}"></i>
+                                </div>
+                            @endif
+                            <div class="stat-number">
+                                <span class="counter-number" data-number="{{ (int)$st['value'] }}">{{ $st['value'] }}</span><span>{{ $st['suffix'] ?? '' }}</span>
+                            </div>
+                            <p class="stat-label">{{ $st['title'] }}</p>
+                        </div>
                     </div>
-                </div>
-                <div class="col-lg-3 col-6" data-aos="zoom-in" data-aos-delay="100">
-                    <div class="stat-counter-box bg-white">
-                        <div class="stat-number">{{ $s2Num }}</div>
-                        <p class="stat-label">{{ $s2Lbl }}</p>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-6" data-aos="zoom-in" data-aos-delay="150">
-                    <div class="stat-counter-box bg-white">
-                        <div class="stat-number">{{ $s3Num }}</div>
-                        <p class="stat-label">{{ $s3Lbl }}</p>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-6" data-aos="zoom-in" data-aos-delay="200">
-                    <div class="stat-counter-box bg-white">
-                        <div class="stat-number">{{ $s4Num }}</div>
-                        <p class="stat-label">{{ $s4Lbl }}</p>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </section>
