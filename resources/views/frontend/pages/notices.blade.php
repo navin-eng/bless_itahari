@@ -182,7 +182,7 @@
                                 <td class="col-files text-center">
                                     @if($hasFile)
                                         @if($isPdf)
-                                            <a href="{{ route('notice.detail', $notice->id) }}#pdfViewerContainer" 
+                                            <a href="{{ route('notice.detail', $notice->id) }}?view_pdf=1" 
                                                class="notice-document-icon" 
                                                title="PDF कागजात हेर्नुहोस् ({{ $notice->file_name ?? 'PDF' }})">
                                                 <svg width="22" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">

@@ -129,23 +129,77 @@
                                 </div>
                                 <div class="d-flex align-items-center gap-2 flex-wrap">
                                     @if($notice->isPdf())
-                                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="togglePdfFullscreen()" id="pdfFullscreenBtn">
-                                            <i class="fa-solid fa-expand me-1"></i> Fullscreen
+                                        <button type="button" class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm" onclick="loadPdfViewer(true)" id="topLoadPdfBtn">
+                                            <i class="fa-solid fa-eye me-1"></i> कागजात हेर्नुहोस् (View PDF)
                                         </button>
                                     @endif
                                     <a href="{{ asset($notice->file) }}" target="_blank" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
-                                        <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Open in New Tab
+                                        <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> नयाँ ट्याबमा खोल्नुहोस्
                                     </a>
-                                    <a href="{{ asset($notice->file) }}" download="{{ $notice->file_name ?? basename($notice->file) }}" class="btn btn-sm btn-primary rounded-pill px-3">
-                                        <i class="fa-solid fa-download me-1"></i> Download
+                                    <a href="{{ asset($notice->file) }}" download="{{ $notice->file_name ?? basename($notice->file) }}" class="btn btn-sm btn-outline-dark rounded-pill px-3">
+                                        <i class="fa-solid fa-download me-1"></i> डाउनलोड
                                     </a>
                                 </div>
                             </div>
 
                             @if($notice->isPdf())
-                                {{-- Embedded PDF Viewer --}}
-                                <div class="pdf-viewer-container position-relative rounded-3 overflow-hidden border shadow-sm" id="pdfViewerContainer" style="height: 680px; background: #525659;">
-                                    <iframe src="{{ asset($notice->file) }}#toolbar=1&navpanes=1" width="100%" height="100%" style="border: none;" title="{{ $notice->title }}">
+                                {{-- Lazy On-Demand Preview Card (0 KB PDF transferred on initial page load) --}}
+                                <div class="pdf-lazy-card p-4 p-md-5 rounded-3 text-center border shadow-sm my-2" id="pdfLazyCard" style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);">
+                                    <div class="pdf-preview-icon-wrap mb-3">
+                                        <div class="mx-auto rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 72px; height: 72px; background: #fee2e2; color: #dc2626;">
+                                            <i class="fa-solid fa-file-pdf fs-2"></i>
+                                        </div>
+                                    </div>
+                                    <h5 class="fw-bold text-dark mb-1">{{ $notice->file_name ?? basename($notice->file) }}</h5>
+                                    <p class="text-muted small mb-3">
+                                        <span>PDF कागजात (PDF Document)</span>
+                                        @if($notice->file_size)
+                                            <span> • <strong>{{ $notice->file_size }}</strong></span>
+                                        @endif
+                                        <span> • वेबसाइटको गति छिटो राख्न PDF अन-डिमान्ड राखिएको छ</span>
+                                    </p>
+                                    <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
+                                        <button type="button" class="btn btn-primary px-4 py-2 rounded-pill fw-semibold shadow-sm" id="btnLoadPdfMain" onclick="loadPdfViewer(true)">
+                                            <i class="fa-solid fa-eye me-2"></i> कागजात / PDF हेर्नुहोस् (Click to View PDF)
+                                        </button>
+                                        <a href="{{ asset($notice->file) }}" target="_blank" class="btn btn-outline-secondary px-3 py-2 rounded-pill">
+                                            <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> नयाँ ट्याब
+                                        </a>
+                                        <a href="{{ asset($notice->file) }}" download="{{ $notice->file_name ?? basename($notice->file) }}" class="btn btn-outline-dark px-3 py-2 rounded-pill">
+                                            <i class="fa-solid fa-download me-1"></i> डाउनलोड
+                                        </a>
+                                    </div>
+                                </div>
+
+                                {{-- Embedded PDF Viewer (Initially hidden with NO src loaded) --}}
+                                <div class="pdf-viewer-container position-relative rounded-3 overflow-hidden border shadow-sm d-none" id="pdfViewerContainer" style="height: 700px; background: #525659;">
+                                    {{-- Active Viewer Toolbar --}}
+                                    <div class="pdf-active-toolbar d-flex align-items-center justify-content-between px-3 py-2 bg-dark text-white border-bottom border-secondary">
+                                        <div class="small text-truncate me-2 text-white-50">
+                                            <i class="fa-solid fa-file-pdf text-danger me-1"></i>
+                                            <span class="text-white fw-semibold">{{ $notice->file_name ?? basename($notice->file) }}</span>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <button type="button" class="btn btn-sm btn-outline-light py-1 px-2 text-nowrap" onclick="togglePdfFullscreen()" id="pdfFullscreenBtn" style="font-size: 12px;">
+                                                <i class="fa-solid fa-expand me-1"></i> Fullscreen
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-warning py-1 px-2 text-nowrap" onclick="unloadPdfViewer()" style="font-size: 12px;" title="कागजात बन्द गर्नुहोस् / मेमोरी खाली गर्नुहोस्">
+                                                <i class="fa-solid fa-xmark me-1"></i> बन्द गर्नुहोस् (Close)
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {{-- Loading Spinner Overlay --}}
+                                    <div class="pdf-loading-overlay position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center text-white" id="pdfLoadingSpinner" style="background: rgba(30, 41, 59, 0.95); z-index: 10;">
+                                        <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                        <p class="mb-1 fw-bold fs-6">PDF लोड हुँदैछ, कृपया केही क्षण प्रतीक्षा गर्नुहोस्...</p>
+                                        <small class="text-white-50">Loading PDF document into embedded viewer...</small>
+                                    </div>
+
+                                    {{-- The iframe has NO src until user explicitly triggers loadPdfViewer --}}
+                                    <iframe id="pdfIframe" data-src="{{ asset($notice->file) }}#toolbar=1&navpanes=1" width="100%" height="100%" style="border: none; min-height: 640px;" title="{{ $notice->title }}">
                                         <p class="p-4 text-white text-center">Your browser does not support embedding PDF files. 
                                             <a href="{{ asset($notice->file) }}" target="_blank" class="text-warning text-decoration-underline">Click here to view or download the PDF</a>.
                                         </p>
@@ -432,6 +486,66 @@
 
 @push('scripts')
 <script>
+    function loadPdfViewer(scrollIntoView = false) {
+        const lazyCard = document.getElementById('pdfLazyCard');
+        const container = document.getElementById('pdfViewerContainer');
+        const iframe = document.getElementById('pdfIframe');
+        const spinner = document.getElementById('pdfLoadingSpinner');
+        const topBtn = document.getElementById('topLoadPdfBtn');
+
+        if (!container || !iframe) return;
+
+        // Reveal container and hide preview placeholder
+        if (lazyCard) lazyCard.classList.add('d-none');
+        container.classList.remove('d-none');
+        if (topBtn) {
+            topBtn.innerHTML = '<i class="fa-solid fa-arrows-rotate me-1"></i> पुन: लोड गर्नुहोस्';
+        }
+
+        // Dynamically load PDF src only upon click
+        if (!iframe.src || iframe.src === 'about:blank' || iframe.src.indexOf('backend/files') === -1) {
+            if (spinner) {
+                spinner.classList.remove('d-none');
+                spinner.style.opacity = '1';
+            }
+            iframe.src = iframe.getAttribute('data-src');
+
+            iframe.onload = function() {
+                if (spinner) {
+                    spinner.style.transition = 'opacity 0.25s ease';
+                    spinner.style.opacity = '0';
+                    setTimeout(() => {
+                        spinner.classList.add('d-none');
+                    }, 250);
+                }
+            };
+        } else {
+            if (spinner) spinner.classList.add('d-none');
+        }
+
+        if (scrollIntoView) {
+            container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    function unloadPdfViewer() {
+        const lazyCard = document.getElementById('pdfLazyCard');
+        const container = document.getElementById('pdfViewerContainer');
+        const iframe = document.getElementById('pdfIframe');
+        const topBtn = document.getElementById('topLoadPdfBtn');
+
+        if (container) container.classList.add('d-none');
+        if (lazyCard) lazyCard.classList.remove('d-none');
+        if (topBtn) {
+            topBtn.innerHTML = '<i class="fa-solid fa-eye me-1"></i> कागजात हेर्नुहोस् (View PDF)';
+        }
+
+        // Free browser memory immediately
+        if (iframe) {
+            iframe.src = 'about:blank';
+        }
+    }
+
     function togglePdfFullscreen() {
         const container = document.getElementById('pdfViewerContainer');
         if (!container) return;
@@ -466,6 +580,14 @@
             btn.innerHTML = '<i class="fa-solid fa-expand me-1"></i> Fullscreen';
         } else {
             btn.innerHTML = '<i class="fa-solid fa-compress me-1"></i> Exit Fullscreen';
+        }
+    });
+
+    // Handle view_pdf query param if explicitly present
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('view_pdf') === '1') {
+            loadPdfViewer(true);
         }
     });
 </script>
