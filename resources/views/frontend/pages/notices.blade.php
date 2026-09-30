@@ -6,10 +6,10 @@
 @section('frontend-content')
 
 <div class="notice-portal-wrapper">
-    <div class="container py-4 py-md-5">
+    <div class="container py-3 py-md-5">
 
-        {{-- Top Header Section in English --}}
-        <div class="notice-portal-header d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        {{-- Top Header Section --}}
+        <div class="notice-portal-header d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3 mb-md-4">
             <div>
                 <h1 class="notice-portal-title mb-1">Notices & Announcements</h1>
                 <nav class="notice-breadcrumb" aria-label="breadcrumb">
@@ -19,31 +19,22 @@
                 </nav>
             </div>
             <div class="d-flex align-items-center gap-2">
-                {{-- Mobile View Mode Switcher --}}
-                <div class="btn-group btn-group-sm view-mode-toggle d-md-none" role="group">
-                    <button type="button" class="btn btn-outline-secondary active" id="btnTableView" title="Table View">
-                        <i class="fa-solid fa-table-list"></i> Table
-                    </button>
-                    <button type="button" class="btn btn-outline-secondary" id="btnCardView" title="Card View">
-                        <i class="fa-solid fa-grip"></i> Cards
-                    </button>
-                </div>
-                <button type="button" class="btn btn-sm btn-outline-primary" id="btnResetFilters" title="Reset all filters">
-                    <i class="fa-solid fa-arrows-rotate me-1"></i> Reset
+                <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3" id="btnResetFilters" title="Reset all filters">
+                    <i class="fa-solid fa-arrows-rotate me-1"></i> Reset Filters
                 </button>
             </div>
         </div>
 
-        {{-- Prominent Category Department Tabs (SHOW THEM instead of hiding inside dropdown) --}}
+        {{-- Category & Department Tabs (Prominently shown as swipeable pills) --}}
         <div class="notice-categories-bar mb-3">
             <div class="d-flex align-items-center justify-content-between mb-2">
-                <span class="small fw-bold text-uppercase text-secondary" style="letter-spacing: 0.5px;">
-                    <i class="fa-solid fa-layer-group text-primary me-1"></i> Departments & Categories
+                <span class="small fw-bold text-uppercase text-secondary" style="letter-spacing: 0.5px; font-size: 0.75rem;">
+                    <i class="fa-solid fa-layer-group text-primary me-1"></i> Departments & Filters
                 </span>
                 <span class="small text-muted" id="filterStatsText">Showing all notices</span>
             </div>
             <div class="notice-category-pills-scroll">
-                <div class="notice-category-pills d-flex align-items-center gap-2 pb-1" id="categoryPillList">
+                <div class="notice-category-pills d-flex align-items-center gap-2 pb-2" id="categoryPillList">
                     <button type="button" class="category-pill-btn active" data-category="all">
                         <i class="fa-solid fa-border-all me-1"></i> All Notices
                         <span class="pill-badge" id="countAll">{{ count($notices) }}</span>
@@ -70,42 +61,45 @@
                         <i class="fa-solid fa-hourglass-end text-warning me-1"></i> Expired
                     </button>
                     <button type="button" class="category-pill-btn pill-filter-status" data-has-file="1">
-                        <i class="fa-solid fa-file-pdf text-danger me-1"></i> With Attachments
+                        <i class="fa-solid fa-file-pdf text-danger me-1"></i> With Attachment
                     </button>
                 </div>
             </div>
         </div>
 
-        {{-- Search & Date Filter Card (Cleaned without dropdown) --}}
-        <div class="notice-filter-card mb-3">
+        {{-- Search & Date Filter Card (Mobile Optimized Layout) --}}
+        <div class="notice-filter-card mb-3 shadow-sm">
             <div class="row g-2 align-items-center">
-                <div class="col-12 col-md-3">
+                {{-- Search Box --}}
+                <div class="col-12 col-md-6 order-1">
+                    <div class="input-group input-group-sm notice-input-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa-solid fa-magnifying-glass"></i></span>
+                        <input type="search" id="filterSearch" class="form-control border-start-0" placeholder="Search notices by title, content...">
+                    </div>
+                </div>
+
+                {{-- From Date --}}
+                <div class="col-6 col-md-3 order-2">
                     <div class="input-group input-group-sm notice-input-group">
                         <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa-regular fa-calendar"></i></span>
-                        <input type="text" id="filterDateFrom" class="form-control border-start-0" placeholder="From Date (YYYY-MM-DD)" onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'">
+                        <input type="text" id="filterDateFrom" class="form-control border-start-0" placeholder="From Date" onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'">
                     </div>
                 </div>
 
-                <div class="col-12 col-md-3">
+                {{-- To Date --}}
+                <div class="col-6 col-md-3 order-3">
                     <div class="input-group input-group-sm notice-input-group">
                         <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa-regular fa-calendar-check"></i></span>
-                        <input type="text" id="filterDateTo" class="form-control border-start-0" placeholder="To Date (YYYY-MM-DD)" onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'">
-                    </div>
-                </div>
-
-                <div class="col-12 col-md-6">
-                    <div class="input-group input-group-sm notice-input-group">
-                        <input type="search" id="filterSearch" class="form-control border-end-0" placeholder="Search notices by title, content, or keywords...">
-                        <span class="input-group-text bg-white border-start-0 text-muted"><i class="fa-solid fa-magnifying-glass"></i></span>
+                        <input type="text" id="filterDateTo" class="form-control border-start-0" placeholder="To Date" onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'">
                     </div>
                 </div>
             </div>
         </div>
 
         {{-- Sub-bar with Per Page and Active Filter Summary --}}
-        <div class="d-flex flex-wrap justify-content-between align-items-center mb-2 px-1">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 px-1">
             <div class="small text-muted" id="activeFilterBadgeContainer">
-                <span id="activeFilterSummary">All records</span>
+                <span id="activeFilterSummary">Showing all records</span>
             </div>
             <div class="d-flex align-items-center gap-2 ms-auto">
                 <label for="perPageSelect" class="small text-secondary mb-0 fw-semibold text-nowrap">Per Page</label>
@@ -118,9 +112,9 @@
             </div>
         </div>
 
-        {{-- Tabular Notice Table in Full English --}}
-        <div class="notice-table-container shadow-sm mb-4">
-            <div class="table-responsive">
+        {{-- Responsive Tabular / Mobile Card Notices Container --}}
+        <div class="notice-table-container mb-4">
+            <div class="table-responsive-desktop">
                 <table class="table align-middle notice-tabular-table mb-0" id="portalNoticeTable">
                     <thead>
                         <tr>
@@ -128,7 +122,7 @@
                                 Date <i class="fa-solid fa-caret-down ms-1 text-secondary" id="sortDateIcon"></i>
                             </th>
                             <th class="col-desc">Notice Details</th>
-                            <th class="col-cat">Department / Category</th>
+                            <th class="col-cat">Department</th>
                             <th class="col-files text-center">Attachment</th>
                             <th class="col-action text-center">Action</th>
                         </tr>
@@ -140,16 +134,13 @@
                                 $hasFile = $notice->hasFile();
                                 $isPdf = $notice->isPdf();
                                 
-                                // English formatted dates
                                 $carbonDate = optional($notice->created_at);
                                 $formattedDate = $carbonDate ? $carbonDate->format('M d, Y') : '';
                                 $adDate = $carbonDate ? $carbonDate->format('Y-m-d') : '';
                                 $relativeTime = $carbonDate ? $carbonDate->diffForHumans() : '';
                                 
-                                // Nepali BS date for subtle Nepali reference
                                 $bsDate = function_exists('to_nepali_bs_date') ? to_nepali_bs_date($notice->created_at, false) : '';
                                 
-                                // Notice Category / Department
                                 $noticeCategory = !empty($notice->category) ? $notice->category : 'General & Administration';
                                 $categorySlug = Str::slug($noticeCategory);
                             @endphp
@@ -164,17 +155,28 @@
                                 data-status="{{ $isExpired ? 'expired' : 'active' }}"
                                 data-hasfile="{{ $hasFile ? '1' : '0' }}">
                                 
-                                {{-- Column 1: Date --}}
+                                {{-- Column 1: Date (On Mobile: Top card header) --}}
                                 <td class="col-date">
                                     <div class="notice-date-cell">
-                                        <span class="en-date">{{ $formattedDate ?: $adDate }}</span>
+                                        <span class="en-date">
+                                            <i class="fa-regular fa-calendar text-muted me-1 d-md-none"></i>{{ $formattedDate ?: $adDate }}
+                                        </span>
                                         @if($bsDate)
                                             <span class="bs-date-sub" title="Bikram Sambat: {{ $bsDate }}">BS: {{ $bsDate }}</span>
                                         @endif
                                     </div>
+                                    {{-- Mobile Badges in Card Header --}}
+                                    <div class="d-md-none mobile-header-badges">
+                                        <span class="badge bg-light text-primary border me-1">{{ $noticeCategory }}</span>
+                                        @if($isExpired)
+                                            <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">Expired</span>
+                                        @else
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle">Active</span>
+                                        @endif
+                                    </div>
                                 </td>
 
-                                {{-- Column 2: Notice Title & Details --}}
+                                {{-- Column 2: Notice Details (Title & Meta) --}}
                                 <td class="col-desc">
                                     <div class="notice-desc-cell">
                                         <a href="{{ route('notice.detail', $notice->id) }}" class="notice-title-link">
@@ -186,18 +188,14 @@
                                                 <i class="fa-regular fa-clock me-1 text-muted"></i>{{ $relativeTime }}
                                             </span>
 
-                                            {{-- Inline Category badge on mobile --}}
-                                            <span class="meta-separator d-md-none">|</span>
-                                            <span class="meta-item d-md-none text-primary fw-semibold">
-                                                {{ $noticeCategory }}
-                                            </span>
+                                            <span class="meta-separator d-none d-md-inline">|</span>
 
                                             @if($isExpired)
-                                                <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle status-pill ms-2">
+                                                <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle status-pill d-none d-md-inline">
                                                     Expired
                                                 </span>
                                             @else
-                                                <span class="badge bg-success-subtle text-success border border-success-subtle status-pill ms-2">
+                                                <span class="badge bg-success-subtle text-success border border-success-subtle status-pill d-none d-md-inline">
                                                     Active
                                                 </span>
                                             @endif
@@ -205,21 +203,26 @@
                                     </div>
                                 </td>
 
-                                {{-- Column 3: Category / Department --}}
+                                {{-- Column 3: Department (Desktop only) --}}
                                 <td class="col-cat">
                                     <span class="notice-cat-badge">
                                         <i class="fa-solid fa-tag text-muted me-1"></i>{{ $noticeCategory }}
                                     </span>
                                 </td>
 
-                                {{-- Column 4: Files / Attachment --}}
+                                {{-- Column 4: Attachment --}}
                                 <td class="col-files text-center">
                                     @if($hasFile)
                                         @if($isPdf)
                                             <a href="{{ route('notice.detail', $notice->id) }}?view_pdf=1" 
                                                class="notice-document-icon" 
                                                title="View attached PDF ({{ $notice->file_name ?? 'PDF' }})">
-                                                <svg width="22" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                {{-- Mobile label + icon --}}
+                                                <span class="d-md-none mobile-btn-label text-danger fw-semibold">
+                                                    <i class="fa-solid fa-file-pdf me-1"></i> PDF
+                                                </span>
+                                                {{-- Desktop SVG Outline icon --}}
+                                                <svg class="d-none d-md-inline" width="22" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                                     <polyline points="14 2 14 8 20 8"></polyline>
                                                     <line x1="16" y1="13" x2="8" y2="13"></line>
@@ -232,7 +235,10 @@
                                                download 
                                                class="notice-document-icon" 
                                                title="Download file ({{ $notice->file_name ?? 'Download' }})">
-                                                <svg width="22" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                                <span class="d-md-none mobile-btn-label text-primary fw-semibold">
+                                                    <i class="fa-solid fa-paperclip me-1"></i> File
+                                                </span>
+                                                <svg class="d-none d-md-inline" width="22" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                                     <polyline points="14 2 14 8 20 8"></polyline>
                                                     <path d="M12 18v-6"></path>
@@ -241,16 +247,17 @@
                                             </a>
                                         @endif
                                     @else
-                                        <span class="text-muted opacity-25">&mdash;</span>
+                                        <span class="text-muted opacity-25 d-none d-md-inline">&mdash;</span>
                                     @endif
                                 </td>
 
-                                {{-- Column 5: Action --}}
+                                {{-- Column 5: Action Button --}}
                                 <td class="col-action text-center">
                                     <a href="{{ route('notice.detail', $notice->id) }}" 
                                        class="notice-action-btn" 
                                        title="View Notice Details">
-                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                        <i class="fa-solid fa-magnifying-glass d-none d-md-inline"></i>
+                                        <span class="d-md-none fw-semibold"><i class="fa-solid fa-arrow-right me-1"></i> View</span>
                                     </a>
                                 </td>
                             </tr>
@@ -267,12 +274,12 @@
             </div>
 
             {{-- Empty search result state --}}
-            <div id="noFilterMatchMessage" class="text-center py-5 text-muted d-none">
+            <div id="noFilterMatchMessage" class="text-center py-5 text-muted d-none bg-white rounded-3 border">
                 <i class="fa-solid fa-search fs-2 mb-2 d-block opacity-50 text-secondary"></i>
                 <p class="mb-1 fw-semibold text-dark">No notices match your selected filters.</p>
-                <small>Try selecting a different category or clearing search filters.</small>
+                <small>Try selecting another department or clearing search keywords.</small>
                 <div class="mt-3">
-                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="document.getElementById('btnResetFilters').click();">
+                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="document.getElementById('btnResetFilters').click();">
                         View All Notices
                     </button>
                 </div>
@@ -281,11 +288,11 @@
 
         {{-- Bottom Footer with Count and Pagination --}}
         <div class="notice-pagination-bar d-flex flex-wrap justify-content-between align-items-center gap-3">
-            <div class="notice-results-counter text-muted small" id="paginationStats">
+            <div class="notice-results-counter text-muted small mx-auto mx-md-0" id="paginationStats">
                 Showing 1 to 10 of {{ count($notices) }} results
             </div>
 
-            <nav aria-label="Notice pagination">
+            <nav aria-label="Notice pagination" class="mx-auto mx-md-0">
                 <ul class="pagination pagination-sm mb-0 notice-pagination-list" id="paginationControls">
                     {{-- Dynamically populated via JS --}}
                 </ul>
@@ -299,14 +306,14 @@
 <style>
     /* Clean Modern Portal Layout */
     .notice-portal-wrapper {
-        background-color: #fbfcfe;
+        background-color: #f8fafc;
         min-height: 80vh;
     }
 
     .notice-portal-title {
-        font-size: 2.1rem;
+        font-size: 2rem;
         font-weight: 700;
-        color: #1e293b;
+        color: #0f172a;
         letter-spacing: -0.5px;
     }
 
@@ -335,7 +342,7 @@
     .notice-category-pills-scroll {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
-        padding-bottom: 4px;
+        scrollbar-width: thin;
     }
     .notice-category-pills-scroll::-webkit-scrollbar {
         height: 4px;
@@ -350,7 +357,7 @@
         color: #475569;
         font-size: 0.825rem;
         font-weight: 500;
-        padding: 6px 14px;
+        padding: 7px 14px;
         border-radius: 30px;
         white-space: nowrap;
         cursor: pointer;
@@ -358,10 +365,11 @@
         align-items: center;
         gap: 6px;
         transition: all 0.18s ease;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.02);
     }
     .category-pill-btn:hover {
         background: #f1f5f9;
-        color: #1e293b;
+        color: #0f172a;
         border-color: #94a3b8;
     }
     .category-pill-btn.active {
@@ -380,7 +388,7 @@
         color: #475569;
         font-size: 0.72rem;
         font-weight: 600;
-        padding: 1px 7px;
+        padding: 2px 7px;
         border-radius: 20px;
         transition: all 0.18s ease;
     }
@@ -389,8 +397,8 @@
     .notice-filter-card {
         background: #ffffff;
         border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        padding: 14px 16px;
+        border-radius: 10px;
+        padding: 12px 14px;
     }
     .notice-input-group .form-control {
         height: 38px;
@@ -399,8 +407,8 @@
         border-color: #cbd5e1;
     }
     .notice-input-group .form-control:focus {
-        border-color: #94a3b8;
-        box-shadow: 0 0 0 2px rgba(148, 163, 184, 0.2);
+        border-color: #0f8a5f;
+        box-shadow: 0 0 0 2px rgba(15, 138, 95, 0.15);
     }
     .notice-perpage-select {
         width: 80px;
@@ -409,74 +417,131 @@
         border-color: #cbd5e1;
     }
 
-    /* Table Container & Table */
-    .notice-table-container {
-        background: #ffffff;
+    /* Desktop Table Styling */
+    @media (min-width: 768px) {
+        .notice-table-container {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .notice-tabular-table {
+            margin-bottom: 0;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .notice-tabular-table thead th {
+            background-color: #ffffff;
+            color: #111827;
+            font-size: 0.88rem;
+            font-weight: 700;
+            padding: 14px 16px;
+            border-bottom: 2px solid #e2e8f0;
+            white-space: nowrap;
+        }
+        .notice-tabular-table tbody td {
+            padding: 16px 16px;
+            border-bottom: 1px solid #edf2f7;
+            vertical-align: middle;
+            background-color: #ffffff;
+            transition: background-color 0.15s ease;
+        }
+        .notice-tabular-table tbody tr.notice-row:hover td {
+            background-color: #f8fafc;
+        }
+
+        .col-date {
+            width: 140px;
+            min-width: 130px;
+        }
+        .col-desc {
+            width: auto;
+        }
+        .col-cat {
+            width: 180px;
+            min-width: 160px;
+        }
+        .col-files {
+            width: 90px;
+            min-width: 80px;
+        }
+        .col-action {
+            width: 75px;
+            min-width: 70px;
+        }
+
+        .notice-date-cell .en-date {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #1e293b;
+            white-space: nowrap;
+        }
+        .notice-date-cell .bs-date-sub {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 1px;
+            white-space: nowrap;
+        }
+
+        .notice-title-link {
+            font-size: 0.98rem;
+            font-weight: 600;
+            color: #0f172a;
+            text-decoration: none;
+            line-height: 1.45;
+            transition: color 0.15s ease;
+        }
+        .notice-title-link:hover {
+            color: #0f8a5f;
+        }
+
+        .notice-document-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            color: #475569;
+            border-radius: 6px;
+            transition: all 0.18s ease;
+            text-decoration: none;
+        }
+        .notice-document-icon:hover {
+            color: #dc2626;
+            background-color: #fee2e2;
+            transform: scale(1.08);
+        }
+
+        .notice-action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background-color: #0f8a5f;
+            color: #ffffff !important;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 13px;
+            transition: all 0.18s ease;
+            box-shadow: 0 1px 3px rgba(15, 138, 95, 0.2);
+        }
+        .notice-action-btn:hover {
+            background-color: #0b6b49;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(15, 138, 95, 0.3);
+        }
+    }
+
+    .notice-cat-badge {
+        display: inline-block;
+        background: #f1f5f9;
+        color: #334155;
         border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        overflow: hidden;
-    }
-    .notice-tabular-table {
-        margin-bottom: 0;
-        border-collapse: collapse;
-        width: 100%;
-    }
-    .notice-tabular-table thead th {
-        background-color: #ffffff;
-        color: #111827;
-        font-size: 0.9rem;
-        font-weight: 700;
-        padding: 14px 16px;
-        border-bottom: 2px solid #e2e8f0;
-        white-space: nowrap;
-    }
-    .notice-tabular-table tbody td {
-        padding: 16px 16px;
-        border-bottom: 1px solid #edf2f7;
-        vertical-align: middle;
-        background-color: #ffffff;
-        transition: background-color 0.15s ease;
-    }
-    .notice-tabular-table tbody tr.notice-row:hover td {
-        background-color: #f8fafc;
-    }
-
-    /* Columns */
-    .col-date {
-        width: 140px;
-        min-width: 130px;
-    }
-    .col-desc {
-        width: auto;
-    }
-    .col-cat {
-        width: 180px;
-        min-width: 160px;
-    }
-    .col-files {
-        width: 90px;
-        min-width: 80px;
-    }
-    .col-action {
-        width: 75px;
-        min-width: 70px;
-    }
-
-    /* Cells */
-    .notice-date-cell {
-        display: flex;
-        flex-direction: column;
-    }
-    .notice-date-cell .en-date {
-        font-size: 0.92rem;
-        font-weight: 600;
-        color: #1e293b;
-        white-space: nowrap;
-    }
-    .notice-date-cell .bs-date-sub {
-        font-size: 0.75rem;
-        color: #94a3b8;
-        margin-top: 1px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        padding: 4px 10px;
+        border-radius: 6px;
         white-space: nowrap;
     }
 
@@ -484,17 +549,6 @@
         display: flex;
         flex-direction: column;
         gap: 4px;
-    }
-    .notice-title-link {
-        font-size: 0.98rem;
-        font-weight: 600;
-        color: #1e293b;
-        text-decoration: none;
-        line-height: 1.45;
-        transition: color 0.15s ease;
-    }
-    .notice-title-link:hover {
-        color: #0f8a5f;
     }
     .notice-meta-line {
         display: flex;
@@ -514,64 +568,12 @@
         padding: 2px 7px;
     }
 
-    .notice-cat-badge {
-        display: inline-block;
-        background: #f1f5f9;
-        color: #334155;
-        border: 1px solid #e2e8f0;
-        font-size: 0.8rem;
-        font-weight: 500;
-        padding: 4px 10px;
-        border-radius: 6px;
-        white-space: nowrap;
-    }
-
-    /* Document Icon */
-    .notice-document-icon {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 36px;
-        height: 36px;
-        color: #475569;
-        border-radius: 6px;
-        transition: all 0.18s ease;
-        text-decoration: none;
-    }
-    .notice-document-icon:hover {
-        color: #dc2626;
-        background-color: #fee2e2;
-        transform: scale(1.08);
-    }
-
-    /* Action Green Square Button */
-    .notice-action-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 32px;
-        height: 32px;
-        background-color: #0f8a5f;
-        color: #ffffff !important;
-        border-radius: 5px;
-        text-decoration: none;
-        font-size: 13px;
-        transition: all 0.18s ease;
-        box-shadow: 0 1px 3px rgba(15, 138, 95, 0.2);
-    }
-    .notice-action-btn:hover {
-        background-color: #0b6b49;
-        transform: translateY(-1px);
-        box-shadow: 0 3px 6px rgba(15, 138, 95, 0.3);
-    }
-
-    /* Pagination */
     .notice-pagination-list .page-link {
         color: #334155;
         border-color: #cbd5e1;
-        padding: 5px 11px;
+        padding: 5px 12px;
         font-size: 0.85rem;
-        border-radius: 4px;
+        border-radius: 6px;
         margin: 0 2px;
     }
     .notice-pagination-list .page-item.active .page-link {
@@ -580,79 +582,186 @@
         color: #ffffff;
         font-weight: 600;
     }
-    .notice-pagination-list .page-link:hover {
-        background-color: #e2e8f0;
-        color: #0f172a;
-    }
 
-    /* Mobile Responsive Handling */
+    /* ========================================================
+       MOBILE-FIRST RESPONSIVE CARDS DESIGN (< 768px)
+       ======================================================== */
     @media (max-width: 767.98px) {
+        .notice-portal-wrapper {
+            padding-top: 10px;
+        }
         .notice-portal-title {
-            font-size: 1.7rem;
-        }
-        .col-cat {
-            display: none;
+            font-size: 1.55rem;
+            line-height: 1.25;
         }
 
-        /* Mobile Card Mode when toggled */
-        body.card-view-active .notice-tabular-table thead {
-            display: none;
+        /* Filter Card on mobile */
+        .notice-filter-card {
+            padding: 10px;
         }
-        body.card-view-active .notice-tabular-table,
-        body.card-view-active .notice-tabular-table tbody,
-        body.card-view-active .notice-tabular-table tr.notice-row {
-            display: block;
-            width: 100%;
+        .notice-input-group .form-control {
+            height: 40px;
+            font-size: 0.825rem;
         }
-        body.card-view-active .notice-tabular-table tr.notice-row {
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            padding: 14px;
-            background: #ffffff;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+
+        /* Hide desktop table structure completely */
+        .notice-table-container {
+            background: transparent;
+            border: none;
         }
-        body.card-view-active .notice-tabular-table td {
-            display: block;
+        .table-responsive-desktop {
+            overflow: visible;
+        }
+        .notice-tabular-table thead {
+            display: none !important;
+        }
+        .notice-tabular-table,
+        .notice-tabular-table tbody {
+            display: block !important;
             width: 100% !important;
-            padding: 4px 0 !important;
-            border: none !important;
-        }
-        body.card-view-active .notice-tabular-table td.col-date {
-            margin-bottom: 6px;
-        }
-        body.card-view-active .notice-tabular-table td.col-cat {
-            display: block;
-            margin-top: 6px;
-        }
-        body.card-view-active .notice-tabular-table td.col-files,
-        body.card-view-active .notice-tabular-table td.col-action {
-            display: inline-block !important;
-            width: auto !important;
-            margin-top: 10px;
-            margin-right: 8px;
-        }
-        body.card-view-active .notice-tabular-table td.col-action {
-            float: right;
         }
 
-        /* Standard Mobile Table Scrolling */
-        .table-responsive {
-            -webkit-overflow-scrolling: touch;
+        /* Each Notice transforms into a sleek mobile card */
+        .notice-tabular-table tr.notice-row {
+            display: flex !important;
+            flex-direction: column !important;
+            width: 100% !important;
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 12px !important;
+            margin-bottom: 12px !important;
+            padding: 14px 16px !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
-        .notice-tabular-table thead th {
-            padding: 10px 12px;
-            font-size: 0.85rem;
+        .notice-tabular-table tr.notice-row:active {
+            transform: scale(0.995);
         }
-        .notice-tabular-table tbody td {
-            padding: 12px 12px;
+
+        /* Card Top: Date & Badges */
+        .notice-tabular-table td.col-date {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            width: 100% !important;
+            padding: 0 0 8px 0 !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+            margin-bottom: 8px !important;
+            order: 1;
         }
-        .col-date {
-            width: 110px;
-            min-width: 100px;
+        .notice-date-cell .en-date {
+            font-size: 0.85rem !important;
+            font-weight: 600 !important;
+            color: #334155 !important;
+        }
+        .notice-date-cell .bs-date-sub {
+            font-size: 0.72rem !important;
+            color: #94a3b8 !important;
+            margin-left: 4px !important;
+        }
+        .mobile-header-badges .badge {
+            font-size: 0.72rem !important;
+            padding: 3px 8px !important;
+        }
+
+        /* Card Middle: Notice Title */
+        .notice-tabular-table td.col-desc {
+            display: block !important;
+            width: 100% !important;
+            padding: 0 0 10px 0 !important;
+            border: none !important;
+            order: 2;
         }
         .notice-title-link {
-            font-size: 0.92rem;
+            font-size: 1.02rem !important;
+            font-weight: 600 !important;
+            color: #0f172a !important;
+            line-height: 1.45 !important;
+            display: block !important;
+            margin-bottom: 4px !important;
+            text-decoration: none !important;
+        }
+        .notice-meta-line {
+            font-size: 0.78rem !important;
+            color: #64748b !important;
+        }
+
+        /* Hide desktop Category column */
+        .notice-tabular-table td.col-cat {
+            display: none !important;
+        }
+
+        /* Bottom Row with actions and attachment */
+        .notice-tabular-table td.col-files,
+        .notice-tabular-table td.col-action {
+            display: inline-block !important;
+            width: auto !important;
+            padding: 0 !important;
+            border: none !important;
+            order: 3;
+        }
+
+        /* Group files and action at bottom */
+        .notice-tabular-table tr.notice-row {
+            display: grid !important;
+            grid-template-columns: 1fr auto auto;
+            grid-template-areas: 
+                "header header header"
+                "title title title"
+                "desc files action";
+            row-gap: 6px;
+            align-items: center;
+        }
+        .notice-tabular-table td.col-date {
+            grid-area: header;
+        }
+        .notice-tabular-table td.col-desc {
+            grid-area: title;
+            margin-bottom: 0 !important;
+        }
+        .notice-tabular-table td.col-files {
+            grid-area: files;
+            justify-self: end;
+            margin-right: 6px;
+        }
+        .notice-tabular-table td.col-action {
+            grid-area: action;
+            justify-self: end;
+        }
+
+        /* Mobile Action Buttons */
+        .notice-document-icon {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 5px 10px !important;
+            background: #fee2e2 !important;
+            border: 1px solid #fecaca !important;
+            border-radius: 20px !important;
+            font-size: 0.75rem !important;
+            text-decoration: none !important;
+        }
+        .notice-action-btn {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 6px 14px !important;
+            background-color: #0f8a5f !important;
+            color: #ffffff !important;
+            border-radius: 20px !important;
+            font-size: 0.8rem !important;
+            text-decoration: none !important;
+            box-shadow: 0 1px 3px rgba(15, 138, 95, 0.25) !important;
+        }
+
+        /* Mobile Pagination */
+        .notice-pagination-bar {
+            flex-direction: column !important;
+            text-align: center !important;
+        }
+        .notice-pagination-list .page-link {
+            padding: 6px 10px !important;
+            font-size: 0.8rem !important;
         }
     }
 </style>
@@ -678,23 +787,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Category pills
     const categoryPills = Array.from(document.querySelectorAll('#categoryPillList .category-pill-btn'));
-
-    // Mobile view toggles
-    const btnTableView = document.getElementById('btnTableView');
-    const btnCardView = document.getElementById('btnCardView');
-
-    if (btnTableView && btnCardView) {
-        btnTableView.addEventListener('click', function() {
-            btnTableView.classList.add('active');
-            btnCardView.classList.remove('active');
-            document.body.classList.remove('card-view-active');
-        });
-        btnCardView.addEventListener('click', function() {
-            btnCardView.classList.add('active');
-            btnTableView.classList.remove('active');
-            document.body.classList.add('card-view-active');
-        });
-    }
 
     let currentPage = 1;
     let sortAsc = false; // default latest first (desc)
