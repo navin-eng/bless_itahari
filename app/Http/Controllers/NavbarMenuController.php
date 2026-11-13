@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\NavbarMenu;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class NavbarMenuController extends Controller
@@ -112,6 +113,8 @@ class NavbarMenuController extends Controller
         foreach ($request->ids as $index => $id) {
             NavbarMenu::where('id', $id)->update(['order' => $index + 1]);
         }
+
+        Cache::forget('navbar_menus_active');
 
         return response()->json(['success' => true]);
     }
