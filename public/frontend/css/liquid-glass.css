@@ -1,0 +1,530 @@
+/* ============================================================
+   BLESS ITAHARI — macOS Liquid Glass Design System
+   Inspired by macOS Tahoe / Apple Liquid Glass
+   ============================================================ */
+
+:root {
+    --glass-bg: rgba(255, 255, 255, 0.58);
+    --glass-bg-strong: rgba(255, 255, 255, 0.76);
+    --glass-bg-subtle: rgba(255, 255, 255, 0.38);
+    --glass-dark-bg: rgba(15, 23, 42, 0.68);
+    --glass-dark-card: rgba(255, 255, 255, 0.08);
+
+    --glass-border: rgba(255, 255, 255, 0.78);
+    --glass-border-subtle: rgba(255, 255, 255, 0.45);
+    --glass-border-dark: rgba(255, 255, 255, 0.16);
+
+    --glass-blur: blur(24px) saturate(185%);
+    --glass-blur-heavy: blur(32px) saturate(200%);
+
+    --glass-specular: inset 0 1.5px 0 rgba(255, 255, 255, 0.92),
+                      inset 0 -1px 0 rgba(255, 255, 255, 0.24);
+    --glass-specular-dark: inset 0 1px 0 rgba(255, 255, 255, 0.22),
+                           inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+
+    --glass-shadow: 0 12px 36px -6px rgba(15, 23, 42, 0.09),
+                    0 4px 12px -2px rgba(15, 23, 42, 0.04);
+    --glass-shadow-hover: 0 24px 48px -8px rgba(20, 30, 50, 0.15),
+                          0 8px 20px -4px rgba(20, 30, 50, 0.07);
+
+    --radius-glass-sm: 14px;
+    --radius-glass-md: 22px;
+    --radius-glass-lg: 28px;
+    --spring-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── Ambient Translucent Canvas ────────────────────────── */
+body {
+    background-color: #eef3fb !important;
+    background-image:
+        radial-gradient(at 10% 14%, rgba(99, 179, 237, 0.24) 0px, transparent 48%),
+        radial-gradient(at 88% 10%, rgba(167, 139, 250, 0.17) 0px, transparent 44%),
+        radial-gradient(at 82% 68%, rgba(244, 114, 182, 0.10) 0px, transparent 46%),
+        radial-gradient(at 16% 84%, rgba(56, 189, 248, 0.16) 0px, transparent 50%) !important;
+    background-attachment: fixed !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Let ambient canvas breathe through Bootstrap .bg-light sections */
+.section-block.bg-light,
+section.bg-light {
+    background-color: transparent !important;
+    position: relative;
+}
+
+.section-tag {
+    background: var(--glass-bg-strong);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-specular), 0 4px 14px rgba(187, 50, 51, 0.08);
+    color: var(--accent);
+}
+
+/* ── Liquid Glass Utility Class ────────────────────────── */
+.liquid-glass {
+    background: var(--glass-bg) !important;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border) !important;
+    box-shadow: var(--glass-specular), var(--glass-shadow) !important;
+}
+
+/* ── Topbar (Smoked macOS Glass Utility Strip) ─────────── */
+.gplc-topbar {
+    background: rgba(15, 23, 42, 0.84) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 7px 0;
+}
+
+.nepali-date-widget {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border: 1px solid rgba(255, 255, 255, 0.24) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.topbar-social a {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    opacity: 0.9 !important;
+    transition: all 0.25s var(--spring-ease);
+}
+.topbar-social a:hover {
+    background: rgba(255, 255, 255, 0.22);
+    color: #fff !important;
+    transform: translateY(-1px) scale(1.06);
+}
+
+.portal-btn {
+    background: linear-gradient(135deg, var(--accent), #d94647) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 4px 12px rgba(187, 50, 51, 0.3);
+    padding: 5px 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.25s var(--spring-ease);
+}
+.portal-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 6px 18px rgba(187, 50, 51, 0.4);
+    color: #ffffff !important;
+}
+.portal-btn-secondary {
+    background: rgba(255, 255, 255, 0.16) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+.portal-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.28) !important;
+}
+
+/* ── Main Header (macOS Frosted Menu Bar) ──────────────── */
+.gplc-header {
+    background: rgba(255, 255, 255, 0.64) !important;
+    backdrop-filter: var(--glass-blur-heavy) !important;
+    -webkit-backdrop-filter: var(--glass-blur-heavy) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.72) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 4px 24px rgba(15, 23, 42, 0.05);
+}
+.gplc-header.scrolled {
+    background: rgba(255, 255, 255, 0.76) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 10px 32px rgba(15, 23, 42, 0.09) !important;
+}
+
+.gplc-header.nav-theme-dark {
+    background: rgba(15, 23, 42, 0.72) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 8px 30px rgba(0, 0, 0, 0.22);
+}
+.gplc-header.nav-theme-primary {
+    background: rgba(37, 37, 95, 0.76) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 8px 30px rgba(20, 30, 50, 0.2);
+}
+
+/* macOS Pill Navigation Links */
+@media (min-width: 1200px) {
+    .gplc-nav ul {
+        gap: 0.45rem;
+    }
+    .gplc-nav > ul > li > a {
+        padding: 8px 15px !important;
+        border-radius: 9999px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        transition: all 0.28s var(--spring-ease);
+    }
+    .gplc-nav > ul > li > a::after {
+        display: none !important;
+    }
+    .gplc-nav > ul > li > a:hover,
+    .gplc-nav > ul > li > a.active {
+        background: rgba(37, 37, 95, 0.08);
+        color: var(--primary);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 2px 8px rgba(15, 23, 42, 0.05);
+    }
+    .gplc-nav > ul > li > a.active {
+        background: rgba(37, 37, 95, 0.12);
+        font-weight: 600;
+    }
+
+    .gplc-header.nav-theme-dark .gplc-nav > ul > li > a:hover,
+    .gplc-header.nav-theme-dark .gplc-nav > ul > li > a.active,
+    .gplc-header.nav-theme-primary .gplc-nav > ul > li > a:hover,
+    .gplc-header.nav-theme-primary .gplc-nav > ul > li > a.active {
+        background: rgba(255, 255, 255, 0.16);
+        color: #ffffff;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+    }
+}
+
+/* Liquid Glass Dropdown Menu */
+.dropdown-menu-gplc {
+    background: rgba(255, 255, 255, 0.82) !important;
+    backdrop-filter: var(--glass-blur-heavy) !important;
+    -webkit-backdrop-filter: var(--glass-blur-heavy) !important;
+    border: 1px solid rgba(255, 255, 255, 0.88) !important;
+    border-radius: var(--radius-glass-md) !important;
+    box-shadow: var(--glass-specular), 0 20px 50px rgba(15, 23, 42, 0.16) !important;
+    padding: 10px !important;
+}
+.dropdown-menu-gplc a {
+    border-radius: 12px !important;
+    transition: all 0.22s var(--spring-ease);
+}
+.dropdown-menu-gplc a:hover {
+    background: rgba(37, 37, 95, 0.08) !important;
+    padding-left: 14px;
+}
+
+@media (max-width: 1199px) {
+    .gplc-nav {
+        background: rgba(255, 255, 255, 0.86) !important;
+        backdrop-filter: var(--glass-blur-heavy) !important;
+        -webkit-backdrop-filter: var(--glass-blur-heavy) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.85);
+        box-shadow: 0 20px 45px rgba(15, 23, 42, 0.14) !important;
+    }
+}
+
+/* ── Liquid Glass Buttons ──────────────────────────────── */
+.btn-gplc {
+    background: linear-gradient(135deg, rgba(37, 37, 95, 0.92), rgba(20, 30, 50, 0.95));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.35), 0 8px 24px rgba(20, 30, 50, 0.28);
+    transition: all 0.32s var(--spring-ease);
+}
+.btn-gplc:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.45), 0 14px 32px rgba(20, 30, 50, 0.36);
+}
+
+.btn-gplc-light {
+    background: rgba(255, 255, 255, 0.18) !important;
+    backdrop-filter: blur(16px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.48) !important;
+    box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.55), 0 8px 24px rgba(0, 0, 0, 0.16);
+    transition: all 0.32s var(--spring-ease);
+}
+.btn-gplc-light:hover {
+    background: rgba(255, 255, 255, 0.92) !important;
+    color: var(--primary-dark) !important;
+    transform: translateY(-2px) scale(1.02);
+}
+
+/* ── Hero Banner Liquid Glass Accents ──────────────────── */
+.gplc-hero-content .tag-line {
+    background: rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(18px) saturate(180%);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.38);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+.hero-pagination.swiper-pagination-bullets {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: auto !important;
+    left: 50% !important;
+    transform: translateX(-50%);
+    bottom: 68px !important;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    background: rgba(15, 23, 42, 0.36);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* ── Notice Ticker & Affiliation Bar ───────────────────── */
+.gplc-ticker {
+    background: rgba(15, 23, 42, 0.88) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+.gplc-ticker-label {
+    background: linear-gradient(135deg, var(--accent), #d94647) !important;
+    color: #ffffff !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.affiliation-bar {
+    background: var(--glass-bg) !important;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-top: 1px solid var(--glass-border) !important;
+    border-bottom: 1px solid var(--glass-border) !important;
+    box-shadow: var(--glass-specular);
+}
+.affiliation-bar .aff-badge {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 4px 12px rgba(37, 37, 95, 0.2);
+}
+
+/* ── Liquid Glass Cards (Courses, Events, Officials, Testimonials) ── */
+.course-card,
+.event-card,
+.event-card-animated,
+.msg-card,
+.official-card-modern,
+.testi-card,
+.testi-card-modern,
+.premium-faculty-card,
+.notice-table-wrapper,
+.contact-form-card {
+    background: var(--glass-bg) !important;
+    backdrop-filter: var(--glass-blur) !important;
+    -webkit-backdrop-filter: var(--glass-blur) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: var(--radius-glass-md) !important;
+    box-shadow: var(--glass-specular), var(--glass-shadow) !important;
+    transition: transform 0.42s var(--spring-ease), box-shadow 0.42s var(--spring-ease), background 0.3s ease !important;
+}
+
+.course-card:hover,
+.event-card:hover,
+.event-card-animated:hover,
+.msg-card:hover,
+.official-card-modern:hover,
+.testi-card:hover,
+.testi-card-modern:hover,
+.premium-faculty-card:hover {
+    background: var(--glass-bg-strong) !important;
+    transform: translateY(-8px) !important;
+    box-shadow: var(--glass-specular), var(--glass-shadow-hover) !important;
+    border-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.card-footer-gplc {
+    background: rgba(255, 255, 255, 0.42) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255, 255, 255, 0.65) !important;
+}
+
+/* Glass Badges inside cards */
+.course-card .card-badge,
+.ev-date,
+.event-date-badge {
+    background: rgba(255, 255, 255, 0.78) !important;
+    backdrop-filter: blur(16px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.9) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 6px 18px rgba(15, 23, 42, 0.12) !important;
+}
+
+/* Official Avatar Ring */
+.official-avatar,
+.official-avatar-placeholder {
+    border: 5px solid rgba(255, 255, 255, 0.85) !important;
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.14) !important;
+}
+
+/* ── Statistics Section (Dark Smoked Liquid Glass) ─────── */
+.gplc-stats {
+    background:
+        radial-gradient(at 15% 20%, rgba(56, 189, 248, 0.25) 0px, transparent 50%),
+        radial-gradient(at 85% 80%, rgba(187, 50, 51, 0.28) 0px, transparent 50%),
+        linear-gradient(135deg, var(--primary-dark, #141E32) 0%, #1d2b53 100%) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.gplc-stats .stat-box {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: var(--radius-glass-md);
+    padding: 32px 20px;
+    box-shadow: var(--glass-specular-dark), 0 12px 32px rgba(0, 0, 0, 0.18);
+    transition: transform 0.35s var(--spring-ease), background 0.3s ease;
+    height: 100%;
+}
+.gplc-stats .stat-box:hover {
+    background: rgba(255, 255, 255, 0.13);
+    transform: translateY(-6px);
+}
+.gplc-stats .stat-box .stat-icon {
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    border-radius: 18px;
+}
+
+/* ── Contact Section ───────────────────────────────────── */
+.contact-info-card {
+    background:
+        radial-gradient(at 0% 0%, rgba(255, 255, 255, 0.14) 0px, transparent 55%),
+        linear-gradient(145deg, rgba(37, 37, 95, 0.92), rgba(20, 30, 50, 0.96)) !important;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: var(--radius-glass-md) !important;
+    box-shadow: var(--glass-specular-dark), var(--glass-shadow-hover);
+}
+
+.gplc-input {
+    background: rgba(255, 255, 255, 0.65) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.85) !important;
+    border-radius: var(--radius-glass-sm) !important;
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+.gplc-input:focus {
+    background: rgba(255, 255, 255, 0.92) !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 4px rgba(37, 37, 95, 0.12) !important;
+}
+
+/* ── Footer (Deep Smoked Liquid Glass) ─────────────────── */
+.gplc-footer {
+    background:
+        radial-gradient(at 20% 0%, rgba(56, 189, 248, 0.14) 0px, transparent 45%),
+        radial-gradient(at 85% 90%, rgba(187, 50, 51, 0.16) 0px, transparent 45%),
+        linear-gradient(180deg, #11192c 0%, #0b1120 100%) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+.gplc-footer-social a {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    transition: all 0.28s var(--spring-ease);
+}
+.gplc-footer-social a:hover {
+    background: var(--accent) !important;
+    transform: translateY(-3px) scale(1.08);
+    border-color: rgba(255, 255, 255, 0.45);
+}
+
+/* ── Sticky Notice Widget (macOS Notification Center) ──── */
+.sticky-notice-widget {
+    right: 12px !important;
+    background: rgba(255, 255, 255, 0.72) !important;
+    backdrop-filter: var(--glass-blur-heavy) !important;
+    -webkit-backdrop-filter: var(--glass-blur-heavy) !important;
+    border: 1px solid rgba(255, 255, 255, 0.85) !important;
+    border-radius: var(--radius-glass-md) !important;
+    box-shadow: var(--glass-specular), 0 18px 42px rgba(15, 23, 42, 0.14) !important;
+}
+.sticky-notice-widget.is-collapsed {
+    right: 0 !important;
+    border-radius: 18px 0 0 18px !important;
+    border-right: 0 !important;
+}
+.sticky-notice-head {
+    background: linear-gradient(135deg, rgba(37, 37, 95, 0.9), rgba(20, 30, 50, 0.92)) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+}
+.sticky-notice-item {
+    border-radius: 12px !important;
+}
+.sticky-notice-item:hover {
+    background: rgba(255, 255, 255, 0.75) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 3px 10px rgba(15, 23, 42, 0.05);
+}
+
+/* ── Floating Action Orbs (Back to Top & WhatsApp) ─────── */
+.back-to-top {
+    background: rgba(37, 37, 95, 0.78) !important;
+    backdrop-filter: blur(18px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(180%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.35) !important;
+    border-radius: 50% !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 10px 26px rgba(20, 30, 50, 0.25) !important;
+}
+.back-to-top:hover {
+    background: rgba(20, 30, 50, 0.92) !important;
+    transform: translateY(-4px) scale(1.06);
+}
+
+.wa-float,
+.whatsapp-float {
+    border: 2px solid rgba(255, 255, 255, 0.55);
+    box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.5), 0 10px 28px rgba(37, 211, 102, 0.42);
+}
+
+/* ── Popup Notice & Modals (macOS Sheet Glass) ─────────── */
+.gplc-popup-wrap {
+    background: rgba(15, 23, 42, 0.52) !important;
+    backdrop-filter: blur(14px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(14px) saturate(150%) !important;
+}
+.gplc-popup,
+.modal-content {
+    background: rgba(255, 255, 255, 0.84) !important;
+    backdrop-filter: var(--glass-blur-heavy) !important;
+    -webkit-backdrop-filter: var(--glass-blur-heavy) !important;
+    border: 1px solid rgba(255, 255, 255, 0.9) !important;
+    border-radius: var(--radius-glass-lg) !important;
+    box-shadow: var(--glass-specular), 0 28px 70px rgba(15, 23, 42, 0.25) !important;
+    overflow: hidden;
+}
+.modal-content .bg-white {
+    background-color: transparent !important;
+}
+
+/* ── Page Hero (Inner Pages) ───────────────────────────── */
+.page-hero {
+    background:
+        radial-gradient(at 15% 20%, rgba(56, 189, 248, 0.25) 0px, transparent 50%),
+        radial-gradient(at 85% 80%, rgba(187, 50, 51, 0.28) 0px, transparent 50%),
+        linear-gradient(135deg, var(--primary-dark, #141E32) 0%, #1d2b53 100%) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ── Generic Bootstrap Cards on Inner Pages ────────────── */
+.card {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-glass-md);
+    box-shadow: var(--glass-specular), var(--glass-shadow);
+}
+

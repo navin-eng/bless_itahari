@@ -165,6 +165,9 @@
         }
     </style>
 
+    <!-- macOS Liquid Glass Theme Layer -->
+    <link rel="stylesheet" href="{{ asset('frontend/css/liquid-glass.css') }}?v={{ file_exists(public_path('frontend/css/liquid-glass.css')) ? filemtime(public_path('frontend/css/liquid-glass.css')) : '1.0' }}">
+
     @if($siteSettings->enable_analytics && !empty($siteSettings->google_analytics_id))
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id={{ $siteSettings->google_analytics_id }}"></script>

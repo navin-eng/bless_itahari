@@ -11,7 +11,7 @@
         <div class="row g-4">
             @forelse($courses as $course)
                 <div class="col-lg-4 col-md-6 mb-3" data-aos="fade-up" data-aos-delay="{{ $loop->index * 80 }}">
-                    <div class="course-card h-100 d-flex flex-column shadow-sm border-0" style="border-radius: 16px; overflow: hidden; background: #fff;">
+                    <div class="course-card h-100 d-flex flex-column shadow-sm border-0" style="border-radius: 22px; overflow: hidden;">
                         <div class="card-img" style="position: relative; height: 170px; background: linear-gradient(135deg, var(--bs-primary, #0d6efd) 0%, #1e3a8a 100%);">
                             @if($course->image && file_exists(public_path($course->image)) && !str_contains($course->image, 'default.jpg'))
                                 <img src="{{ asset($course->image) }}" alt="{{ $course->name }}" style="width: 100%; height: 100%; object-fit: cover;">
@@ -56,7 +56,7 @@
                                 View Level Details <i class="fa-solid fa-arrow-right ms-1"></i>
                             </a>
                         </div>
-                        <div class="card-footer-gplc px-4 py-2.5 bg-light border-top d-flex justify-content-between align-items-center" style="font-size: 12px;">
+                        <div class="card-footer-gplc px-4 py-2.5 border-top d-flex justify-content-between align-items-center" style="font-size: 12px;">
                             <span class="text-muted">
                                 <i class="fa-regular fa-calendar-check text-primary me-1"></i>
                                 {{ $course->duration }}
