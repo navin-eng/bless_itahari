@@ -161,25 +161,40 @@
                             @if($navCourses->count() > 0)
                                 <li class="dropdown nav-item">
                                     <a href="#" class="nav-link dropdown-toggle {{ request()->segment(1)=='course' ? 'active' : '' }}" data-bs-toggle="dropdown" aria-expanded="false">
-                                        {{ $menu->name }} <i class="fas fa-chevron-down" style="font-size:9px;margin-left:4px;"></i>
+                                        {{ $menu->name }} <i class="fas fa-chevron-down nav-caret"></i>
                                     </a>
-                                    <ul class="dropdown-menu-gplc dropdown-menu dropdown-menu-end border-0 shadow" style="border-radius: 14px; padding: 8px; width: 330px; max-width: calc(100vw - 32px);">
+                                    <ul class="dropdown-menu-gplc academics-glass-dropdown dropdown-menu dropdown-menu-end border-0">
                                         <li>
-                                            <a class="dropdown-item fw-bold text-primary py-2 px-3 d-flex align-items-center gap-2" href="{{ url('course') }}" style="border-radius: 8px; background: rgba(13, 110, 253, 0.08); margin-bottom: 4px;">
-                                                <i class="bi bi-grid-fill"></i>
-                                                <span>All Academic Levels (PG to 12)</span>
+                                            <a class="academics-featured-link {{ request()->is('course') ? 'is-active' : '' }}" href="{{ url('course') }}">
+                                                <span class="academics-icon-box is-featured">
+                                                    <i class="bi bi-grid-fill"></i>
+                                                </span>
+                                                <span class="academics-item-copy">
+                                                    <span class="academics-item-title">All Academic Levels</span>
+                                                    <span class="academics-item-sub">Explore PG to Grade 12</span>
+                                                </span>
+                                                <i class="bi bi-arrow-right-short academics-arrow"></i>
                                             </a>
                                         </li>
-                                        <li><hr class="dropdown-divider my-1" style="opacity: 0.12;"></li>
+                                        <li class="academics-divider-wrap"><hr class="academics-divider"></li>
                                         @foreach($navCourses as $nc)
+                                            @php
+                                                $isCourseActive = request()->is('course/' . $nc->slug);
+                                            @endphp
                                             <li>
-                                                <a class="dropdown-item py-2 px-3 d-block" href="{{ url('course/' . $nc->slug) }}" style="border-radius: 8px; white-space: normal;">
-                                                    <div class="fw-semibold text-dark text-truncate" style="font-size: 13.5px; line-height: 1.35;" title="{{ $nc->name }}">{{ $nc->name }}</div>
-                                                    @if($nc->grade_span)
-                                                        <div class="text-muted small text-truncate mt-0.5" style="font-size: 11px; line-height: 1.25;" title="{{ $nc->grade_span }}">
-                                                            <i class="bi bi-mortarboard me-1 text-primary"></i>{{ $nc->grade_span }}
-                                                        </div>
-                                                    @endif
+                                                <a class="academics-item-link {{ $isCourseActive ? 'is-active' : '' }}" href="{{ url('course/' . $nc->slug) }}">
+                                                    <span class="academics-icon-box">
+                                                        <i class="bi bi-mortarboard-fill"></i>
+                                                    </span>
+                                                    <span class="academics-item-copy">
+                                                        <span class="academics-item-title" title="{{ $nc->name }}">{{ $nc->name }}</span>
+                                                        @if($nc->grade_span || $nc->academic_level)
+                                                            <span class="academics-item-sub" title="{{ $nc->grade_span ?? $nc->academic_level }}">
+                                                                {{ $nc->grade_span ?? $nc->academic_level }}
+                                                            </span>
+                                                        @endif
+                                                    </span>
+                                                    <i class="bi bi-chevron-right academics-arrow"></i>
                                                 </a>
                                             </li>
                                         @endforeach
